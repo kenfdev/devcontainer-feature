@@ -1,11 +1,6 @@
 #!/bin/sh
 set -e
 
-echo "Activating feature 'hello'"
-
-GREETING=${GREETING:-undefined}
-echo "The provided greeting is: $GREETING"
-
 # The 'install.sh' entrypoint script is always executed as the root user.
 #
 # These following environment variables are passed in by the dev container CLI.
@@ -18,12 +13,12 @@ echo "The effective dev container remoteUser's home directory is '$_REMOTE_USER_
 echo "The effective dev container containerUser is '$_CONTAINER_USER'"
 echo "The effective dev container containerUser's home directory is '$_CONTAINER_USER_HOME'"
 
-cat > /usr/local/bin/hello \
-<< EOF
-#!/bin/sh
-RED='\033[0;91m'
-NC='\033[0m' # No Color
-echo "\${RED}${GREETING}, \$(whoami)!\${NC}"
-EOF
+echo "Download tig source code"
+curl -LO https://github.com/jonas/tig/releases/download/tig-2.5.8/tig-2.5.8.tar.gz
+tar -xf tig-2.5.8.tar.gz
+cd tig-2.5.8
 
-chmod +x /usr/local/bin/hello
+echo "make tig"
+make prefix=/usr/local
+echo "install tig"
+make install prefix=/usr/local

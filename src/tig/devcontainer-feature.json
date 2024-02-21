@@ -1,0 +1,10 @@
+{
+    "name": "tig",
+    "id": "tig",
+    "version": "2.5.4",
+    "description": "A feature that adds tig to your dev container.",
+    "options": {},
+    "installsAfter": [
+        "ghcr.io/devcontainers/features/common-utils"
+    ]
+}
