@@ -3,8 +3,14 @@
     "id": "tig",
     "version": "2.5.4",
     "description": "A feature that adds tig to your dev container.",
-    "options": {},
-    "installsAfter": [
-        "ghcr.io/devcontainers/features/common-utils"
-    ]
+    "options": {
+        "customprefix": {
+            "type": "string",
+            "description": "The prefix to use where to install tig. Defaults to '/usr/local'.",
+            "default": "/usr/local"
+        }
+    },
+    "dependsOn": {
+        "ghcr.io/devcontainers/features/common-utils": {}
+    }
 }

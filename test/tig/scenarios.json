@@ -1,0 +1,16 @@
+{
+  "default_prefix": {
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "features": {
+      "tig": {}
+    }
+  },
+  "custom_prefix": {
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "features": {
+      "tig": {
+        "customprefix": "/home/vscode"
+      }
+    }
+  }
+}
