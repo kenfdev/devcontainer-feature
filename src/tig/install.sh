@@ -13,12 +13,14 @@ echo "The effective dev container remoteUser's home directory is '$_REMOTE_USER_
 echo "The effective dev container containerUser is '$_CONTAINER_USER'"
 echo "The effective dev container containerUser's home directory is '$_CONTAINER_USER_HOME'"
 
+VERSION="2.5.8"
+
 echo "Download tig source code"
-curl -LO https://github.com/jonas/tig/releases/download/tig-2.5.8/tig-2.5.8.tar.gz
-tar -xf tig-2.5.8.tar.gz
-cd tig-2.5.8
+curl -LO https://github.com/jonas/tig/releases/download/tig-$VERSION/tig-$VERSION.tar.gz
+tar -xf tig-$VERSION.tar.gz
+cd tig-$VERSION
 
 echo "make tig"
-make prefix=/usr/local
+make prefix=$CUSTOMPREFIX
 echo "install tig"
-make install prefix=/usr/local
+make install prefix=$CUSTOMPREFIX
