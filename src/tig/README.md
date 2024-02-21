@@ -15,7 +15,7 @@ A feature that adds tig to your dev container.
 
 | Options Id | Description | Type | Default Value |
 |-----|-----|-----|-----|
-
+| customprefix | The prefix to use where to install tig. Defaults to '/usr/local'. | string | /usr/local |
 
 
 
