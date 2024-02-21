@@ -15,8 +15,8 @@ echo "The effective dev container containerUser's home directory is '$_CONTAINER
 
 VERSION="2.5.8"
 
-echo "update and upgrade apt"
-apt update && apt upgrade
+echo "update apt"
+apt update
 
 echo "install dependencies"
 apt-get install -y make gcc libncurses5-dev libncursesw5-dev

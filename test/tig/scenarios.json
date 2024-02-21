@@ -9,7 +9,7 @@
     "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
     "features": {
       "tig": {
-        "customprefix": "$HOME"
+        "customprefix": "/home/vscode"
       }
     }
   }
