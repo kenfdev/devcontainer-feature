@@ -15,6 +15,13 @@ echo "The effective dev container containerUser's home directory is '$_CONTAINER
 
 VERSION="2.5.8"
 
+echo "update and upgrade apt"
+apt update && apt upgrade
+
+echo "install dependencies"
+apt-get install -y make gcc libncurses5-dev libncursesw5-dev
+
+
 echo "Download tig source code"
 curl -LO https://github.com/jonas/tig/releases/download/tig-$VERSION/tig-$VERSION.tar.gz
 tar -xf tig-$VERSION.tar.gz
