@@ -1,0 +1,38 @@
+{
+    "name": "devenv",
+    "id": "devenv",
+    "version": "1.0.0",
+    "description": "A dev container feature that bundles essential terminal-based development tools: tmux, lazygit, and neovim (with ripgrep, fd, fzf).",
+    "options": {
+        "installTmux": {
+            "type": "boolean",
+            "description": "Install tmux terminal multiplexer",
+            "default": true
+        },
+        "installLazygit": {
+            "type": "boolean",
+            "description": "Install lazygit terminal UI for Git",
+            "default": true
+        },
+        "installNvim": {
+            "type": "boolean",
+            "description": "Install neovim and supporting tools (ripgrep, fd, fzf)",
+            "default": true
+        },
+        "tmuxVersion": {
+            "type": "string",
+            "description": "tmux version to install (e.g., '3.4', 'latest')",
+            "default": "latest"
+        },
+        "lazygitVersion": {
+            "type": "string",
+            "description": "lazygit version to install (e.g., '0.40.2', 'latest')",
+            "default": "latest"
+        },
+        "nvimVersion": {
+            "type": "string",
+            "description": "neovim version to install (e.g., '0.9.5', 'latest')",
+            "default": "latest"
+        }
+    }
+}
