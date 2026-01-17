@@ -1,0 +1,55 @@
+{
+    "default": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "devenv": {}
+        }
+    },
+    "tmux-only": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "devenv": {
+                "installLazygit": false,
+                "installNvim": false
+            }
+        }
+    },
+    "lazygit-only": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "devenv": {
+                "installTmux": false,
+                "installNvim": false
+            }
+        }
+    },
+    "nvim-only": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "devenv": {
+                "installTmux": false,
+                "installLazygit": false
+            }
+        }
+    },
+    "all-disabled": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "devenv": {
+                "installTmux": false,
+                "installLazygit": false,
+                "installNvim": false
+            }
+        }
+    },
+    "pinned-versions": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "devenv": {
+                "tmuxVersion": "3.4",
+                "lazygitVersion": "0.40.2",
+                "nvimVersion": "v0.10.4"
+            }
+        }
+    }
+}

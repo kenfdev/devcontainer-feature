@@ -19,7 +19,7 @@ echo "update apt"
 apt update
 
 echo "install dependencies"
-apt-get install -y make gcc libncursesw5 libncursesw5-dev
+apt-get install -y make gcc libncurses-dev
 
 
 echo "Download tig source code"
