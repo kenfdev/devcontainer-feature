@@ -44,8 +44,12 @@ else
     exit 1
 fi
 
-# Note: tmux test is skipped for now since it requires building from source
-# and is marked as TODO in install.sh
-echo "NOTE: tmux test skipped (implementation pending)"
+# Test tmux
+if command -v tmux &>/dev/null; then
+    echo "PASS: tmux is installed"
+else
+    echo "FAIL: tmux is not installed"
+    exit 1
+fi
 
 echo "All tests passed!"

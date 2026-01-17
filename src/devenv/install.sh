@@ -70,7 +70,23 @@ install_dependencies() {
     fi
 }
 
-# Install tmux from GitHub Releases
+# Install tmux build dependencies
+install_tmux_build_deps() {
+    echo "Installing tmux build dependencies..."
+    if command -v apt-get &>/dev/null; then
+        apt-get install -y --no-install-recommends build-essential libevent-dev libncurses-dev bison pkg-config
+    elif command -v apk &>/dev/null; then
+        apk add --no-cache build-base libevent-dev ncurses-dev bison pkgconf
+    elif command -v dnf &>/dev/null; then
+        dnf install -y gcc make libevent-devel ncurses-devel bison pkgconfig
+    else
+        echo "WARNING: Unknown package manager, cannot install tmux build dependencies" >&2
+        return 1
+    fi
+    return 0
+}
+
+# Install tmux from GitHub Releases (builds from source)
 install_tmux() {
     if [ "$INSTALL_TMUX" != "true" ]; then
         echo "Skipping tmux installation (disabled)"
@@ -89,12 +105,43 @@ install_tmux() {
         return 0
     fi
 
-    echo "tmux version: $version"
+    # Strip leading 'v' if present (tmux versions don't have 'v' prefix typically)
+    local version_num="${version#v}"
+    echo "tmux version: $version_num"
 
-    # tmux doesn't provide prebuilt binaries, need to build from source
-    # For now, we install build dependencies and compile
-    echo "WARNING: tmux requires building from source - implementation pending" >&2
-    # TODO: Implement tmux installation from source
+    # Install build dependencies
+    if ! install_tmux_build_deps; then
+        echo "WARNING: Failed to install tmux build dependencies, skipping tmux" >&2
+        return 0
+    fi
+
+    local url="https://github.com/tmux/tmux/releases/download/${version_num}/tmux-${version_num}.tar.gz"
+    local tmpdir
+    tmpdir=$(mktemp -d)
+
+    if ! download_file "$url" "$tmpdir/tmux.tar.gz"; then
+        echo "WARNING: Failed to download tmux, skipping" >&2
+        rm -rf "$tmpdir"
+        return 0
+    fi
+
+    # Extract and build
+    tar -xzf "$tmpdir/tmux.tar.gz" -C "$tmpdir"
+    cd "$tmpdir/tmux-${version_num}" || {
+        echo "WARNING: Failed to extract tmux source, skipping" >&2
+        rm -rf "$tmpdir"
+        return 0
+    }
+
+    # Configure and build
+    if ./configure --prefix=/usr/local && make -j"$(nproc)" && make install; then
+        echo "tmux installed successfully"
+    else
+        echo "WARNING: Failed to build tmux" >&2
+    fi
+
+    cd - >/dev/null || true
+    rm -rf "$tmpdir"
     return 0
 }
 
