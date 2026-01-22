@@ -52,4 +52,20 @@ else
     echo "PASS: fzf is not installed (as expected)"
 fi
 
+# Test Claude Code (should NOT be installed)
+if command -v claude &>/dev/null; then
+    echo "FAIL: claude should not be installed"
+    exit 1
+else
+    echo "PASS: claude is not installed (as expected)"
+fi
+
+# Test Codex (should NOT be installed)
+if command -v codex &>/dev/null; then
+    echo "FAIL: codex should not be installed"
+    exit 1
+else
+    echo "PASS: codex is not installed (as expected)"
+fi
+
 echo "All tests passed!"

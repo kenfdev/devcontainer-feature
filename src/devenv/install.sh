@@ -9,6 +9,8 @@ set -e
 INSTALL_TMUX="${INSTALLTMUX:-true}"
 INSTALL_LAZYGIT="${INSTALLLAZYGIT:-true}"
 INSTALL_NVIM="${INSTALLNVIM:-true}"
+INSTALL_CLAUDE_CODE="${INSTALLCLAUDECODE:-true}"
+INSTALL_CODEX="${INSTALLCODEX:-true}"
 TMUX_VERSION="${TMUXVERSION:-latest}"
 LAZYGIT_VERSION="${LAZYGITVERSION:-latest}"
 NVIM_VERSION="${NVIMVERSION:-latest}"
@@ -369,6 +371,62 @@ install_fzf() {
     return 0
 }
 
+# Install Claude Code CLI
+install_claude_code() {
+    if [ "$INSTALL_CLAUDE_CODE" != "true" ]; then
+        echo "Skipping Claude Code installation (disabled)"
+        return 0
+    fi
+
+    echo "Installing Claude Code..."
+
+    # Check if claude is already installed
+    if command -v claude &>/dev/null; then
+        echo "Claude Code is already installed, skipping"
+        return 0
+    fi
+
+    # Install Claude Code using the official install script
+    if curl -fsSL https://claude.ai/install.sh | bash; then
+        echo "Claude Code installed successfully"
+    else
+        echo "WARNING: Failed to install Claude Code" >&2
+    fi
+
+    return 0
+}
+
+# Install OpenAI Codex CLI
+install_codex() {
+    if [ "$INSTALL_CODEX" != "true" ]; then
+        echo "Skipping Codex installation (disabled)"
+        return 0
+    fi
+
+    echo "Installing Codex..."
+
+    # Check if codex is already installed
+    if command -v codex &>/dev/null; then
+        echo "Codex is already installed, skipping"
+        return 0
+    fi
+
+    # Check if npm is available
+    if ! command -v npm &>/dev/null; then
+        echo "WARNING: npm is not installed, skipping Codex installation" >&2
+        return 0
+    fi
+
+    # Install Codex globally using npm
+    if npm i -g @openai/codex; then
+        echo "Codex installed successfully"
+    else
+        echo "WARNING: Failed to install Codex" >&2
+    fi
+
+    return 0
+}
+
 # Main installation
 main() {
     echo "Starting devenv feature installation..."
@@ -376,6 +434,8 @@ main() {
     echo "  INSTALL_TMUX=$INSTALL_TMUX"
     echo "  INSTALL_LAZYGIT=$INSTALL_LAZYGIT"
     echo "  INSTALL_NVIM=$INSTALL_NVIM"
+    echo "  INSTALL_CLAUDE_CODE=$INSTALL_CLAUDE_CODE"
+    echo "  INSTALL_CODEX=$INSTALL_CODEX"
     echo "  TMUX_VERSION=$TMUX_VERSION"
     echo "  LAZYGIT_VERSION=$LAZYGIT_VERSION"
     echo "  NVIM_VERSION=$NVIM_VERSION"
@@ -391,6 +451,8 @@ main() {
     install_tmux
     install_lazygit
     install_nvim
+    install_claude_code
+    install_codex
 
     echo "devenv feature installation complete"
 }

@@ -33,6 +33,16 @@
             "type": "string",
             "description": "neovim version to install (e.g., '0.9.5', 'latest')",
             "default": "latest"
+        },
+        "installClaudeCode": {
+            "type": "boolean",
+            "description": "Install Claude Code CLI (AI coding assistant)",
+            "default": true
+        },
+        "installCodex": {
+            "type": "boolean",
+            "description": "Install OpenAI Codex CLI (requires npm)",
+            "default": true
         }
     }
 }
