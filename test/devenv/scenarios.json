@@ -2,7 +2,10 @@
     "default": {
         "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
         "features": {
-            "devenv": {}
+            "devenv": {
+                "installClaudeCode": false,
+                "installCodex": false
+            }
         }
     },
     "tmux-only": {
@@ -10,7 +13,9 @@
         "features": {
             "devenv": {
                 "installLazygit": false,
-                "installNvim": false
+                "installNvim": false,
+                "installClaudeCode": false,
+                "installCodex": false
             }
         }
     },
@@ -19,7 +24,9 @@
         "features": {
             "devenv": {
                 "installTmux": false,
-                "installNvim": false
+                "installNvim": false,
+                "installClaudeCode": false,
+                "installCodex": false
             }
         }
     },
@@ -28,7 +35,9 @@
         "features": {
             "devenv": {
                 "installTmux": false,
-                "installLazygit": false
+                "installLazygit": false,
+                "installClaudeCode": false,
+                "installCodex": false
             }
         }
     },
@@ -38,7 +47,9 @@
             "devenv": {
                 "installTmux": false,
                 "installLazygit": false,
-                "installNvim": false
+                "installNvim": false,
+                "installClaudeCode": false,
+                "installCodex": false
             }
         }
     },
@@ -48,7 +59,33 @@
             "devenv": {
                 "tmuxVersion": "3.4",
                 "lazygitVersion": "0.40.2",
-                "nvimVersion": "v0.10.4"
+                "nvimVersion": "v0.10.4",
+                "installClaudeCode": false,
+                "installCodex": false
+            }
+        }
+    },
+    "claude-code-only": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "devenv": {
+                "installTmux": false,
+                "installLazygit": false,
+                "installNvim": false,
+                "installClaudeCode": true,
+                "installCodex": false
+            }
+        }
+    },
+    "codex-only": {
+        "image": "mcr.microsoft.com/devcontainers/javascript-node:22",
+        "features": {
+            "devenv": {
+                "installTmux": false,
+                "installLazygit": false,
+                "installNvim": false,
+                "installClaudeCode": false,
+                "installCodex": true
             }
         }
     }
