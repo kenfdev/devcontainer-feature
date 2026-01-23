@@ -49,6 +49,7 @@ Tests live in `test/<feature-name>/`:
 - Install scripts receive options as environment variables (e.g., `$CUSTOMPREFIX` for the custom prefix option)
 - Features can declare dependencies on other features via `dependsOn` in the JSON manifest
 - The `tig` feature depends on `ghcr.io/devcontainers/features/common-utils`
+- **Always bump the version** in `devcontainer-feature.json` when making changes to a feature. GHCR caches by version tag, so unchanged versions may serve stale content.
 
 ### CI/CD
 
