@@ -21,6 +21,8 @@ A dev container feature that bundles essential terminal-based development tools:
 | tmuxVersion | tmux version to install (e.g., '3.4', 'latest') | string | latest |
 | lazygitVersion | lazygit version to install (e.g., '0.40.2', 'latest') | string | latest |
 | nvimVersion | neovim version to install (e.g., '0.9.5', 'latest') | string | latest |
+| installClaudeCode | Install Claude Code CLI (AI coding assistant) | boolean | true |
+| installCodex | Install OpenAI Codex CLI (requires npm) | boolean | true |
 
 
 
