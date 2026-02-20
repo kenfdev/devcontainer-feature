@@ -23,6 +23,7 @@ A dev container feature that bundles essential terminal-based development tools:
 | nvimVersion | neovim version to install (e.g., '0.9.5', 'latest') | string | latest |
 | installClaudeCode | Install Claude Code CLI (AI coding assistant) | boolean | true |
 | installCodex | Install OpenAI Codex CLI (requires npm) | boolean | true |
+| installBeads | Install Beads (AI agent framework by Steve Yegge) | boolean | true |
 
 
 
