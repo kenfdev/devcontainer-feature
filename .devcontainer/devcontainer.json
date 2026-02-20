@@ -1,5 +1,5 @@
 {
-    "image": "mcr.microsoft.com/devcontainers/javascript-node:1-18-bullseye",
+    "image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
     "customizations": {
         "vscode": {
             "settings": {
@@ -18,7 +18,14 @@
         }
     },
     "features": {
-        "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+        "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+        "ghcr.io/kenfdev/devcontainer-feature/devenv:1": {
+            "installTmux": true,
+            "installLazygit": true,
+            "installNvim": true,
+            "installClaudeCode": true,
+            "installCodex": true
+        }
     },
     "remoteUser": "node",
     "updateContentCommand": "npm install -g @devcontainers/cli"
