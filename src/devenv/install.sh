@@ -11,12 +11,17 @@ INSTALL_LAZYGIT="${INSTALLLAZYGIT:-true}"
 INSTALL_NVIM="${INSTALLNVIM:-true}"
 INSTALL_CLAUDE_CODE="${INSTALLCLAUDECODE:-true}"
 INSTALL_CODEX="${INSTALLCODEX:-true}"
+INSTALL_BEADS="${INSTALLBEADS:-true}"
 TMUX_VERSION="${TMUXVERSION:-latest}"
 LAZYGIT_VERSION="${LAZYGITVERSION:-latest}"
 NVIM_VERSION="${NVIMVERSION:-latest}"
 
 # Installation target
 INSTALL_DIR="/usr/local/bin"
+
+# Detect remote user (provided by devcontainer CLI)
+REMOTE_USER="${_REMOTE_USER:-root}"
+REMOTE_USER_HOME="${_REMOTE_USER_HOME:-/root}"
 
 # Detect architecture
 detect_architecture() {
@@ -380,17 +385,30 @@ install_claude_code() {
 
     echo "Installing Claude Code..."
 
-    # Check if claude is already installed
-    if command -v claude &>/dev/null; then
+    # Check if claude is already installed (check as remote user since it installs to user home)
+    if [ "$REMOTE_USER" != "root" ]; then
+        if su - "$REMOTE_USER" -c "command -v claude" &>/dev/null; then
+            echo "Claude Code is already installed, skipping"
+            return 0
+        fi
+    elif command -v claude &>/dev/null; then
         echo "Claude Code is already installed, skipping"
         return 0
     fi
 
-    # Install Claude Code using the official install script
-    if curl -fsSL https://claude.ai/install.sh | bash; then
-        echo "Claude Code installed successfully"
+    # Install as the remote user so binaries go to their home directory
+    if [ "$REMOTE_USER" != "root" ]; then
+        if su - "$REMOTE_USER" -c "curl -fsSL https://claude.ai/install.sh | bash"; then
+            echo "Claude Code installed successfully for user $REMOTE_USER"
+        else
+            echo "WARNING: Failed to install Claude Code" >&2
+        fi
     else
-        echo "WARNING: Failed to install Claude Code" >&2
+        if curl -fsSL https://claude.ai/install.sh | bash; then
+            echo "Claude Code installed successfully"
+        else
+            echo "WARNING: Failed to install Claude Code" >&2
+        fi
     fi
 
     return 0
@@ -405,23 +423,71 @@ install_codex() {
 
     echo "Installing Codex..."
 
-    # Check if codex is already installed
-    if command -v codex &>/dev/null; then
+    # Check if codex is already installed (check as remote user first)
+    if [ "$REMOTE_USER" != "root" ]; then
+        if su - "$REMOTE_USER" -c "command -v codex" &>/dev/null; then
+            echo "Codex is already installed, skipping"
+            return 0
+        fi
+    elif command -v codex &>/dev/null; then
         echo "Codex is already installed, skipping"
         return 0
     fi
 
-    # Check if npm is available
-    if ! command -v npm &>/dev/null; then
+    # Try installing as remote user if they have npm available
+    if [ "$REMOTE_USER" != "root" ] && su - "$REMOTE_USER" -c "command -v npm" &>/dev/null; then
+        if su - "$REMOTE_USER" -c "npm i -g @openai/codex"; then
+            echo "Codex installed successfully for user $REMOTE_USER"
+        else
+            echo "WARNING: Failed to install Codex" >&2
+        fi
+    elif command -v npm &>/dev/null; then
+        # Fallback: install as root (system-wide)
+        if npm i -g @openai/codex; then
+            echo "Codex installed successfully"
+        else
+            echo "WARNING: Failed to install Codex" >&2
+        fi
+    else
         echo "WARNING: npm is not installed, skipping Codex installation" >&2
+    fi
+
+    return 0
+}
+
+# Install Beads
+install_beads() {
+    if [ "$INSTALL_BEADS" != "true" ]; then
+        echo "Skipping Beads installation (disabled)"
         return 0
     fi
 
-    # Install Codex globally using npm
-    if npm i -g @openai/codex; then
-        echo "Codex installed successfully"
+    echo "Installing Beads..."
+
+    # Check if beads is already installed (check as remote user since it installs to user home)
+    if [ "$REMOTE_USER" != "root" ]; then
+        if su - "$REMOTE_USER" -c "command -v beads" &>/dev/null; then
+            echo "Beads is already installed, skipping"
+            return 0
+        fi
+    elif command -v beads &>/dev/null; then
+        echo "Beads is already installed, skipping"
+        return 0
+    fi
+
+    # Install as the remote user so binaries go to their home directory
+    if [ "$REMOTE_USER" != "root" ]; then
+        if su - "$REMOTE_USER" -c "curl -fsSL https://raw.githubusercontent.com/steveyegge/beads/main/scripts/install.sh | bash"; then
+            echo "Beads installed successfully for user $REMOTE_USER"
+        else
+            echo "WARNING: Failed to install Beads" >&2
+        fi
     else
-        echo "WARNING: Failed to install Codex" >&2
+        if curl -fsSL https://raw.githubusercontent.com/steveyegge/beads/main/scripts/install.sh | bash; then
+            echo "Beads installed successfully"
+        else
+            echo "WARNING: Failed to install Beads" >&2
+        fi
     fi
 
     return 0
@@ -430,12 +496,14 @@ install_codex() {
 # Main installation
 main() {
     echo "Starting devenv feature installation..."
+    echo "Remote user: $REMOTE_USER (home: $REMOTE_USER_HOME)"
     echo "Options:"
     echo "  INSTALL_TMUX=$INSTALL_TMUX"
     echo "  INSTALL_LAZYGIT=$INSTALL_LAZYGIT"
     echo "  INSTALL_NVIM=$INSTALL_NVIM"
     echo "  INSTALL_CLAUDE_CODE=$INSTALL_CLAUDE_CODE"
     echo "  INSTALL_CODEX=$INSTALL_CODEX"
+    echo "  INSTALL_BEADS=$INSTALL_BEADS"
     echo "  TMUX_VERSION=$TMUX_VERSION"
     echo "  LAZYGIT_VERSION=$LAZYGIT_VERSION"
     echo "  NVIM_VERSION=$NVIM_VERSION"
@@ -453,6 +521,7 @@ main() {
     install_nvim
     install_claude_code
     install_codex
+    install_beads
 
     echo "devenv feature installation complete"
 }
