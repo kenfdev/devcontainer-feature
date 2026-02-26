@@ -2,7 +2,7 @@
 set -e
 
 # devenv feature install script
-# Installs tmux, lazygit, neovim (with supporting tools: ripgrep, fd, fzf)
+# Installs tmux, lazygit, neovim (with supporting tools: ripgrep, fd, fzf), and gh
 # All tools installed from GitHub Releases
 
 # Options (passed as environment variables)
@@ -12,6 +12,7 @@ INSTALL_NVIM="${INSTALLNVIM:-true}"
 INSTALL_CLAUDE_CODE="${INSTALLCLAUDECODE:-true}"
 INSTALL_CODEX="${INSTALLCODEX:-true}"
 INSTALL_BEADS="${INSTALLBEADS:-true}"
+INSTALL_GH="${INSTALLGH:-true}"
 TMUX_VERSION="${TMUXVERSION:-latest}"
 LAZYGIT_VERSION="${LAZYGITVERSION:-latest}"
 NVIM_VERSION="${NVIMVERSION:-latest}"
@@ -493,6 +494,58 @@ install_beads() {
     return 0
 }
 
+# Install GitHub CLI from GitHub Releases
+install_gh() {
+    if [ "$INSTALL_GH" != "true" ]; then
+        echo "Skipping GitHub CLI installation (disabled)"
+        return 0
+    fi
+
+    echo "Installing GitHub CLI..."
+
+    # Check if gh is already installed
+    if command -v gh &>/dev/null; then
+        echo "GitHub CLI is already installed, skipping"
+        return 0
+    fi
+
+    local version
+    version=$(get_latest_version "cli/cli")
+
+    if [ -z "$version" ]; then
+        echo "WARNING: Could not determine GitHub CLI version, skipping" >&2
+        return 0
+    fi
+
+    local version_num="${version#v}"
+    echo "GitHub CLI version: $version_num"
+
+    local gh_arch
+    if [ "$ARCH" = "amd64" ]; then
+        gh_arch="linux_amd64"
+    elif [ "$ARCH" = "arm64" ]; then
+        gh_arch="linux_arm64"
+    else
+        echo "WARNING: Unsupported architecture for GitHub CLI: $ARCH" >&2
+        return 0
+    fi
+
+    local url="https://github.com/cli/cli/releases/download/v${version_num}/gh_${version_num}_${gh_arch}.tar.gz"
+    local tmpdir
+    tmpdir=$(mktemp -d)
+
+    if download_file "$url" "$tmpdir/gh.tar.gz"; then
+        tar -xzf "$tmpdir/gh.tar.gz" -C "$tmpdir"
+        install -m 755 "$tmpdir/gh_${version_num}_${gh_arch}/bin/gh" "$INSTALL_DIR/gh"
+        echo "GitHub CLI installed successfully"
+    else
+        echo "WARNING: Failed to install GitHub CLI" >&2
+    fi
+
+    rm -rf "$tmpdir"
+    return 0
+}
+
 # Main installation
 main() {
     echo "Starting devenv feature installation..."
@@ -504,6 +557,7 @@ main() {
     echo "  INSTALL_CLAUDE_CODE=$INSTALL_CLAUDE_CODE"
     echo "  INSTALL_CODEX=$INSTALL_CODEX"
     echo "  INSTALL_BEADS=$INSTALL_BEADS"
+    echo "  INSTALL_GH=$INSTALL_GH"
     echo "  TMUX_VERSION=$TMUX_VERSION"
     echo "  LAZYGIT_VERSION=$LAZYGIT_VERSION"
     echo "  NVIM_VERSION=$NVIM_VERSION"
@@ -522,6 +576,7 @@ main() {
     install_claude_code
     install_codex
     install_beads
+    install_gh
 
     echo "devenv feature installation complete"
 }
