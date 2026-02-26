@@ -1,8 +1,8 @@
 {
     "name": "devenv",
     "id": "devenv",
-    "version": "1.3.0",
-    "description": "A dev container feature that bundles essential terminal-based development tools: tmux, lazygit, and neovim (with ripgrep, fd, fzf).",
+    "version": "1.4.0",
+    "description": "A dev container feature that bundles essential terminal-based development tools: tmux, lazygit, neovim (with ripgrep, fd, fzf), and gh.",
     "options": {
         "installTmux": {
             "type": "boolean",
@@ -47,6 +47,11 @@
         "installBeads": {
             "type": "boolean",
             "description": "Install Beads (AI agent framework by Steve Yegge)",
+            "default": true
+        },
+        "installGh": {
+            "type": "boolean",
+            "description": "Install GitHub CLI (gh)",
             "default": true
         }
     }
