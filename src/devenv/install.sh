@@ -11,7 +11,6 @@ INSTALL_LAZYGIT="${INSTALLLAZYGIT:-true}"
 INSTALL_NVIM="${INSTALLNVIM:-true}"
 INSTALL_CLAUDE_CODE="${INSTALLCLAUDECODE:-true}"
 INSTALL_CODEX="${INSTALLCODEX:-true}"
-INSTALL_BEADS="${INSTALLBEADS:-true}"
 INSTALL_GH="${INSTALLGH:-true}"
 INSTALL_TAKT="${INSTALLTAKT:-true}"
 TMUX_VERSION="${TMUXVERSION:-latest}"
@@ -457,44 +456,6 @@ install_codex() {
     return 0
 }
 
-# Install Beads
-install_beads() {
-    if [ "$INSTALL_BEADS" != "true" ]; then
-        echo "Skipping Beads installation (disabled)"
-        return 0
-    fi
-
-    echo "Installing Beads..."
-
-    # Check if beads is already installed (check as remote user since it installs to user home)
-    if [ "$REMOTE_USER" != "root" ]; then
-        if su - "$REMOTE_USER" -c "command -v beads" &>/dev/null; then
-            echo "Beads is already installed, skipping"
-            return 0
-        fi
-    elif command -v beads &>/dev/null; then
-        echo "Beads is already installed, skipping"
-        return 0
-    fi
-
-    # Install as the remote user so binaries go to their home directory
-    if [ "$REMOTE_USER" != "root" ]; then
-        if su - "$REMOTE_USER" -c "curl -fsSL https://raw.githubusercontent.com/steveyegge/beads/main/scripts/install.sh | bash"; then
-            echo "Beads installed successfully for user $REMOTE_USER"
-        else
-            echo "WARNING: Failed to install Beads" >&2
-        fi
-    else
-        if curl -fsSL https://raw.githubusercontent.com/steveyegge/beads/main/scripts/install.sh | bash; then
-            echo "Beads installed successfully"
-        else
-            echo "WARNING: Failed to install Beads" >&2
-        fi
-    fi
-
-    return 0
-}
-
 # Install GitHub CLI from GitHub Releases
 install_gh() {
     if [ "$INSTALL_GH" != "true" ]; then
@@ -596,7 +557,6 @@ main() {
     echo "  INSTALL_NVIM=$INSTALL_NVIM"
     echo "  INSTALL_CLAUDE_CODE=$INSTALL_CLAUDE_CODE"
     echo "  INSTALL_CODEX=$INSTALL_CODEX"
-    echo "  INSTALL_BEADS=$INSTALL_BEADS"
     echo "  INSTALL_GH=$INSTALL_GH"
     echo "  INSTALL_TAKT=$INSTALL_TAKT"
     echo "  TMUX_VERSION=$TMUX_VERSION"
@@ -616,7 +576,6 @@ main() {
     install_nvim
     install_claude_code
     install_codex
-    install_beads
     install_gh
     install_takt
 
