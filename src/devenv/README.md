@@ -1,7 +1,7 @@
 
 # devenv (devenv)
 
-A dev container feature that bundles essential terminal-based development tools: tmux, lazygit, neovim (with ripgrep, fd, fzf), gh, and takt.
+A dev container feature that bundles essential terminal-based development tools: tmux, lazygit, neovim (with ripgrep, fd, fzf), gh, takt, and opencode.
 
 ## Example Usage
 
@@ -25,6 +25,7 @@ A dev container feature that bundles essential terminal-based development tools:
 | installCodex | Install OpenAI Codex CLI (requires npm) | boolean | true |
 | installGh | Install GitHub CLI (gh) | boolean | true |
 | installTakt | Install takt (task runner by nrslib) | boolean | true |
+| installOpencode | Install opencode (AI coding assistant) | boolean | true |
 
 
 
