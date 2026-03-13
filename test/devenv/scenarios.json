@@ -4,7 +4,8 @@
         "features": {
             "devenv": {
                 "installClaudeCode": false,
-                "installCodex": false
+                "installCodex": false,
+                "installOpencode": false
             }
         }
     },
@@ -15,7 +16,8 @@
                 "installLazygit": false,
                 "installNvim": false,
                 "installClaudeCode": false,
-                "installCodex": false
+                "installCodex": false,
+                "installOpencode": false
             }
         }
     },
@@ -26,7 +28,8 @@
                 "installTmux": false,
                 "installNvim": false,
                 "installClaudeCode": false,
-                "installCodex": false
+                "installCodex": false,
+                "installOpencode": false
             }
         }
     },
@@ -37,7 +40,8 @@
                 "installTmux": false,
                 "installLazygit": false,
                 "installClaudeCode": false,
-                "installCodex": false
+                "installCodex": false,
+                "installOpencode": false
             }
         }
     },
@@ -49,7 +53,8 @@
                 "installLazygit": false,
                 "installNvim": false,
                 "installClaudeCode": false,
-                "installCodex": false
+                "installCodex": false,
+                "installOpencode": false
             }
         }
     },
@@ -61,7 +66,8 @@
                 "lazygitVersion": "0.40.2",
                 "nvimVersion": "v0.10.4",
                 "installClaudeCode": false,
-                "installCodex": false
+                "installCodex": false,
+                "installOpencode": false
             }
         }
     },
@@ -73,7 +79,8 @@
                 "installLazygit": false,
                 "installNvim": false,
                 "installClaudeCode": true,
-                "installCodex": false
+                "installCodex": false,
+                "installOpencode": false
             }
         }
     },
@@ -85,7 +92,8 @@
                 "installLazygit": false,
                 "installNvim": false,
                 "installClaudeCode": false,
-                "installCodex": true
+                "installCodex": true,
+                "installOpencode": false
             }
         }
     },
@@ -98,7 +106,22 @@
                 "installNvim": false,
                 "installClaudeCode": false,
                 "installCodex": false,
-                "installTakt": true
+                "installTakt": true,
+                "installOpencode": false
+            }
+        }
+    },
+    "opencode-only": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "devenv": {
+                "installTmux": false,
+                "installLazygit": false,
+                "installNvim": false,
+                "installClaudeCode": false,
+                "installCodex": false,
+                "installTakt": false,
+                "installOpencode": true
             }
         }
     }

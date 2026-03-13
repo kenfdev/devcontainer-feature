@@ -1,8 +1,8 @@
 {
     "name": "devenv",
     "id": "devenv",
-    "version": "1.6.0",
-    "description": "A dev container feature that bundles essential terminal-based development tools: tmux, lazygit, neovim (with ripgrep, fd, fzf), gh, and takt.",
+    "version": "1.7.0",
+    "description": "A dev container feature that bundles essential terminal-based development tools: tmux, lazygit, neovim (with ripgrep, fd, fzf), gh, takt, and opencode.",
     "options": {
         "installTmux": {
             "type": "boolean",
@@ -52,6 +52,11 @@
         "installTakt": {
             "type": "boolean",
             "description": "Install takt (task runner by nrslib)",
+            "default": true
+        },
+        "installOpencode": {
+            "type": "boolean",
+            "description": "Install opencode (AI coding assistant)",
             "default": true
         }
     }

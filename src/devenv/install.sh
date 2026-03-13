@@ -13,6 +13,7 @@ INSTALL_CLAUDE_CODE="${INSTALLCLAUDECODE:-true}"
 INSTALL_CODEX="${INSTALLCODEX:-true}"
 INSTALL_GH="${INSTALLGH:-true}"
 INSTALL_TAKT="${INSTALLTAKT:-true}"
+INSTALL_OPENCODE="${INSTALLOPENCODE:-true}"
 TMUX_VERSION="${TMUXVERSION:-latest}"
 LAZYGIT_VERSION="${LAZYGITVERSION:-latest}"
 NVIM_VERSION="${NVIMVERSION:-latest}"
@@ -547,6 +548,44 @@ install_takt() {
     return 0
 }
 
+# Install opencode
+install_opencode() {
+    if [ "$INSTALL_OPENCODE" != "true" ]; then
+        echo "Skipping opencode installation (disabled)"
+        return 0
+    fi
+
+    echo "Installing opencode..."
+
+    # Check if opencode is already installed (check as remote user first)
+    if [ "$REMOTE_USER" != "root" ]; then
+        if su - "$REMOTE_USER" -c "command -v opencode" &>/dev/null; then
+            echo "opencode is already installed, skipping"
+            return 0
+        fi
+    elif command -v opencode &>/dev/null; then
+        echo "opencode is already installed, skipping"
+        return 0
+    fi
+
+    # Install as the remote user so binaries go to their home directory
+    if [ "$REMOTE_USER" != "root" ]; then
+        if su - "$REMOTE_USER" -c "curl -fsSL https://opencode.ai/install | bash"; then
+            echo "opencode installed successfully for user $REMOTE_USER"
+        else
+            echo "WARNING: Failed to install opencode" >&2
+        fi
+    else
+        if curl -fsSL https://opencode.ai/install | bash; then
+            echo "opencode installed successfully"
+        else
+            echo "WARNING: Failed to install opencode" >&2
+        fi
+    fi
+
+    return 0
+}
+
 # Main installation
 main() {
     echo "Starting devenv feature installation..."
@@ -559,6 +598,7 @@ main() {
     echo "  INSTALL_CODEX=$INSTALL_CODEX"
     echo "  INSTALL_GH=$INSTALL_GH"
     echo "  INSTALL_TAKT=$INSTALL_TAKT"
+    echo "  INSTALL_OPENCODE=$INSTALL_OPENCODE"
     echo "  TMUX_VERSION=$TMUX_VERSION"
     echo "  LAZYGIT_VERSION=$LAZYGIT_VERSION"
     echo "  NVIM_VERSION=$NVIM_VERSION"
@@ -578,6 +618,7 @@ main() {
     install_codex
     install_gh
     install_takt
+    install_opencode
 
     echo "devenv feature installation complete"
 }
