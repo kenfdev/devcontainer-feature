@@ -11,8 +11,8 @@ INSTALL_LAZYGIT="${INSTALLLAZYGIT:-true}"
 INSTALL_NVIM="${INSTALLNVIM:-true}"
 INSTALL_CLAUDE_CODE="${INSTALLCLAUDECODE:-true}"
 INSTALL_CODEX="${INSTALLCODEX:-true}"
-INSTALL_BEADS="${INSTALLBEADS:-true}"
 INSTALL_GH="${INSTALLGH:-true}"
+INSTALL_TAKT="${INSTALLTAKT:-true}"
 TMUX_VERSION="${TMUXVERSION:-latest}"
 LAZYGIT_VERSION="${LAZYGITVERSION:-latest}"
 NVIM_VERSION="${NVIMVERSION:-latest}"
@@ -456,44 +456,6 @@ install_codex() {
     return 0
 }
 
-# Install Beads
-install_beads() {
-    if [ "$INSTALL_BEADS" != "true" ]; then
-        echo "Skipping Beads installation (disabled)"
-        return 0
-    fi
-
-    echo "Installing Beads..."
-
-    # Check if beads is already installed (check as remote user since it installs to user home)
-    if [ "$REMOTE_USER" != "root" ]; then
-        if su - "$REMOTE_USER" -c "command -v beads" &>/dev/null; then
-            echo "Beads is already installed, skipping"
-            return 0
-        fi
-    elif command -v beads &>/dev/null; then
-        echo "Beads is already installed, skipping"
-        return 0
-    fi
-
-    # Install as the remote user so binaries go to their home directory
-    if [ "$REMOTE_USER" != "root" ]; then
-        if su - "$REMOTE_USER" -c "curl -fsSL https://raw.githubusercontent.com/steveyegge/beads/main/scripts/install.sh | bash"; then
-            echo "Beads installed successfully for user $REMOTE_USER"
-        else
-            echo "WARNING: Failed to install Beads" >&2
-        fi
-    else
-        if curl -fsSL https://raw.githubusercontent.com/steveyegge/beads/main/scripts/install.sh | bash; then
-            echo "Beads installed successfully"
-        else
-            echo "WARNING: Failed to install Beads" >&2
-        fi
-    fi
-
-    return 0
-}
-
 # Install GitHub CLI from GitHub Releases
 install_gh() {
     if [ "$INSTALL_GH" != "true" ]; then
@@ -546,6 +508,45 @@ install_gh() {
     return 0
 }
 
+# Install takt
+install_takt() {
+    if [ "$INSTALL_TAKT" != "true" ]; then
+        echo "Skipping takt installation (disabled)"
+        return 0
+    fi
+
+    echo "Installing takt..."
+
+    # Check if takt is already installed (check as remote user first)
+    if [ "$REMOTE_USER" != "root" ] && su - "$REMOTE_USER" -c "command -v takt" &>/dev/null; then
+        echo "takt is already installed, skipping"
+        return 0
+    elif command -v takt &>/dev/null; then
+        echo "takt is already installed, skipping"
+        return 0
+    fi
+
+    # Try installing as remote user if they have npm available
+    if [ "$REMOTE_USER" != "root" ] && su - "$REMOTE_USER" -c "command -v npm" &>/dev/null; then
+        if su - "$REMOTE_USER" -c "npm install -g takt"; then
+            echo "takt installed successfully for user $REMOTE_USER"
+        else
+            echo "WARNING: Failed to install takt" >&2
+        fi
+    elif command -v npm &>/dev/null; then
+        # Fallback: install as root (system-wide)
+        if npm install -g takt; then
+            echo "takt installed successfully"
+        else
+            echo "WARNING: Failed to install takt" >&2
+        fi
+    else
+        echo "WARNING: npm is not installed, skipping takt installation" >&2
+    fi
+
+    return 0
+}
+
 # Main installation
 main() {
     echo "Starting devenv feature installation..."
@@ -556,8 +557,8 @@ main() {
     echo "  INSTALL_NVIM=$INSTALL_NVIM"
     echo "  INSTALL_CLAUDE_CODE=$INSTALL_CLAUDE_CODE"
     echo "  INSTALL_CODEX=$INSTALL_CODEX"
-    echo "  INSTALL_BEADS=$INSTALL_BEADS"
     echo "  INSTALL_GH=$INSTALL_GH"
+    echo "  INSTALL_TAKT=$INSTALL_TAKT"
     echo "  TMUX_VERSION=$TMUX_VERSION"
     echo "  LAZYGIT_VERSION=$LAZYGIT_VERSION"
     echo "  NVIM_VERSION=$NVIM_VERSION"
@@ -575,8 +576,8 @@ main() {
     install_nvim
     install_claude_code
     install_codex
-    install_beads
     install_gh
+    install_takt
 
     echo "devenv feature installation complete"
 }

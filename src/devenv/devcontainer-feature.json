@@ -1,8 +1,8 @@
 {
     "name": "devenv",
     "id": "devenv",
-    "version": "1.4.0",
-    "description": "A dev container feature that bundles essential terminal-based development tools: tmux, lazygit, neovim (with ripgrep, fd, fzf), and gh.",
+    "version": "1.6.0",
+    "description": "A dev container feature that bundles essential terminal-based development tools: tmux, lazygit, neovim (with ripgrep, fd, fzf), gh, and takt.",
     "options": {
         "installTmux": {
             "type": "boolean",
@@ -44,14 +44,14 @@
             "description": "Install OpenAI Codex CLI (requires npm)",
             "default": true
         },
-        "installBeads": {
-            "type": "boolean",
-            "description": "Install Beads (AI agent framework by Steve Yegge)",
-            "default": true
-        },
         "installGh": {
             "type": "boolean",
             "description": "Install GitHub CLI (gh)",
+            "default": true
+        },
+        "installTakt": {
+            "type": "boolean",
+            "description": "Install takt (task runner by nrslib)",
             "default": true
         }
     }
