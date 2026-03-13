@@ -88,5 +88,18 @@
                 "installCodex": true
             }
         }
+    },
+    "takt-only": {
+        "image": "mcr.microsoft.com/devcontainers/javascript-node:22",
+        "features": {
+            "devenv": {
+                "installTmux": false,
+                "installLazygit": false,
+                "installNvim": false,
+                "installClaudeCode": false,
+                "installCodex": false,
+                "installTakt": true
+            }
+        }
     }
 }

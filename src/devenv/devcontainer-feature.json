@@ -1,8 +1,8 @@
 {
     "name": "devenv",
     "id": "devenv",
-    "version": "1.4.0",
-    "description": "A dev container feature that bundles essential terminal-based development tools: tmux, lazygit, neovim (with ripgrep, fd, fzf), and gh.",
+    "version": "1.5.0",
+    "description": "A dev container feature that bundles essential terminal-based development tools: tmux, lazygit, neovim (with ripgrep, fd, fzf), gh, and takt.",
     "options": {
         "installTmux": {
             "type": "boolean",
@@ -52,6 +52,11 @@
         "installGh": {
             "type": "boolean",
             "description": "Install GitHub CLI (gh)",
+            "default": true
+        },
+        "installTakt": {
+            "type": "boolean",
+            "description": "Install takt (task runner by nrslib)",
             "default": true
         }
     }
