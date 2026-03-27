@@ -14,6 +14,7 @@ INSTALL_CODEX="${INSTALLCODEX:-true}"
 INSTALL_GH="${INSTALLGH:-true}"
 INSTALL_TAKT="${INSTALLTAKT:-true}"
 INSTALL_OPENCODE="${INSTALLOPENCODE:-true}"
+INSTALL_GEMINI="${INSTALLGEMINI:-true}"
 TMUX_VERSION="${TMUXVERSION:-latest}"
 LAZYGIT_VERSION="${LAZYGITVERSION:-latest}"
 NVIM_VERSION="${NVIMVERSION:-latest}"
@@ -586,6 +587,47 @@ install_opencode() {
     return 0
 }
 
+# Install Gemini CLI
+install_gemini() {
+    if [ "$INSTALL_GEMINI" != "true" ]; then
+        echo "Skipping Gemini CLI installation (disabled)"
+        return 0
+    fi
+
+    echo "Installing Gemini CLI..."
+
+    # Check if gemini is already installed (check as remote user first)
+    if [ "$REMOTE_USER" != "root" ]; then
+        if su - "$REMOTE_USER" -c "command -v gemini" &>/dev/null; then
+            echo "Gemini CLI is already installed, skipping"
+            return 0
+        fi
+    elif command -v gemini &>/dev/null; then
+        echo "Gemini CLI is already installed, skipping"
+        return 0
+    fi
+
+    # Try installing as remote user if they have npm available
+    if [ "$REMOTE_USER" != "root" ] && su - "$REMOTE_USER" -c "command -v npm" &>/dev/null; then
+        if su - "$REMOTE_USER" -c "npm install -g @google/gemini-cli"; then
+            echo "Gemini CLI installed successfully for user $REMOTE_USER"
+        else
+            echo "WARNING: Failed to install Gemini CLI" >&2
+        fi
+    elif command -v npm &>/dev/null; then
+        # Fallback: install as root (system-wide)
+        if npm install -g @google/gemini-cli; then
+            echo "Gemini CLI installed successfully"
+        else
+            echo "WARNING: Failed to install Gemini CLI" >&2
+        fi
+    else
+        echo "WARNING: npm is not installed, skipping Gemini CLI installation" >&2
+    fi
+
+    return 0
+}
+
 # Main installation
 main() {
     echo "Starting devenv feature installation..."
@@ -599,6 +641,7 @@ main() {
     echo "  INSTALL_GH=$INSTALL_GH"
     echo "  INSTALL_TAKT=$INSTALL_TAKT"
     echo "  INSTALL_OPENCODE=$INSTALL_OPENCODE"
+    echo "  INSTALL_GEMINI=$INSTALL_GEMINI"
     echo "  TMUX_VERSION=$TMUX_VERSION"
     echo "  LAZYGIT_VERSION=$LAZYGIT_VERSION"
     echo "  NVIM_VERSION=$NVIM_VERSION"
@@ -619,6 +662,7 @@ main() {
     install_gh
     install_takt
     install_opencode
+    install_gemini
 
     echo "devenv feature installation complete"
 }

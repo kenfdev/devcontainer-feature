@@ -1,8 +1,8 @@
 {
     "name": "devenv",
     "id": "devenv",
-    "version": "1.7.0",
-    "description": "A dev container feature that bundles essential terminal-based development tools: tmux, lazygit, neovim (with ripgrep, fd, fzf), gh, takt, and opencode.",
+    "version": "1.8.0",
+    "description": "A dev container feature that bundles essential terminal-based development tools: tmux, lazygit, neovim (with ripgrep, fd, fzf), gh, takt, opencode, and gemini.",
     "options": {
         "installTmux": {
             "type": "boolean",
@@ -57,6 +57,11 @@
         "installOpencode": {
             "type": "boolean",
             "description": "Install opencode (AI coding assistant)",
+            "default": true
+        },
+        "installGemini": {
+            "type": "boolean",
+            "description": "Install Gemini CLI (Google AI coding assistant)",
             "default": true
         }
     }
