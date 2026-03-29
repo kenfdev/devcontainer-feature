@@ -649,43 +649,46 @@ install_fdsx() {
         return 0
     fi
 
-    # Helper: install uv if not available
-    install_uv_if_needed() {
+    # Helper: run a command as user, sourcing uv env if available
+    run_with_uv() {
         local run_as="$1"
+        shift
+        local cmd="$*"
+        # Source uv env to ensure uv and uv-installed tools are in PATH
+        local uv_env="export PATH=\"\$HOME/.local/bin:\$HOME/.cargo/bin:\$PATH\""
         if [ -n "$run_as" ]; then
-            if ! su - "$run_as" -c "command -v uv" &>/dev/null; then
-                echo "Installing uv for user $run_as..."
-                su - "$run_as" -c "curl -LsSf https://astral.sh/uv/install.sh | sh" || return 1
-            fi
+            su - "$run_as" -c "$uv_env && $cmd"
         else
-            if ! command -v uv &>/dev/null; then
-                echo "Installing uv..."
-                curl -LsSf https://astral.sh/uv/install.sh | sh || return 1
-            fi
+            eval "$uv_env && $cmd"
         fi
-        return 0
     }
 
-    # Try installing as remote user
+    # Install uv if not available, then install fdsx
     if [ "$REMOTE_USER" != "root" ]; then
-        if install_uv_if_needed "$REMOTE_USER"; then
-            if su - "$REMOTE_USER" -c "uv tool install fdsx"; then
-                echo "fdsx installed successfully for user $REMOTE_USER"
-            else
-                echo "WARNING: Failed to install fdsx" >&2
-            fi
+        if ! su - "$REMOTE_USER" -c "command -v uv" &>/dev/null; then
+            echo "Installing uv for user $REMOTE_USER..."
+            su - "$REMOTE_USER" -c "curl -LsSf https://astral.sh/uv/install.sh | sh" || {
+                echo "WARNING: Failed to install uv, skipping fdsx installation" >&2
+                return 0
+            }
+        fi
+        if run_with_uv "$REMOTE_USER" "uv tool install fdsx"; then
+            echo "fdsx installed successfully for user $REMOTE_USER"
         else
-            echo "WARNING: Failed to install uv, skipping fdsx installation" >&2
+            echo "WARNING: Failed to install fdsx" >&2
         fi
     else
-        if install_uv_if_needed ""; then
-            if uv tool install fdsx; then
-                echo "fdsx installed successfully"
-            else
-                echo "WARNING: Failed to install fdsx" >&2
-            fi
+        if ! command -v uv &>/dev/null; then
+            echo "Installing uv..."
+            curl -LsSf https://astral.sh/uv/install.sh | sh || {
+                echo "WARNING: Failed to install uv, skipping fdsx installation" >&2
+                return 0
+            }
+        fi
+        if run_with_uv "" "uv tool install fdsx"; then
+            echo "fdsx installed successfully"
         else
-            echo "WARNING: Failed to install uv, skipping fdsx installation" >&2
+            echo "WARNING: Failed to install fdsx" >&2
         fi
     fi
 
