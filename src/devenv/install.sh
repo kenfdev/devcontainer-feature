@@ -15,6 +15,7 @@ INSTALL_GH="${INSTALLGH:-true}"
 INSTALL_TAKT="${INSTALLTAKT:-true}"
 INSTALL_OPENCODE="${INSTALLOPENCODE:-true}"
 INSTALL_GEMINI="${INSTALLGEMINI:-true}"
+INSTALL_FDSX="${INSTALLFDSX:-true}"
 TMUX_VERSION="${TMUXVERSION:-latest}"
 LAZYGIT_VERSION="${LAZYGITVERSION:-latest}"
 NVIM_VERSION="${NVIMVERSION:-latest}"
@@ -628,6 +629,69 @@ install_gemini() {
     return 0
 }
 
+# Install fdsx via uv tool
+install_fdsx() {
+    if [ "$INSTALL_FDSX" != "true" ]; then
+        echo "Skipping fdsx installation (disabled)"
+        return 0
+    fi
+
+    echo "Installing fdsx..."
+
+    # Check if fdsx is already installed (check as remote user first)
+    if [ "$REMOTE_USER" != "root" ]; then
+        if su - "$REMOTE_USER" -c "command -v fdsx" &>/dev/null; then
+            echo "fdsx is already installed, skipping"
+            return 0
+        fi
+    elif command -v fdsx &>/dev/null; then
+        echo "fdsx is already installed, skipping"
+        return 0
+    fi
+
+    # Helper: install uv if not available
+    install_uv_if_needed() {
+        local run_as="$1"
+        if [ -n "$run_as" ]; then
+            if ! su - "$run_as" -c "command -v uv" &>/dev/null; then
+                echo "Installing uv for user $run_as..."
+                su - "$run_as" -c "curl -LsSf https://astral.sh/uv/install.sh | sh" || return 1
+            fi
+        else
+            if ! command -v uv &>/dev/null; then
+                echo "Installing uv..."
+                curl -LsSf https://astral.sh/uv/install.sh | sh || return 1
+            fi
+        fi
+        return 0
+    }
+
+    # Try installing as remote user
+    if [ "$REMOTE_USER" != "root" ]; then
+        if install_uv_if_needed "$REMOTE_USER"; then
+            if su - "$REMOTE_USER" -c "uv tool install fdsx"; then
+                echo "fdsx installed successfully for user $REMOTE_USER"
+            else
+                echo "WARNING: Failed to install fdsx" >&2
+            fi
+        else
+            echo "WARNING: Failed to install uv, skipping fdsx installation" >&2
+        fi
+    else
+        if install_uv_if_needed ""; then
+            if uv tool install fdsx; then
+                echo "fdsx installed successfully"
+            else
+                echo "WARNING: Failed to install fdsx" >&2
+            fi
+        else
+            echo "WARNING: Failed to install uv, skipping fdsx installation" >&2
+        fi
+    fi
+
+    return 0
+}
+
 # Main installation
 main() {
     echo "Starting devenv feature installation..."
@@ -642,6 +706,7 @@ main() {
     echo "  INSTALL_TAKT=$INSTALL_TAKT"
     echo "  INSTALL_OPENCODE=$INSTALL_OPENCODE"
     echo "  INSTALL_GEMINI=$INSTALL_GEMINI"
+    echo "  INSTALL_FDSX=$INSTALL_FDSX"
     echo "  TMUX_VERSION=$TMUX_VERSION"
     echo "  LAZYGIT_VERSION=$LAZYGIT_VERSION"
     echo "  NVIM_VERSION=$NVIM_VERSION"
@@ -663,6 +728,7 @@ main() {
     install_takt
     install_opencode
     install_gemini
+    install_fdsx
 
     echo "devenv feature installation complete"
 }
