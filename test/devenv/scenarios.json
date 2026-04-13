@@ -124,5 +124,20 @@
                 "installOpencode": true
             }
         }
+    },
+    "rtk-only": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "devenv": {
+                "installTmux": false,
+                "installLazygit": false,
+                "installNvim": false,
+                "installClaudeCode": false,
+                "installCodex": false,
+                "installTakt": false,
+                "installOpencode": false,
+                "installRtk": true
+            }
+        }
     }
 }
