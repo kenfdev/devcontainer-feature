@@ -16,6 +16,7 @@ INSTALL_TAKT="${INSTALLTAKT:-true}"
 INSTALL_OPENCODE="${INSTALLOPENCODE:-true}"
 INSTALL_GEMINI="${INSTALLGEMINI:-true}"
 INSTALL_FDSX="${INSTALLFDSX:-true}"
+INSTALL_RTK="${INSTALLRTK:-true}"
 TMUX_VERSION="${TMUXVERSION:-latest}"
 LAZYGIT_VERSION="${LAZYGITVERSION:-latest}"
 NVIM_VERSION="${NVIMVERSION:-latest}"
@@ -695,6 +696,44 @@ install_fdsx() {
     return 0
 }
 
+# Install rtk (Rust Token Killer)
+install_rtk() {
+    if [ "$INSTALL_RTK" != "true" ]; then
+        echo "Skipping rtk installation (disabled)"
+        return 0
+    fi
+
+    echo "Installing rtk..."
+
+    # Check if rtk is already installed (check as remote user first)
+    if [ "$REMOTE_USER" != "root" ]; then
+        if su - "$REMOTE_USER" -c "command -v rtk" &>/dev/null; then
+            echo "rtk is already installed, skipping"
+            return 0
+        fi
+    elif command -v rtk &>/dev/null; then
+        echo "rtk is already installed, skipping"
+        return 0
+    fi
+
+    # Install as the remote user so binaries go to their home directory
+    if [ "$REMOTE_USER" != "root" ]; then
+        if su - "$REMOTE_USER" -c "curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh"; then
+            echo "rtk installed successfully for user $REMOTE_USER"
+        else
+            echo "WARNING: Failed to install rtk" >&2
+        fi
+    else
+        if curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh; then
+            echo "rtk installed successfully"
+        else
+            echo "WARNING: Failed to install rtk" >&2
+        fi
+    fi
+
+    return 0
+}
+
 # Main installation
 main() {
     echo "Starting devenv feature installation..."
@@ -710,6 +749,7 @@ main() {
     echo "  INSTALL_OPENCODE=$INSTALL_OPENCODE"
     echo "  INSTALL_GEMINI=$INSTALL_GEMINI"
     echo "  INSTALL_FDSX=$INSTALL_FDSX"
+    echo "  INSTALL_RTK=$INSTALL_RTK"
     echo "  TMUX_VERSION=$TMUX_VERSION"
     echo "  LAZYGIT_VERSION=$LAZYGIT_VERSION"
     echo "  NVIM_VERSION=$NVIM_VERSION"
@@ -732,6 +772,7 @@ main() {
     install_opencode
     install_gemini
     install_fdsx
+    install_rtk
 
     echo "devenv feature installation complete"
 }
