@@ -1,7 +1,7 @@
 
 # devenv (devenv)
 
-A dev container feature that bundles essential terminal-based development tools: tmux, lazygit, neovim (with ripgrep, fd, fzf), gh, takt, opencode, gemini, fdsx, and rtk.
+A dev container feature that bundles essential terminal-based development tools: tmux, lazygit, neovim (with ripgrep, fd, fzf), gh, takt, opencode, gemini, fdsx, rtk, and 1Password CLI (op).
 
 ## Example Usage
 
@@ -29,6 +29,7 @@ A dev container feature that bundles essential terminal-based development tools:
 | installGemini | Install Gemini CLI (Google AI coding assistant) | boolean | true |
 | installFdsx | Install fdsx (fast data serialization tool) | boolean | true |
 | installRtk | Install rtk (Rust Token Killer - token-optimized CLI proxy) | boolean | true |
+| installOp | Install 1Password CLI (op) | boolean | true |
 
 
 
