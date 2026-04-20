@@ -13,7 +13,6 @@ jobs:
       matrix:
         features:
           - devenv
-          - tig
         baseImage:
           - debian:latest
           - ubuntu:latest
@@ -33,7 +32,6 @@ jobs:
       matrix:
         features:
           - devenv
-          - tig
     steps:
       - uses: actions/checkout@v6
 
