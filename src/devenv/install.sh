@@ -17,6 +17,7 @@ INSTALL_OPENCODE="${INSTALLOPENCODE:-true}"
 INSTALL_GEMINI="${INSTALLGEMINI:-true}"
 INSTALL_FDSX="${INSTALLFDSX:-true}"
 INSTALL_RTK="${INSTALLRTK:-true}"
+INSTALL_OP="${INSTALLOP:-true}"
 TMUX_VERSION="${TMUXVERSION:-latest}"
 LAZYGIT_VERSION="${LAZYGITVERSION:-latest}"
 NVIM_VERSION="${NVIMVERSION:-latest}"
@@ -734,6 +735,71 @@ install_rtk() {
     return 0
 }
 
+# Install 1Password CLI (op) from cache.agilebits.com
+install_op() {
+    if [ "$INSTALL_OP" != "true" ]; then
+        echo "Skipping 1Password CLI installation (disabled)"
+        return 0
+    fi
+
+    echo "Installing 1Password CLI (op)..."
+
+    if command -v op &>/dev/null; then
+        echo "1Password CLI is already installed, skipping"
+        return 0
+    fi
+
+    # Ensure unzip is available
+    if ! command -v unzip &>/dev/null; then
+        if command -v apt-get &>/dev/null; then
+            apt-get install -y --no-install-recommends unzip
+        elif command -v apk &>/dev/null; then
+            apk add --no-cache unzip
+        elif command -v dnf &>/dev/null; then
+            dnf install -y unzip
+        else
+            echo "WARNING: Cannot install unzip, skipping 1Password CLI" >&2
+            return 0
+        fi
+    fi
+
+    local op_arch
+    if [ "$ARCH" = "amd64" ]; then
+        op_arch="amd64"
+    elif [ "$ARCH" = "arm64" ]; then
+        op_arch="arm64"
+    else
+        echo "WARNING: Unsupported architecture for 1Password CLI: $ARCH" >&2
+        return 0
+    fi
+
+    # Resolve latest version from 1Password product history
+    local version
+    version=$(curl -sL https://app-updates.agilebits.com/product_history/CLI2 | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+
+    if [ -z "$version" ]; then
+        echo "WARNING: Could not determine 1Password CLI version, skipping" >&2
+        return 0
+    fi
+
+    echo "1Password CLI version: $version"
+
+    local url="https://cache.agilebits.com/dist/1P/op2/pkg/${version}/op_linux_${op_arch}_${version}.zip"
+    local tmpdir
+    tmpdir=$(mktemp -d)
+
+    if download_file "$url" "$tmpdir/op.zip"; then
+        unzip -o "$tmpdir/op.zip" -d "$tmpdir" >/dev/null
+        install -m 755 "$tmpdir/op" "$INSTALL_DIR/op"
+        echo "1Password CLI installed successfully"
+    else
+        echo "WARNING: Failed to install 1Password CLI" >&2
+    fi
+
+    rm -rf "$tmpdir"
+    return 0
+}
+
 # Main installation
 main() {
     echo "Starting devenv feature installation..."
@@ -750,6 +816,7 @@ main() {
     echo "  INSTALL_GEMINI=$INSTALL_GEMINI"
     echo "  INSTALL_FDSX=$INSTALL_FDSX"
     echo "  INSTALL_RTK=$INSTALL_RTK"
+    echo "  INSTALL_OP=$INSTALL_OP"
     echo "  TMUX_VERSION=$TMUX_VERSION"
     echo "  LAZYGIT_VERSION=$LAZYGIT_VERSION"
     echo "  NVIM_VERSION=$NVIM_VERSION"
@@ -773,6 +840,7 @@ main() {
     install_gemini
     install_fdsx
     install_rtk
+    install_op
 
     echo "devenv feature installation complete"
 }
