@@ -1,8 +1,8 @@
 {
     "name": "devenv",
     "id": "devenv",
-    "version": "1.10.0",
-    "description": "A dev container feature that bundles essential terminal-based development tools: tmux, lazygit, neovim (with ripgrep, fd, fzf), gh, takt, opencode, gemini, fdsx, and rtk.",
+    "version": "1.11.0",
+    "description": "A dev container feature that bundles essential terminal-based development tools: tmux, lazygit, neovim (with ripgrep, fd, fzf), gh, takt, opencode, gemini, fdsx, rtk, and 1Password CLI (op).",
     "options": {
         "installTmux": {
             "type": "boolean",
@@ -72,6 +72,11 @@
         "installRtk": {
             "type": "boolean",
             "description": "Install rtk (Rust Token Killer - token-optimized CLI proxy)",
+            "default": true
+        },
+        "installOp": {
+            "type": "boolean",
+            "description": "Install 1Password CLI (op)",
             "default": true
         }
     }
