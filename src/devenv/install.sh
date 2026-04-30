@@ -2,8 +2,8 @@
 set -e
 
 # devenv feature install script
-# Installs tmux, lazygit, neovim (with supporting tools: ripgrep, fd, fzf), and gh
-# All tools installed from GitHub Releases
+# Installs tmux, lazygit, neovim (with supporting tools: ripgrep, fd, fzf), gh,
+# Claude Code, Codex, opencode, Gemini CLI, fdsx, and rtk
 
 # Options (passed as environment variables)
 INSTALL_TMUX="${INSTALLTMUX:-true}"
@@ -12,12 +12,10 @@ INSTALL_NVIM="${INSTALLNVIM:-true}"
 INSTALL_CLAUDE_CODE="${INSTALLCLAUDECODE:-true}"
 INSTALL_CODEX="${INSTALLCODEX:-true}"
 INSTALL_GH="${INSTALLGH:-true}"
-INSTALL_TAKT="${INSTALLTAKT:-true}"
 INSTALL_OPENCODE="${INSTALLOPENCODE:-true}"
 INSTALL_GEMINI="${INSTALLGEMINI:-true}"
 INSTALL_FDSX="${INSTALLFDSX:-true}"
 INSTALL_RTK="${INSTALLRTK:-true}"
-INSTALL_OP="${INSTALLOP:-true}"
 TMUX_VERSION="${TMUXVERSION:-latest}"
 LAZYGIT_VERSION="${LAZYGITVERSION:-latest}"
 NVIM_VERSION="${NVIMVERSION:-latest}"
@@ -513,45 +511,6 @@ install_gh() {
     return 0
 }
 
-# Install takt
-install_takt() {
-    if [ "$INSTALL_TAKT" != "true" ]; then
-        echo "Skipping takt installation (disabled)"
-        return 0
-    fi
-
-    echo "Installing takt..."
-
-    # Check if takt is already installed (check as remote user first)
-    if [ "$REMOTE_USER" != "root" ] && su - "$REMOTE_USER" -c "command -v takt" &>/dev/null; then
-        echo "takt is already installed, skipping"
-        return 0
-    elif command -v takt &>/dev/null; then
-        echo "takt is already installed, skipping"
-        return 0
-    fi
-
-    # Try installing as remote user if they have npm available
-    if [ "$REMOTE_USER" != "root" ] && su - "$REMOTE_USER" -c "command -v npm" &>/dev/null; then
-        if su - "$REMOTE_USER" -c "npm install -g takt"; then
-            echo "takt installed successfully for user $REMOTE_USER"
-        else
-            echo "WARNING: Failed to install takt" >&2
-        fi
-    elif command -v npm &>/dev/null; then
-        # Fallback: install as root (system-wide)
-        if npm install -g takt; then
-            echo "takt installed successfully"
-        else
-            echo "WARNING: Failed to install takt" >&2
-        fi
-    else
-        echo "WARNING: npm is not installed, skipping takt installation" >&2
-    fi
-
-    return 0
-}
-
 # Install opencode
 install_opencode() {
     if [ "$INSTALL_OPENCODE" != "true" ]; then
@@ -735,71 +694,6 @@ install_rtk() {
     return 0
 }
 
-# Install 1Password CLI (op) from cache.agilebits.com
-install_op() {
-    if [ "$INSTALL_OP" != "true" ]; then
-        echo "Skipping 1Password CLI installation (disabled)"
-        return 0
-    fi
-
-    echo "Installing 1Password CLI (op)..."
-
-    if command -v op &>/dev/null; then
-        echo "1Password CLI is already installed, skipping"
-        return 0
-    fi
-
-    # Ensure unzip is available
-    if ! command -v unzip &>/dev/null; then
-        if command -v apt-get &>/dev/null; then
-            apt-get install -y --no-install-recommends unzip
-        elif command -v apk &>/dev/null; then
-            apk add --no-cache unzip
-        elif command -v dnf &>/dev/null; then
-            dnf install -y unzip
-        else
-            echo "WARNING: Cannot install unzip, skipping 1Password CLI" >&2
-            return 0
-        fi
-    fi
-
-    local op_arch
-    if [ "$ARCH" = "amd64" ]; then
-        op_arch="amd64"
-    elif [ "$ARCH" = "arm64" ]; then
-        op_arch="arm64"
-    else
-        echo "WARNING: Unsupported architecture for 1Password CLI: $ARCH" >&2
-        return 0
-    fi
-
-    # Resolve latest version from 1Password product history
-    local version
-    version=$(curl -sL https://app-updates.agilebits.com/product_history/CLI2 | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+' | head -1)
-
-    if [ -z "$version" ]; then
-        echo "WARNING: Could not determine 1Password CLI version, skipping" >&2
-        return 0
-    fi
-
-    echo "1Password CLI version: $version"
-
-    local url="https://cache.agilebits.com/dist/1P/op2/pkg/${version}/op_linux_${op_arch}_${version}.zip"
-    local tmpdir
-    tmpdir=$(mktemp -d)
-
-    if download_file "$url" "$tmpdir/op.zip"; then
-        unzip -o "$tmpdir/op.zip" -d "$tmpdir" >/dev/null
-        install -m 755 "$tmpdir/op" "$INSTALL_DIR/op"
-        echo "1Password CLI installed successfully"
-    else
-        echo "WARNING: Failed to install 1Password CLI" >&2
-    fi
-
-    rm -rf "$tmpdir"
-    return 0
-}
-
 # Main installation
 main() {
     echo "Starting devenv feature installation..."
@@ -811,12 +705,10 @@ main() {
     echo "  INSTALL_CLAUDE_CODE=$INSTALL_CLAUDE_CODE"
     echo "  INSTALL_CODEX=$INSTALL_CODEX"
     echo "  INSTALL_GH=$INSTALL_GH"
-    echo "  INSTALL_TAKT=$INSTALL_TAKT"
     echo "  INSTALL_OPENCODE=$INSTALL_OPENCODE"
     echo "  INSTALL_GEMINI=$INSTALL_GEMINI"
     echo "  INSTALL_FDSX=$INSTALL_FDSX"
     echo "  INSTALL_RTK=$INSTALL_RTK"
-    echo "  INSTALL_OP=$INSTALL_OP"
     echo "  TMUX_VERSION=$TMUX_VERSION"
     echo "  LAZYGIT_VERSION=$LAZYGIT_VERSION"
     echo "  NVIM_VERSION=$NVIM_VERSION"
@@ -835,12 +727,10 @@ main() {
     install_claude_code
     install_codex
     install_gh
-    install_takt
     install_opencode
     install_gemini
     install_fdsx
     install_rtk
-    install_op
 
     echo "devenv feature installation complete"
 }
