@@ -1,7 +1,7 @@
 
 # devenv (devenv)
 
-A dev container feature that bundles essential terminal-based development tools: tmux, lazygit, neovim (with ripgrep, fd, fzf), gh, takt, opencode, gemini, fdsx, rtk, and 1Password CLI (op).
+A dev container feature that bundles essential terminal-based development tools: tmux, lazygit, neovim (with ripgrep, fd, fzf), gh, opencode, gemini, [fdsx](https://github.com/kenfdev/fdsx), and rtk.
 
 ## Example Usage
 
@@ -24,12 +24,10 @@ A dev container feature that bundles essential terminal-based development tools:
 | installClaudeCode | Install Claude Code CLI (AI coding assistant) | boolean | true |
 | installCodex | Install OpenAI Codex CLI (requires npm) | boolean | true |
 | installGh | Install GitHub CLI (gh) | boolean | true |
-| installTakt | Install takt (task runner by nrslib) | boolean | true |
 | installOpencode | Install opencode (AI coding assistant) | boolean | true |
 | installGemini | Install Gemini CLI (Google AI coding assistant) | boolean | true |
-| installFdsx | Install fdsx (fast data serialization tool) | boolean | true |
+| installFdsx | Install [fdsx](https://github.com/kenfdev/fdsx) | boolean | true |
 | installRtk | Install rtk (Rust Token Killer - token-optimized CLI proxy) | boolean | true |
-| installOp | Install 1Password CLI (op) | boolean | true |
 
 
 
