@@ -5,7 +5,8 @@
             "devenv": {
                 "installClaudeCode": false,
                 "installCodex": false,
-                "installOpencode": false
+                "installOpencode": false,
+                "installPi": false
             }
         }
     },
@@ -17,7 +18,8 @@
                 "installNvim": false,
                 "installClaudeCode": false,
                 "installCodex": false,
-                "installOpencode": false
+                "installOpencode": false,
+                "installPi": false
             }
         }
     },
@@ -29,7 +31,8 @@
                 "installNvim": false,
                 "installClaudeCode": false,
                 "installCodex": false,
-                "installOpencode": false
+                "installOpencode": false,
+                "installPi": false
             }
         }
     },
@@ -41,7 +44,8 @@
                 "installLazygit": false,
                 "installClaudeCode": false,
                 "installCodex": false,
-                "installOpencode": false
+                "installOpencode": false,
+                "installPi": false
             }
         }
     },
@@ -54,7 +58,8 @@
                 "installNvim": false,
                 "installClaudeCode": false,
                 "installCodex": false,
-                "installOpencode": false
+                "installOpencode": false,
+                "installPi": false
             }
         }
     },
@@ -67,7 +72,8 @@
                 "nvimVersion": "v0.10.4",
                 "installClaudeCode": false,
                 "installCodex": false,
-                "installOpencode": false
+                "installOpencode": false,
+                "installPi": false
             }
         }
     },
@@ -80,7 +86,8 @@
                 "installNvim": false,
                 "installClaudeCode": true,
                 "installCodex": false,
-                "installOpencode": false
+                "installOpencode": false,
+                "installPi": false
             }
         }
     },
@@ -93,7 +100,8 @@
                 "installNvim": false,
                 "installClaudeCode": false,
                 "installCodex": true,
-                "installOpencode": false
+                "installOpencode": false,
+                "installPi": false
             }
         }
     },
@@ -106,7 +114,8 @@
                 "installNvim": false,
                 "installClaudeCode": false,
                 "installCodex": false,
-                "installOpencode": true
+                "installOpencode": true,
+                "installPi": false
             }
         }
     },
@@ -120,7 +129,26 @@
                 "installClaudeCode": false,
                 "installCodex": false,
                 "installOpencode": false,
-                "installRtk": true
+                "installRtk": true,
+                "installPi": false
+            }
+        }
+    },
+    "pi-only": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "devenv": {
+                "installTmux": false,
+                "installLazygit": false,
+                "installNvim": false,
+                "installClaudeCode": false,
+                "installCodex": false,
+                "installGh": false,
+                "installOpencode": false,
+                "installGemini": false,
+                "installFdsx": false,
+                "installRtk": false,
+                "installPi": true
             }
         }
     }

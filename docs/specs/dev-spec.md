@@ -2,7 +2,7 @@
 
 ## Overview
 
-A dev container feature called `devenv` that bundles essential terminal-based development tools: **tmux**, **lazygit**, and **neovim**.
+A dev container feature called `devenv` that bundles essential terminal-based development tools: **tmux**, **lazygit**, **neovim**, **gh**, AI coding CLIs, **fdsx**, **rtk**, and **pi**.
 
 ## Installation
 
@@ -17,6 +17,7 @@ A dev container feature called `devenv` that bundles essential terminal-based de
 | tmux | Terminal multiplexer |
 | lazygit | Terminal UI for Git |
 | neovim | Hyperextensible Vim-based text editor |
+| pi | AI coding agent |
 
 When neovim is enabled, the following supporting tools are also installed:
 - **ripgrep** (`rg`) - Fast grep alternative, used by telescope.nvim and similar plugins
@@ -34,6 +35,7 @@ All options use **camelCase** naming convention.
 | `installTmux` | boolean | `true` | Install tmux |
 | `installLazygit` | boolean | `true` | Install lazygit |
 | `installNvim` | boolean | `true` | Install neovim (and supporting tools: ripgrep, fd, fzf) |
+| `installPi` | boolean | `true` | Install pi coding agent |
 
 ### Version Options
 
@@ -89,6 +91,7 @@ All tools are installed from **GitHub Releases**:
 - ripgrep: https://github.com/BurntSushi/ripgrep/releases
 - fd: https://github.com/sharkdp/fd/releases
 - fzf: https://github.com/junegunn/fzf/releases
+- pi: https://pi.dev/install.sh
 
 ### tmux Details
 
@@ -138,6 +141,7 @@ Tests verify **binary existence only**:
 4. **Selective installation** - Only nvim enabled
 5. **All disabled** - No tools installed (edge case)
 6. **Specific versions** - Pin specific versions for each tool
+7. **Selective installation** - Only pi enabled
 
 ## Example Configurations
 
@@ -199,7 +203,8 @@ test/devenv/
 ├── tmux-only.sh                 # tmux-only scenario test
 ├── lazygit-only.sh              # lazygit-only scenario test
 ├── nvim-only.sh                 # nvim-only scenario test
-└── pinned-versions.sh           # Pinned versions scenario test
+├── pinned-versions.sh           # Pinned versions scenario test
+└── pi-only.sh                   # pi-only scenario test
 ```
 
 ## Implementation Notes
