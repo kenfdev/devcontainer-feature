@@ -3,7 +3,7 @@ set -e
 
 # devenv feature install script
 # Installs tmux, lazygit, neovim (with supporting tools: ripgrep, fd, fzf), gh,
-# Claude Code, Codex, opencode, Gemini CLI, fdsx, and rtk
+# Claude Code, Codex, opencode, Gemini CLI, fdsx, rtk, and pi
 
 # Options (passed as environment variables)
 INSTALL_TMUX="${INSTALLTMUX:-true}"
@@ -16,6 +16,7 @@ INSTALL_OPENCODE="${INSTALLOPENCODE:-true}"
 INSTALL_GEMINI="${INSTALLGEMINI:-true}"
 INSTALL_FDSX="${INSTALLFDSX:-true}"
 INSTALL_RTK="${INSTALLRTK:-true}"
+INSTALL_PI="${INSTALLPI:-true}"
 TMUX_VERSION="${TMUXVERSION:-latest}"
 LAZYGIT_VERSION="${LAZYGITVERSION:-latest}"
 NVIM_VERSION="${NVIMVERSION:-latest}"
@@ -73,11 +74,11 @@ install_dependencies() {
     echo "Installing build dependencies..."
     if command -v apt-get &>/dev/null; then
         apt-get update
-        apt-get install -y --no-install-recommends curl ca-certificates tar gzip
+        apt-get install -y --no-install-recommends curl ca-certificates tar gzip xz-utils
     elif command -v apk &>/dev/null; then
-        apk add --no-cache curl ca-certificates tar gzip
+        apk add --no-cache curl ca-certificates tar gzip xz
     elif command -v dnf &>/dev/null; then
-        dnf install -y curl ca-certificates tar gzip
+        dnf install -y curl ca-certificates tar gzip xz
     fi
 }
 
@@ -656,6 +657,86 @@ install_fdsx() {
     return 0
 }
 
+# Ensure Node.js is available for pi installer in non-interactive containers
+ensure_node_for_pi() {
+    if command -v node &>/dev/null && command -v npm &>/dev/null && node -e 'const [major, minor] = process.versions.node.split(".").map(Number); process.exit(major > 22 || (major === 22 && minor >= 19) ? 0 : 1)' &>/dev/null; then
+        return 0
+    fi
+
+    echo "Installing Node.js for pi..."
+    local version="22.19.0"
+    local node_arch
+    if [ "$ARCH" = "amd64" ]; then
+        node_arch="x64"
+    elif [ "$ARCH" = "arm64" ]; then
+        node_arch="arm64"
+    else
+        echo "WARNING: Unsupported architecture for Node.js: $ARCH" >&2
+        return 1
+    fi
+
+    local url="https://nodejs.org/dist/v${version}/node-v${version}-linux-${node_arch}.tar.xz"
+    local tmpdir
+    tmpdir=$(mktemp -d)
+
+    if download_file "$url" "$tmpdir/node.tar.xz"; then
+        tar -xJf "$tmpdir/node.tar.xz" -C "$tmpdir"
+        cp -r "$tmpdir/node-v${version}-linux-${node_arch}"/* /usr/local/
+        echo "Node.js installed successfully for pi"
+    else
+        echo "WARNING: Failed to install Node.js for pi" >&2
+        rm -rf "$tmpdir"
+        return 1
+    fi
+
+    rm -rf "$tmpdir"
+    return 0
+}
+
+# Install pi coding agent
+install_pi() {
+    if [ "$INSTALL_PI" != "true" ]; then
+        echo "Skipping pi installation (disabled)"
+        return 0
+    fi
+
+    echo "Installing pi..."
+
+    # Check if pi is already installed (check as remote user first)
+    if [ "$REMOTE_USER" != "root" ]; then
+        if su - "$REMOTE_USER" -c "command -v pi" &>/dev/null; then
+            echo "pi is already installed, skipping"
+            return 0
+        fi
+    elif command -v pi &>/dev/null; then
+        echo "pi is already installed, skipping"
+        return 0
+    fi
+
+    if ! ensure_node_for_pi; then
+        echo "WARNING: Node.js is required for pi installation, skipping pi" >&2
+        return 0
+    fi
+
+    # Install as the remote user so binaries go to their home directory
+    if [ "$REMOTE_USER" != "root" ]; then
+        if su - "$REMOTE_USER" -c "curl -fsSL https://pi.dev/install.sh | sh"; then
+            echo 'export PATH="$HOME/.local/bin:$PATH"' >> /etc/profile.d/devenv.sh
+            echo "pi installed successfully for user $REMOTE_USER"
+        else
+            echo "WARNING: Failed to install pi" >&2
+        fi
+    else
+        if curl -fsSL https://pi.dev/install.sh | sh; then
+            echo "pi installed successfully"
+        else
+            echo "WARNING: Failed to install pi" >&2
+        fi
+    fi
+
+    return 0
+}
+
 # Install rtk (Rust Token Killer)
 install_rtk() {
     if [ "$INSTALL_RTK" != "true" ]; then
@@ -709,6 +790,7 @@ main() {
     echo "  INSTALL_GEMINI=$INSTALL_GEMINI"
     echo "  INSTALL_FDSX=$INSTALL_FDSX"
     echo "  INSTALL_RTK=$INSTALL_RTK"
+    echo "  INSTALL_PI=$INSTALL_PI"
     echo "  TMUX_VERSION=$TMUX_VERSION"
     echo "  LAZYGIT_VERSION=$LAZYGIT_VERSION"
     echo "  NVIM_VERSION=$NVIM_VERSION"
@@ -731,6 +813,7 @@ main() {
     install_gemini
     install_fdsx
     install_rtk
+    install_pi
 
     echo "devenv feature installation complete"
 }

@@ -1,7 +1,7 @@
 
 # devenv (devenv)
 
-A dev container feature that bundles essential terminal-based development tools: tmux, lazygit, neovim (with ripgrep, fd, fzf), gh, opencode, gemini, [fdsx](https://github.com/kenfdev/fdsx), and rtk.
+A dev container feature that bundles essential terminal-based development tools: tmux, lazygit, neovim (with ripgrep, fd, fzf), gh, opencode, gemini, [fdsx](https://github.com/kenfdev/fdsx), rtk, and pi.
 
 ## Example Usage
 
@@ -28,6 +28,7 @@ A dev container feature that bundles essential terminal-based development tools:
 | installGemini | Install Gemini CLI (Google AI coding assistant) | boolean | true |
 | installFdsx | Install [fdsx](https://github.com/kenfdev/fdsx) | boolean | true |
 | installRtk | Install rtk (Rust Token Killer - token-optimized CLI proxy) | boolean | true |
+| installPi | Install pi coding agent | boolean | true |
 
 
 

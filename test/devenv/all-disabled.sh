@@ -68,4 +68,12 @@ else
     echo "PASS: codex is not installed (as expected)"
 fi
 
+# Test pi (should NOT be installed)
+if command -v pi &>/dev/null; then
+    echo "FAIL: pi should not be installed"
+    exit 1
+else
+    echo "PASS: pi is not installed (as expected)"
+fi
+
 echo "All tests passed!"
