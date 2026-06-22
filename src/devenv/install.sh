@@ -51,18 +51,31 @@ echo "Detected architecture: $ARCH"
 # Helper function to get latest release version from GitHub
 get_latest_version() {
     local repo="$1"
-    local response
-    local version
+    local response=""
+    local latest_url=""
+    local version=""
 
-    if ! response=$(curl -fsSL "https://api.github.com/repos/${repo}/releases/latest"); then
-        echo "WARNING: Failed to fetch latest release metadata for ${repo}" >&2
-        return 1
+    # Prefer the GitHub API when available. Match the exact top-level tag_name key
+    # instead of any quoted string on the line.
+    response=$(curl -fsSL "https://api.github.com/repos/${repo}/releases/latest" 2>/dev/null || true)
+    if [ -n "$response" ]; then
+        version=$(printf '%s\n' "$response" | awk -F'"' '/^[[:space:]]*"tag_name"[[:space:]]*:/ { print $4; exit }')
     fi
 
-    version=$(printf '%s\n' "$response" | awk -F'"' '/^[[:space:]]*"tag_name"[[:space:]]*:/ { print $4; exit }')
+    # Fallback to the releases/latest redirect target. This avoids failing on
+    # transient API response shape/rate-limit issues and still yields the tag.
     if [ -z "$version" ]; then
-        echo "WARNING: Could not parse latest release version for ${repo}" >&2
-        return 1
+        latest_url=$(curl -fsSL -o /dev/null -w '%{url_effective}' "https://github.com/${repo}/releases/latest" 2>/dev/null || true)
+        case "$latest_url" in
+            */tag/*)
+                version="${latest_url##*/tag/}"
+                version="${version%%[?#]*}"
+                ;;
+        esac
+    fi
+
+    if [ -z "$version" ]; then
+        echo "WARNING: Could not determine latest release version for ${repo}" >&2
     fi
 
     echo "$version"

@@ -1,7 +1,7 @@
 {
     "name": "devenv",
     "id": "devenv",
-    "version": "1.12.2",
+    "version": "1.12.3",
     "description": "A dev container feature that bundles essential terminal-based development tools: tmux, lazygit, neovim (with ripgrep, fd, fzf), gh, opencode, fdsx, rtk, and pi.",
     "options": {
         "installTmux": {
