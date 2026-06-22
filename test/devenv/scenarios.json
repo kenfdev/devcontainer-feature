@@ -145,7 +145,6 @@
                 "installCodex": false,
                 "installGh": false,
                 "installOpencode": false,
-                "installGemini": false,
                 "installFdsx": false,
                 "installRtk": false,
                 "installPi": true

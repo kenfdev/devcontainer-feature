@@ -9,7 +9,7 @@ Custom [Dev Container Features](https://containers.dev/features) published to Gi
 
 ## `devenv`
 
-A dev container feature that bundles essential terminal-based development tools: tmux, lazygit, neovim (with ripgrep, fd, fzf), gh, Claude Code, Codex, opencode, Gemini CLI, fdsx, rtk, and pi.
+A dev container feature that bundles essential terminal-based development tools: tmux, lazygit, neovim (with ripgrep, fd, fzf), gh, Claude Code, Codex, opencode, fdsx, rtk, and pi.
 
 ### Example Usage
 
@@ -38,8 +38,7 @@ Disable individual tools or pin supported tool versions as needed:
       "installClaudeCode": true,
       "installCodex": true,
       "installGh": true,
-      "installOpencode": true,
-      "installGemini": true,
+      "installOpencode": false,
       "installFdsx": true,
       "installRtk": true,
       "installPi": true
@@ -61,8 +60,7 @@ Disable individual tools or pin supported tool versions as needed:
 | `installClaudeCode` | Install Claude Code CLI (AI coding assistant) | boolean | `true` |
 | `installCodex` | Install OpenAI Codex CLI (requires npm) | boolean | `true` |
 | `installGh` | Install GitHub CLI (gh) | boolean | `true` |
-| `installOpencode` | Install opencode (AI coding assistant) | boolean | `true` |
-| `installGemini` | Install Gemini CLI (Google AI coding assistant) | boolean | `true` |
+| `installOpencode` | Install opencode (AI coding assistant) | boolean | `false` |
 | `installFdsx` | Install fdsx | boolean | `true` |
 | `installRtk` | Install rtk (Rust Token Killer - token-optimized CLI proxy) | boolean | `true` |
 | `installPi` | Install pi coding agent | boolean | `true` |

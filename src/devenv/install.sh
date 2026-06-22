@@ -3,7 +3,7 @@ set -e
 
 # devenv feature install script
 # Installs tmux, lazygit, neovim (with supporting tools: ripgrep, fd, fzf), gh,
-# Claude Code, Codex, opencode, Gemini CLI, fdsx, rtk, and pi
+# Claude Code, Codex, opencode, fdsx, rtk, and pi
 
 # Options (passed as environment variables)
 INSTALL_TMUX="${INSTALLTMUX:-true}"
@@ -12,8 +12,7 @@ INSTALL_NVIM="${INSTALLNVIM:-true}"
 INSTALL_CLAUDE_CODE="${INSTALLCLAUDECODE:-true}"
 INSTALL_CODEX="${INSTALLCODEX:-true}"
 INSTALL_GH="${INSTALLGH:-true}"
-INSTALL_OPENCODE="${INSTALLOPENCODE:-true}"
-INSTALL_GEMINI="${INSTALLGEMINI:-true}"
+INSTALL_OPENCODE="${INSTALLOPENCODE:-false}"
 INSTALL_FDSX="${INSTALLFDSX:-true}"
 INSTALL_RTK="${INSTALLRTK:-true}"
 INSTALL_PI="${INSTALLPI:-true}"
@@ -52,8 +51,33 @@ echo "Detected architecture: $ARCH"
 # Helper function to get latest release version from GitHub
 get_latest_version() {
     local repo="$1"
-    local version
-    version=$(curl -s "https://api.github.com/repos/${repo}/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+    local response=""
+    local latest_url=""
+    local version=""
+
+    # Prefer the GitHub API when available. Match the exact top-level tag_name key
+    # instead of any quoted string on the line.
+    response=$(curl -fsSL "https://api.github.com/repos/${repo}/releases/latest" 2>/dev/null || true)
+    if [ -n "$response" ]; then
+        version=$(printf '%s\n' "$response" | awk -F'"' '/^[[:space:]]*"tag_name"[[:space:]]*:/ { print $4; exit }')
+    fi
+
+    # Fallback to the releases/latest redirect target. This avoids failing on
+    # transient API response shape/rate-limit issues and still yields the tag.
+    if [ -z "$version" ]; then
+        latest_url=$(curl -fsSL -o /dev/null -w '%{url_effective}' "https://github.com/${repo}/releases/latest" 2>/dev/null || true)
+        case "$latest_url" in
+            */tag/*)
+                version="${latest_url##*/tag/}"
+                version="${version%%[?#]*}"
+                ;;
+        esac
+    fi
+
+    if [ -z "$version" ]; then
+        echo "WARNING: Could not determine latest release version for ${repo}" >&2
+    fi
+
     echo "$version"
 }
 
@@ -550,46 +574,6 @@ install_opencode() {
     return 0
 }
 
-# Install Gemini CLI
-install_gemini() {
-    if [ "$INSTALL_GEMINI" != "true" ]; then
-        echo "Skipping Gemini CLI installation (disabled)"
-        return 0
-    fi
-
-    echo "Installing Gemini CLI..."
-
-    # Check if gemini is already installed (check as remote user first)
-    if [ "$REMOTE_USER" != "root" ]; then
-        if su - "$REMOTE_USER" -c "command -v gemini" &>/dev/null; then
-            echo "Gemini CLI is already installed, skipping"
-            return 0
-        fi
-    elif command -v gemini &>/dev/null; then
-        echo "Gemini CLI is already installed, skipping"
-        return 0
-    fi
-
-    # Try installing as remote user if they have npm available
-    if [ "$REMOTE_USER" != "root" ] && su - "$REMOTE_USER" -c "command -v npm" &>/dev/null; then
-        if su - "$REMOTE_USER" -c "npm install -g @google/gemini-cli"; then
-            echo "Gemini CLI installed successfully for user $REMOTE_USER"
-        else
-            echo "WARNING: Failed to install Gemini CLI" >&2
-        fi
-    elif command -v npm &>/dev/null; then
-        # Fallback: install as root (system-wide)
-        if npm install -g @google/gemini-cli; then
-            echo "Gemini CLI installed successfully"
-        else
-            echo "WARNING: Failed to install Gemini CLI" >&2
-        fi
-    else
-        echo "WARNING: npm is not installed, skipping Gemini CLI installation" >&2
-    fi
-
-    return 0
-}
 
 # Install fdsx via uv tool
 install_fdsx() {
@@ -787,7 +771,6 @@ main() {
     echo "  INSTALL_CODEX=$INSTALL_CODEX"
     echo "  INSTALL_GH=$INSTALL_GH"
     echo "  INSTALL_OPENCODE=$INSTALL_OPENCODE"
-    echo "  INSTALL_GEMINI=$INSTALL_GEMINI"
     echo "  INSTALL_FDSX=$INSTALL_FDSX"
     echo "  INSTALL_RTK=$INSTALL_RTK"
     echo "  INSTALL_PI=$INSTALL_PI"
@@ -810,7 +793,6 @@ main() {
     install_codex
     install_gh
     install_opencode
-    install_gemini
     install_fdsx
     install_rtk
     install_pi
