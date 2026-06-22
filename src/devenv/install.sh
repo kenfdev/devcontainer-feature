@@ -51,8 +51,20 @@ echo "Detected architecture: $ARCH"
 # Helper function to get latest release version from GitHub
 get_latest_version() {
     local repo="$1"
+    local response
     local version
-    version=$(curl -s "https://api.github.com/repos/${repo}/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+
+    if ! response=$(curl -fsSL "https://api.github.com/repos/${repo}/releases/latest"); then
+        echo "WARNING: Failed to fetch latest release metadata for ${repo}" >&2
+        return 1
+    fi
+
+    version=$(printf '%s\n' "$response" | awk -F'"' '/^[[:space:]]*"tag_name"[[:space:]]*:/ { print $4; exit }')
+    if [ -z "$version" ]; then
+        echo "WARNING: Could not parse latest release version for ${repo}" >&2
+        return 1
+    fi
+
     echo "$version"
 }
 
