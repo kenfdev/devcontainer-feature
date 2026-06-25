@@ -18,7 +18,7 @@
         }
     },
     "features": {
-        "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+        "ghcr.io/devcontainers/features/docker-in-docker:4": {},
         "ghcr.io/kenfdev/devcontainer-feature/devenv:1": {
             "installTmux": true,
             "installLazygit": true,
