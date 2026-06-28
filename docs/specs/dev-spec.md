@@ -32,7 +32,7 @@ All options use **camelCase** naming convention.
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `installTmux` | boolean | `true` | Install tmux |
+| `installTmux` | boolean | `false` | Install tmux |
 | `installLazygit` | boolean | `true` | Install lazygit |
 | `installNvim` | boolean | `true` | Install neovim (and supporting tools: ripgrep, fd, fzf) |
 | `installPi` | boolean | `true` | Install pi coding agent |
@@ -135,7 +135,7 @@ Tests verify **binary existence only**:
 
 ### Test Scenarios
 
-1. **Default installation** - All tools with latest versions
+1. **Default installation** - Default-enabled tools with latest versions (tmux disabled by default)
 2. **Selective installation** - Only tmux enabled
 3. **Selective installation** - Only lazygit enabled
 4. **Selective installation** - Only nvim enabled
@@ -169,6 +169,7 @@ Tests verify **binary existence only**:
 ```json
 "features": {
   "ghcr.io/kenfdev/devcontainer-feature/devenv": {
+    "installTmux": true,
     "tmuxVersion": "3.4",
     "lazygitVersion": "0.40.2",
     "nvimVersion": "0.9.5"

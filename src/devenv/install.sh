@@ -6,7 +6,7 @@ set -e
 # Claude Code, Codex, opencode, fdsx, rtk, and pi
 
 # Options (passed as environment variables)
-INSTALL_TMUX="${INSTALLTMUX:-true}"
+INSTALL_TMUX="${INSTALLTMUX:-false}"
 INSTALL_LAZYGIT="${INSTALLLAZYGIT:-true}"
 INSTALL_NVIM="${INSTALLNVIM:-true}"
 INSTALL_CLAUDE_CODE="${INSTALLCLAUDECODE:-true}"
