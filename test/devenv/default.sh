@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-# Test default installation - all tools should be installed
+# Test default installation - default-enabled tools should be installed
 echo "Testing default installation..."
 
 # Test lazygit
@@ -44,12 +44,12 @@ else
     exit 1
 fi
 
-# Test tmux
+# Test tmux (disabled by default)
 if command -v tmux &>/dev/null; then
-    echo "PASS: tmux is installed"
-else
-    echo "FAIL: tmux is not installed"
+    echo "FAIL: tmux should not be installed by default"
     exit 1
+else
+    echo "PASS: tmux is not installed (as expected)"
 fi
 
 echo "All tests passed!"

@@ -15,7 +15,7 @@ A dev container feature that bundles essential terminal-based development tools:
 
 | Options Id | Description | Type | Default Value |
 |-----|-----|-----|-----|
-| installTmux | Install tmux terminal multiplexer | boolean | true |
+| installTmux | Install tmux terminal multiplexer | boolean | false |
 | installLazygit | Install lazygit terminal UI for Git | boolean | true |
 | installNvim | Install neovim and supporting tools (ripgrep, fd, fzf) | boolean | true |
 | tmuxVersion | tmux version to install (e.g., '3.4', 'latest') | string | latest |

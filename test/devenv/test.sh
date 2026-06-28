@@ -11,7 +11,7 @@ set -e
 source dev-container-features-test-lib
 
 # Check core tools installed by default
-check "tmux is installed" tmux -V
+check "tmux is not installed by default" bash -c '! command -v tmux'
 check "lazygit is installed" lazygit --version
 check "nvim is installed" nvim --version
 check "gh is installed" gh --version

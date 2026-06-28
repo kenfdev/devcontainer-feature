@@ -14,6 +14,7 @@
         "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
         "features": {
             "devenv": {
+                "installTmux": true,
                 "installLazygit": false,
                 "installNvim": false,
                 "installClaudeCode": false,
@@ -67,6 +68,7 @@
         "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
         "features": {
             "devenv": {
+                "installTmux": true,
                 "tmuxVersion": "3.4",
                 "lazygitVersion": "0.40.2",
                 "nvimVersion": "v0.10.4",
