@@ -1,0 +1,143 @@
+{
+    "all-disabled": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "tools": {
+                "installLazygit": false,
+                "installNvim": false,
+                "installClaudeCode": false,
+                "installCodex": false,
+                "installGh": false,
+                "installFdsx": false,
+                "installRtk": false,
+                "installPi": false
+            }
+        }
+    },
+    "lazygit-only": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "tools": {
+                "installNvim": false,
+                "installClaudeCode": false,
+                "installCodex": false,
+                "installGh": false,
+                "installFdsx": false,
+                "installRtk": false,
+                "installPi": false
+            }
+        }
+    },
+    "nvim-only": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "tools": {
+                "installLazygit": false,
+                "installClaudeCode": false,
+                "installCodex": false,
+                "installGh": false,
+                "installFdsx": false,
+                "installRtk": false,
+                "installPi": false
+            }
+        }
+    },
+    "gh-only": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "tools": {
+                "installLazygit": false,
+                "installNvim": false,
+                "installClaudeCode": false,
+                "installCodex": false,
+                "installFdsx": false,
+                "installRtk": false,
+                "installPi": false
+            }
+        }
+    },
+    "pinned-versions": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "tools": {
+                "lazygitVersion": "0.40.2",
+                "nvimVersion": "v0.10.4",
+                "installClaudeCode": false,
+                "installCodex": false,
+                "installFdsx": false,
+                "installRtk": false,
+                "installPi": false
+            }
+        }
+    },
+    "claude-code-only": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "tools": {
+                "installLazygit": false,
+                "installNvim": false,
+                "installCodex": false,
+                "installGh": false,
+                "installFdsx": false,
+                "installRtk": false,
+                "installPi": false
+            }
+        }
+    },
+    "codex-only": {
+        "image": "mcr.microsoft.com/devcontainers/javascript-node:22",
+        "features": {
+            "tools": {
+                "installLazygit": false,
+                "installNvim": false,
+                "installClaudeCode": false,
+                "installGh": false,
+                "installFdsx": false,
+                "installRtk": false,
+                "installPi": false
+            }
+        }
+    },
+    "fdsx-only": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "tools": {
+                "installLazygit": false,
+                "installNvim": false,
+                "installClaudeCode": false,
+                "installCodex": false,
+                "installGh": false,
+                "installRtk": false,
+                "installPi": false
+            }
+        }
+    },
+    "rtk-only": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "tools": {
+                "installLazygit": false,
+                "installNvim": false,
+                "installClaudeCode": false,
+                "installCodex": false,
+                "installGh": false,
+                "installFdsx": false,
+                "installPi": false
+            }
+        }
+    },
+    "pi-only": {
+        "image": "mcr.microsoft.com/devcontainers/javascript-node:22",
+        "features": {
+            "tools": {
+                "installLazygit": false,
+                "installNvim": false,
+                "installClaudeCode": false,
+                "installCodex": false,
+                "installGh": false,
+                "installFdsx": false,
+                "installRtk": false
+            }
+        }
+    }
+}

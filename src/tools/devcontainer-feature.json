@@ -1,0 +1,58 @@
+{
+    "name": "tools",
+    "id": "tools",
+    "version": "1.0.0",
+    "description": "A minimal dev container feature that bundles terminal-based development tools: lazygit, neovim (with ripgrep, fd, fzf), Claude Code, Codex, gh, fdsx, rtk, and pi.",
+    "options": {
+        "installLazygit": {
+            "type": "boolean",
+            "description": "Install lazygit terminal UI for Git",
+            "default": true
+        },
+        "installNvim": {
+            "type": "boolean",
+            "description": "Install neovim and supporting tools (ripgrep, fd, fzf)",
+            "default": true
+        },
+        "lazygitVersion": {
+            "type": "string",
+            "description": "lazygit version to install (e.g., '0.40.2', 'latest')",
+            "default": "latest"
+        },
+        "nvimVersion": {
+            "type": "string",
+            "description": "neovim version to install (e.g., '0.9.5', 'latest')",
+            "default": "latest"
+        },
+        "installClaudeCode": {
+            "type": "boolean",
+            "description": "Install Claude Code CLI (AI coding assistant)",
+            "default": true
+        },
+        "installCodex": {
+            "type": "boolean",
+            "description": "Install OpenAI Codex CLI (requires npm)",
+            "default": true
+        },
+        "installGh": {
+            "type": "boolean",
+            "description": "Install GitHub CLI (gh)",
+            "default": true
+        },
+        "installFdsx": {
+            "type": "boolean",
+            "description": "Install fdsx (fast data serialization tool)",
+            "default": true
+        },
+        "installRtk": {
+            "type": "boolean",
+            "description": "Install rtk (Rust Token Killer - token-optimized CLI proxy)",
+            "default": true
+        },
+        "installPi": {
+            "type": "boolean",
+            "description": "Install pi coding agent",
+            "default": true
+        }
+    }
+}
