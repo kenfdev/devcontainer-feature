@@ -15,6 +15,9 @@ check "lazygit is installed" lazygit --version
 check "nvim is installed" nvim --version
 check "gh is installed" gh --version
 check "codex is installed" codex --version
+check "tailscale is installed" tailscale version
+check "tailscaled is installed" tailscaled --version
+check "tailscale entrypoint is installed" test -x /usr/local/bin/tailscale-entrypoint.sh
 
 # Report result
 reportResults

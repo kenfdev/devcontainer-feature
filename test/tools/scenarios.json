@@ -10,7 +10,8 @@
                 "installGh": false,
                 "installFdsx": false,
                 "installRtk": false,
-                "installPi": false
+                "installPi": false,
+                "installTailscale": false
             }
         }
     },
@@ -24,7 +25,8 @@
                 "installGh": false,
                 "installFdsx": false,
                 "installRtk": false,
-                "installPi": false
+                "installPi": false,
+                "installTailscale": false
             }
         }
     },
@@ -38,7 +40,8 @@
                 "installGh": false,
                 "installFdsx": false,
                 "installRtk": false,
-                "installPi": false
+                "installPi": false,
+                "installTailscale": false
             }
         }
     },
@@ -52,7 +55,8 @@
                 "installCodex": false,
                 "installFdsx": false,
                 "installRtk": false,
-                "installPi": false
+                "installPi": false,
+                "installTailscale": false
             }
         }
     },
@@ -66,7 +70,8 @@
                 "installCodex": false,
                 "installFdsx": false,
                 "installRtk": false,
-                "installPi": false
+                "installPi": false,
+                "installTailscale": false
             }
         }
     },
@@ -80,7 +85,8 @@
                 "installGh": false,
                 "installFdsx": false,
                 "installRtk": false,
-                "installPi": false
+                "installPi": false,
+                "installTailscale": false
             }
         }
     },
@@ -94,7 +100,8 @@
                 "installGh": false,
                 "installFdsx": false,
                 "installRtk": false,
-                "installPi": false
+                "installPi": false,
+                "installTailscale": false
             }
         }
     },
@@ -108,7 +115,8 @@
                 "installCodex": false,
                 "installGh": false,
                 "installRtk": false,
-                "installPi": false
+                "installPi": false,
+                "installTailscale": false
             }
         }
     },
@@ -122,7 +130,8 @@
                 "installCodex": false,
                 "installGh": false,
                 "installFdsx": false,
-                "installPi": false
+                "installPi": false,
+                "installTailscale": false
             }
         }
     },
@@ -136,7 +145,23 @@
                 "installCodex": false,
                 "installGh": false,
                 "installFdsx": false,
-                "installRtk": false
+                "installRtk": false,
+                "installTailscale": false
+            }
+        }
+    },
+    "tailscale-only": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "tools": {
+                "installLazygit": false,
+                "installNvim": false,
+                "installClaudeCode": false,
+                "installCodex": false,
+                "installGh": false,
+                "installFdsx": false,
+                "installRtk": false,
+                "installPi": false
             }
         }
     }

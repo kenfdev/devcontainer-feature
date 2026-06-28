@@ -3,7 +3,9 @@ set -e
 
 # tools feature install script
 # Installs lazygit, neovim (with supporting tools: ripgrep, fd, fzf), gh,
-# Claude Code, Codex, fdsx, rtk, and pi
+# Claude Code, Codex, fdsx, rtk, pi, and optional Tailscale SSH access
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Options (passed as environment variables)
 INSTALL_LAZYGIT="${INSTALLLAZYGIT:-true}"
@@ -14,6 +16,7 @@ INSTALL_GH="${INSTALLGH:-true}"
 INSTALL_FDSX="${INSTALLFDSX:-true}"
 INSTALL_RTK="${INSTALLRTK:-true}"
 INSTALL_PI="${INSTALLPI:-true}"
+INSTALL_TAILSCALE="${INSTALLTAILSCALE:-true}"
 LAZYGIT_VERSION="${LAZYGITVERSION:-latest}"
 NVIM_VERSION="${NVIMVERSION:-latest}"
 
@@ -115,6 +118,61 @@ install_dependencies() {
     elif command -v dnf &>/dev/null; then
         dnf install -y curl ca-certificates tar gzip xz
     fi
+}
+
+is_debian_or_ubuntu() {
+    if [ ! -r /etc/os-release ]; then
+        return 1
+    fi
+
+    # shellcheck source=/dev/null
+    . /etc/os-release
+
+    case "${ID:-}:${ID_LIKE:-}" in
+        debian:*|ubuntu:*|*:debian*|*:ubuntu*)
+            return 0
+            ;;
+    esac
+
+    return 1
+}
+
+install_tailscale() {
+    if [ "$INSTALL_TAILSCALE" != "true" ]; then
+        if [ -f "${SCRIPT_DIR}/tailscale-entrypoint.sh" ]; then
+            install -m 755 "${SCRIPT_DIR}/tailscale-entrypoint.sh" /usr/local/bin/tailscale-entrypoint.sh
+        fi
+        echo "Skipping Tailscale installation (disabled)"
+        return 0
+    fi
+
+    if [ ! -f "${SCRIPT_DIR}/tailscale-entrypoint.sh" ]; then
+        echo "ERROR: tailscale-entrypoint.sh must be in the same directory as install.sh when installTailscale is enabled." >&2
+        return 1
+    fi
+
+    install -m 755 "${SCRIPT_DIR}/tailscale-entrypoint.sh" /usr/local/bin/tailscale-entrypoint.sh
+
+    if ! is_debian_or_ubuntu; then
+        echo "ERROR: installTailscale requires a Debian/Ubuntu based image. Set installTailscale=false to skip it." >&2
+        return 1
+    fi
+
+    echo "Installing Tailscale..."
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update
+    apt-get install -y --no-install-recommends \
+        bash \
+        ca-certificates \
+        curl \
+        iproute2 \
+        iptables \
+        procps
+
+    curl -fsSL https://tailscale.com/install.sh | sh
+
+    apt-get clean
+    rm -rf /var/lib/apt/lists/*
 }
 
 # Install lazygit from GitHub Releases
@@ -609,6 +667,7 @@ install_pi() {
     # Install as the remote user so binaries go to their home directory
     if [ "$REMOTE_USER" != "root" ]; then
         if su - "$REMOTE_USER" -c "curl -fsSL https://pi.dev/install.sh | sh"; then
+            # shellcheck disable=SC2016
             echo 'export PATH="$HOME/.local/bin:$PATH"' >> /etc/profile.d/tools.sh
             link_user_bin "pi" "$REMOTE_USER_HOME"
             echo "pi installed successfully for user $REMOTE_USER"
@@ -680,6 +739,7 @@ main() {
     echo "  INSTALL_FDSX=$INSTALL_FDSX"
     echo "  INSTALL_RTK=$INSTALL_RTK"
     echo "  INSTALL_PI=$INSTALL_PI"
+    echo "  INSTALL_TAILSCALE=$INSTALL_TAILSCALE"
     echo "  LAZYGIT_VERSION=$LAZYGIT_VERSION"
     echo "  NVIM_VERSION=$NVIM_VERSION"
 
@@ -691,6 +751,7 @@ main() {
     mkdir -p /etc/profile.d
 
     install_dependencies
+    install_tailscale
     install_lazygit
     install_nvim
     install_claude_code

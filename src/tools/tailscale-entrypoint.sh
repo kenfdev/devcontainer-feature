@@ -14,6 +14,10 @@ TS_RESET_ON_AUTH_FAILURE="${TS_RESET_ON_AUTH_FAILURE:-false}"
 AUTH_KEY="${TS_AUTH_KEY:-${TS_AUTHKEY:-}}"
 unset TS_AUTH_KEY TS_AUTHKEY
 
+if ! command -v tailscaled >/dev/null 2>&1 || ! command -v tailscale >/dev/null 2>&1; then
+    exec "$@"
+fi
+
 HOSTNAME_VALUE="${TS_HOSTNAME:-$(hostname)}"
 
 ensure_tun_device() {
