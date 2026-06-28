@@ -15,6 +15,8 @@ check "lazygit is installed" lazygit --version
 check "nvim is installed" nvim --version
 check "gh is installed" gh --version
 check "codex is installed" codex --version
+check "sshd config is valid" /usr/sbin/sshd -t
+check "dev user exists" id dev
 
 # Report result
 reportResults

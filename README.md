@@ -5,7 +5,7 @@ Custom [Dev Container Features](https://containers.dev/features) published to Gi
 ## Available Features
 
 - [`devenv`](./src/devenv) - terminal-focused development environment with tmux, lazygit, Neovim, GitHub CLI, and AI coding CLIs.
-- [`tools`](./src/tools) - minimal terminal-focused tool bundle with lazygit, Neovim, GitHub CLI, and AI coding CLIs.
+- [`tools`](./src/tools) - minimal terminal-focused tool bundle with lazygit, Neovim, GitHub CLI, AI coding CLIs, and SSH access.
 - [`tig`](./src/tig) - installs [`tig`](https://jonas.github.io/tig/), the text-mode interface for Git.
 
 ## `devenv`
@@ -68,7 +68,7 @@ Disable individual tools or pin supported tool versions as needed:
 
 ## `tools`
 
-A minimal dev container feature that bundles terminal-based development tools: lazygit, neovim (with ripgrep, fd, fzf), gh, Claude Code, Codex, fdsx, rtk, and pi.
+A minimal dev container feature that bundles terminal-based development tools: lazygit, neovim (with ripgrep, fd, fzf), gh, Claude Code, Codex, fdsx, rtk, pi, and SSH access.
 
 ### Example Usage
 
@@ -97,7 +97,9 @@ Disable individual tools or pin supported tool versions as needed:
       "installGh": true,
       "installFdsx": true,
       "installRtk": true,
-      "installPi": true
+      "installPi": true,
+      "installSsh": true,
+      "sshUser": "dev"
     }
   }
 }
@@ -117,6 +119,10 @@ Disable individual tools or pin supported tool versions as needed:
 | `installFdsx` | Install fdsx | boolean | `true` |
 | `installRtk` | Install rtk (Rust Token Killer - token-optimized CLI proxy) | boolean | `true` |
 | `installPi` | Install pi coding agent | boolean | `true` |
+| `installSsh` | Install and configure OpenSSH server for public-key container access | boolean | `true` |
+| `sshUser` | User allowed to connect over SSH. Created if missing. | string | `dev` |
+
+The SSH configuration disables password authentication, allows public-key authentication, enables SFTP, and permits only `sshUser`. It supports starting sshd in inetd mode with `docker exec -i <container> /usr/sbin/sshd -i`.
 
 ## `tig`
 

@@ -1,6 +1,6 @@
 # tools (tools)
 
-A minimal dev container feature that bundles terminal-based development tools: lazygit, neovim (with ripgrep, fd, fzf), Claude Code, Codex, gh, [fdsx](https://github.com/kenfdev/fdsx), rtk, and pi.
+A minimal dev container feature that bundles terminal-based development tools: lazygit, neovim (with ripgrep, fd, fzf), Claude Code, Codex, gh, [fdsx](https://github.com/kenfdev/fdsx), rtk, pi, and SSH access.
 
 ## Example Usage
 
@@ -24,6 +24,8 @@ A minimal dev container feature that bundles terminal-based development tools: l
 | installFdsx | Install [fdsx](https://github.com/kenfdev/fdsx) | boolean | true |
 | installRtk | Install rtk (Rust Token Killer - token-optimized CLI proxy) | boolean | true |
 | installPi | Install pi coding agent | boolean | true |
+| installSsh | Install and configure OpenSSH server for public-key container access | boolean | true |
+| sshUser | User allowed to connect over SSH. Created if missing. | string | dev |
 
 ---
 
