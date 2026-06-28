@@ -1,8 +1,8 @@
 {
     "name": "tools",
     "id": "tools",
-    "version": "1.1.0",
-    "description": "A minimal dev container feature that bundles terminal-based development tools: lazygit, neovim (with ripgrep, fd, fzf), Claude Code, Codex, gh, fdsx, rtk, pi, and SSH access.",
+    "version": "1.2.0",
+    "description": "A minimal dev container feature that bundles terminal-based development tools: lazygit, neovim (with ripgrep, fd, fzf), Claude Code, Codex, gh, fdsx, rtk, and pi.",
     "options": {
         "installLazygit": {
             "type": "boolean",
@@ -53,16 +53,6 @@
             "type": "boolean",
             "description": "Install pi coding agent",
             "default": true
-        },
-        "installSsh": {
-            "type": "boolean",
-            "description": "Install and configure OpenSSH server for public-key container access",
-            "default": true
-        },
-        "sshUser": {
-            "type": "string",
-            "description": "User allowed to connect over SSH. Created if missing.",
-            "default": "dev"
         }
     }
 }

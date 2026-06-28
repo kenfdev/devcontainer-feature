@@ -1,6 +1,6 @@
 # tools
 
-A minimal Dev Container Feature that installs terminal development tools and configures SSH access for a non-root container user.
+A minimal Dev Container Feature that installs terminal development tools.
 
 Installed by default:
 
@@ -12,7 +12,6 @@ Installed by default:
 - [fdsx](https://github.com/kenfdev/fdsx)
 - rtk
 - pi
-- OpenSSH server configured for public-key auth
 
 ## VS Code Dev Containers
 
@@ -45,9 +44,7 @@ To customize installed tools:
       "installGh": true,
       "installFdsx": true,
       "installRtk": true,
-      "installPi": true,
-      "installSsh": true,
-      "sshUser": "dev"
+      "installPi": true
     }
   }
 }
@@ -68,9 +65,7 @@ Create a `devcontainer.json` next to your Dockerfile:
     "dockerfile": "Dockerfile"
   },
   "features": {
-    "ghcr.io/kenfdev/devcontainer-feature/tools:1": {
-      "sshUser": "dev"
-    }
+    "ghcr.io/kenfdev/devcontainer-feature/tools:1": {}
   }
 }
 ```
@@ -94,38 +89,13 @@ ENV INSTALLLAZYGIT=true \
     INSTALLGH=true \
     INSTALLFDSX=true \
     INSTALLRTK=true \
-    INSTALLPI=true \
-    INSTALLSSH=true \
-    SSHUSER=dev
+    INSTALLPI=true
 
 ADD https://raw.githubusercontent.com/kenfdev/devcontainer-feature/main/src/tools/install.sh /tmp/tools-install.sh
 
 RUN chmod +x /tmp/tools-install.sh \
     && /tmp/tools-install.sh \
     && rm -f /tmp/tools-install.sh
-```
-
-## SSH Access
-
-When `installSsh` is enabled, the feature:
-
-- installs OpenSSH server
-- creates `sshUser` if it does not already exist
-- disables password authentication
-- enables public-key authentication
-- enables SFTP
-- restricts SSH login to `sshUser`
-
-The generated config supports running sshd in inetd mode:
-
-```bash
-docker exec -i <container> /usr/sbin/sshd -i
-```
-
-Add your public key to the configured user's authorized keys:
-
-```bash
-cat ~/.ssh/id_ed25519.pub | docker exec -i <container> sh -lc 'mkdir -p /home/dev/.ssh && cat >> /home/dev/.ssh/authorized_keys'
 ```
 
 ## Options
@@ -142,5 +112,3 @@ cat ~/.ssh/id_ed25519.pub | docker exec -i <container> sh -lc 'mkdir -p /home/de
 | `installFdsx` | Install [fdsx](https://github.com/kenfdev/fdsx) | boolean | `true` |
 | `installRtk` | Install rtk | boolean | `true` |
 | `installPi` | Install pi coding agent | boolean | `true` |
-| `installSsh` | Install and configure OpenSSH server for public-key container access | boolean | `true` |
-| `sshUser` | User allowed to connect over SSH. Created if missing. | string | `dev` |

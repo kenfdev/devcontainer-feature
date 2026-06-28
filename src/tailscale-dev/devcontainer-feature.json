@@ -1,0 +1,24 @@
+{
+    "name": "Tailscale Dev Container",
+    "id": "tailscale-dev",
+    "version": "0.1.0",
+    "description": "Installs Tailscale and configures an entrypoint for Tailscale SSH access to a development container.",
+    "entrypoint": "/usr/local/bin/tailscale-entrypoint.sh",
+    "capAdd": [
+        "NET_ADMIN",
+        "NET_RAW",
+        "MKNOD"
+    ],
+    "mounts": [
+        {
+            "source": "tailscale-dev-state",
+            "target": "/var/lib/tailscale",
+            "type": "volume"
+        }
+    ],
+    "containerEnv": {
+        "TS_STATE_DIR": "/var/lib/tailscale",
+        "TS_ENABLE_SSH": "true",
+        "TS_TAG": "tag:dev-container"
+    }
+}

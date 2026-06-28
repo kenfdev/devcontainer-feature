@@ -3,7 +3,7 @@ set -e
 
 # tools feature install script
 # Installs lazygit, neovim (with supporting tools: ripgrep, fd, fzf), gh,
-# Claude Code, Codex, fdsx, rtk, pi, and SSH access
+# Claude Code, Codex, fdsx, rtk, and pi
 
 # Options (passed as environment variables)
 INSTALL_LAZYGIT="${INSTALLLAZYGIT:-true}"
@@ -14,10 +14,8 @@ INSTALL_GH="${INSTALLGH:-true}"
 INSTALL_FDSX="${INSTALLFDSX:-true}"
 INSTALL_RTK="${INSTALLRTK:-true}"
 INSTALL_PI="${INSTALLPI:-true}"
-INSTALL_SSH="${INSTALLSSH:-true}"
 LAZYGIT_VERSION="${LAZYGITVERSION:-latest}"
 NVIM_VERSION="${NVIMVERSION:-latest}"
-SSH_USER="${SSHUSER:-dev}"
 
 # Installation target
 INSTALL_DIR="/usr/local/bin"
@@ -117,135 +115,6 @@ install_dependencies() {
     elif command -v dnf &>/dev/null; then
         dnf install -y curl ca-certificates tar gzip xz
     fi
-}
-
-validate_ssh_user() {
-    case "$SSH_USER" in
-        ""|root)
-            echo "WARNING: sshUser must be non-empty and cannot be root" >&2
-            return 1
-            ;;
-    esac
-
-    if ! printf '%s\n' "$SSH_USER" | grep -Eq '^[a-z_][a-z0-9_-]*[$]?$'; then
-        echo "WARNING: sshUser '$SSH_USER' is not a valid Linux username" >&2
-        return 1
-    fi
-}
-
-install_ssh_dependencies() {
-    echo "Installing SSH dependencies..."
-    if command -v apt-get &>/dev/null; then
-        apt-get update
-        apt-get install -y --no-install-recommends openssh-server sudo
-    elif command -v apk &>/dev/null; then
-        apk add --no-cache openssh sudo
-    elif command -v dnf &>/dev/null; then
-        dnf install -y openssh-server sudo
-    else
-        echo "WARNING: Unknown package manager, cannot install SSH dependencies" >&2
-        return 1
-    fi
-}
-
-ensure_ssh_user() {
-    local user_home="/home/$SSH_USER"
-
-    if id "$SSH_USER" &>/dev/null; then
-        user_home="$(getent passwd "$SSH_USER" | cut -d: -f6)"
-        if [ -z "$user_home" ]; then
-            user_home="/home/$SSH_USER"
-        fi
-        mkdir -p "$user_home"
-        if command -v usermod &>/dev/null; then
-            usermod --shell /bin/bash "$SSH_USER" || true
-        fi
-    elif command -v useradd &>/dev/null; then
-        useradd -m -s /bin/bash "$SSH_USER"
-    elif command -v adduser &>/dev/null; then
-        adduser -D -s /bin/bash "$SSH_USER"
-    else
-        echo "WARNING: No supported user creation command found" >&2
-        return 1
-    fi
-
-    user_home="$(getent passwd "$SSH_USER" | cut -d: -f6)"
-    if [ -z "$user_home" ]; then
-        user_home="/home/$SSH_USER"
-    fi
-
-    mkdir -p "$user_home/.ssh" "$user_home/.claude" "$user_home/.codex"
-    chown -R "$SSH_USER:" "$user_home"
-    chmod 700 "$user_home/.ssh"
-
-    if command -v sudo &>/dev/null; then
-        mkdir -p /etc/sudoers.d
-        echo "$SSH_USER ALL=(ALL) NOPASSWD:ALL" > "/etc/sudoers.d/$SSH_USER"
-        chmod 0440 "/etc/sudoers.d/$SSH_USER"
-    fi
-}
-
-configure_sshd() {
-    local sftp_server="/usr/lib/openssh/sftp-server"
-    if [ ! -x "$sftp_server" ]; then
-        if [ -x /usr/lib/ssh/sftp-server ]; then
-            sftp_server="/usr/lib/ssh/sftp-server"
-        else
-            sftp_server="internal-sftp"
-        fi
-    fi
-
-    mkdir -p /run/sshd /etc/ssh
-    ssh-keygen -A
-
-    cat > /etc/ssh/sshd_config <<EOF
-Port 22
-Protocol 2
-PermitRootLogin no
-PasswordAuthentication no
-PubkeyAuthentication yes
-AuthorizedKeysFile .ssh/authorized_keys
-ChallengeResponseAuthentication no
-UsePAM no
-X11Forwarding no
-AllowTcpForwarding yes
-PermitTunnel no
-AllowAgentForwarding yes
-AllowUsers $SSH_USER
-
-# Supports starting sshd through Docker stdin/stdout with:
-# docker exec -i <container> /usr/sbin/sshd -i
-# This inetd mode does not require publishing container port 22.
-PidFile /run/sshd/sshd.pid
-
-# SFTP is required for editor file operations over the SSH connection.
-Subsystem sftp $sftp_server
-EOF
-}
-
-install_ssh() {
-    if [ "$INSTALL_SSH" != "true" ]; then
-        echo "Skipping SSH installation (disabled)"
-        return 0
-    fi
-
-    echo "Installing SSH access for user $SSH_USER..."
-    if ! validate_ssh_user; then
-        return 0
-    fi
-
-    if ! install_ssh_dependencies; then
-        echo "WARNING: Failed to install SSH dependencies, skipping SSH configuration" >&2
-        return 0
-    fi
-
-    if ! ensure_ssh_user; then
-        echo "WARNING: Failed to create/configure SSH user, skipping SSH configuration" >&2
-        return 0
-    fi
-
-    configure_sshd
-    echo "SSH access configured for user $SSH_USER"
 }
 
 # Install lazygit from GitHub Releases
@@ -811,10 +680,8 @@ main() {
     echo "  INSTALL_FDSX=$INSTALL_FDSX"
     echo "  INSTALL_RTK=$INSTALL_RTK"
     echo "  INSTALL_PI=$INSTALL_PI"
-    echo "  INSTALL_SSH=$INSTALL_SSH"
     echo "  LAZYGIT_VERSION=$LAZYGIT_VERSION"
     echo "  NVIM_VERSION=$NVIM_VERSION"
-    echo "  SSH_USER=$SSH_USER"
 
     if [ "$ARCH" = "unknown" ]; then
         echo "WARNING: Unknown architecture, some tools may not install correctly" >&2
@@ -824,7 +691,6 @@ main() {
     mkdir -p /etc/profile.d
 
     install_dependencies
-    install_ssh
     install_lazygit
     install_nvim
     install_claude_code
