@@ -1,8 +1,8 @@
 {
     "name": "tools",
     "id": "tools",
-    "version": "1.3.1",
-    "description": "A minimal dev container feature that bundles terminal-based development tools and optional Tailscale SSH access.",
+    "version": "1.4.0",
+    "description": "A minimal dev container feature that bundles terminal-based development tools, Tailscale access, and an optional OpenSSH server.",
     "entrypoint": "/usr/local/bin/tailscale-entrypoint.sh",
     "capAdd": [
         "NET_ADMIN",
@@ -14,12 +14,19 @@
             "source": "tools-tailscale-state",
             "target": "/var/lib/tailscale",
             "type": "volume"
+        },
+        {
+            "source": "tools-ssh-host-keys",
+            "target": "/var/lib/ssh-host-keys",
+            "type": "volume"
         }
     ],
     "containerEnv": {
         "TS_STATE_DIR": "/var/lib/tailscale",
         "TS_ENABLE_SSH": "true",
-        "TS_TAG": "tag:dev-container"
+        "TS_TAG": "tag:dev-container",
+        "SSHD_ENABLE": "true",
+        "SSHD_USER": "root"
     },
     "options": {
         "installLazygit": {
@@ -75,6 +82,11 @@
         "installTailscale": {
             "type": "boolean",
             "description": "Install Tailscale and configure the tools entrypoint for Tailscale SSH",
+            "default": true
+        },
+        "installSshd": {
+            "type": "boolean",
+            "description": "Install and start OpenSSH server for normal SSH access",
             "default": true
         }
     }

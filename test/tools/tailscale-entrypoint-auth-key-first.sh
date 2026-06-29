@@ -105,11 +105,19 @@ TS_STATE_DIR="${tmpdir}/state" \
 TS_SOCKET="${tmpdir}/tailscaled.sock" \
 TS_AUTH_KEY="tskey-auth-test" \
 TS_ENABLE_SSH=false \
+SSHD_ENABLE=false \
 TS_TAG= \
     "${BASH}" "${repo_root}/src/tools/tailscale-entrypoint.sh" true
 
 if ! grep -q -- '--auth-key=tskey-auth-test' "${tmpdir}/tailscale-up.log"; then
     echo "FAIL: first tailscale up did not use TS_AUTH_KEY when pre-login state existed"
+    echo "Recorded invocations:"
+    cat "${tmpdir}/tailscale-up.log"
+    exit 1
+fi
+
+if ! grep -q -- '--reset' "${tmpdir}/tailscale-up.log"; then
+    echo "FAIL: first tailscale up did not reset existing state when TS_AUTH_KEY was provided"
     echo "Recorded invocations:"
     cat "${tmpdir}/tailscale-up.log"
     exit 1

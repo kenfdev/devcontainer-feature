@@ -10,15 +10,94 @@ TS_SOCKET="${TS_SOCKET:-/var/run/tailscale/tailscaled.sock}"
 TS_ENABLE_SSH="${TS_ENABLE_SSH:-true}"
 TS_ACCEPT_ROUTES="${TS_ACCEPT_ROUTES:-false}"
 TS_RESET_ON_AUTH_FAILURE="${TS_RESET_ON_AUTH_FAILURE:-false}"
+SSHD_ENABLE="${SSHD_ENABLE:-true}"
+SSHD_USER="${SSHD_USER:-root}"
+SSHD_HOST_KEY_DIR="${SSHD_HOST_KEY_DIR:-/var/lib/ssh-host-keys}"
+SSHD_CONFIG_DIR="${SSHD_CONFIG_DIR:-/etc/ssh}"
+SSHD_RUN_DIR="${SSHD_RUN_DIR:-/run/sshd}"
 
 AUTH_KEY="${TS_AUTH_KEY:-${TS_AUTHKEY:-}}"
 unset TS_AUTH_KEY TS_AUTHKEY
 
-if ! command -v tailscaled >/dev/null 2>&1 || ! command -v tailscale >/dev/null 2>&1; then
-    exec "$@"
-fi
-
 HOSTNAME_VALUE="${TS_HOSTNAME:-$(hostname)}"
+
+sshd_bin() {
+    if command -v sshd >/dev/null 2>&1; then
+        command -v sshd
+        return 0
+    fi
+
+    if [ -x /usr/sbin/sshd ]; then
+        echo /usr/sbin/sshd
+        return 0
+    fi
+
+    return 1
+}
+
+ensure_sshd_host_keys() {
+    mkdir -p "${SSHD_CONFIG_DIR}" "${SSHD_HOST_KEY_DIR}"
+
+    if ! find "${SSHD_HOST_KEY_DIR}" -maxdepth 1 -name 'ssh_host_*_key' -type f -print -quit 2>/dev/null | grep -q .; then
+        ssh-keygen -A
+        cp -a "${SSHD_CONFIG_DIR}"/ssh_host_*_key "${SSHD_CONFIG_DIR}"/ssh_host_*_key.pub "${SSHD_HOST_KEY_DIR}"/ 2>/dev/null || true
+    fi
+
+    local key_path key_name
+    for key_path in "${SSHD_HOST_KEY_DIR}"/ssh_host_*_key; do
+        [ -f "${key_path}" ] || continue
+        key_name="$(basename "${key_path}")"
+        ln -sf "${key_path}" "${SSHD_CONFIG_DIR}/${key_name}"
+        if [ -f "${key_path}.pub" ]; then
+            ln -sf "${key_path}.pub" "${SSHD_CONFIG_DIR}/${key_name}.pub"
+        fi
+    done
+}
+
+configure_authorized_keys() {
+    local user_home authorized_keys_file
+    user_home="$(getent passwd "${SSHD_USER}" 2>/dev/null | cut -d: -f6 || true)"
+    if [ -z "${user_home}" ]; then
+        user_home="/root"
+    fi
+
+    mkdir -p "${user_home}/.ssh"
+    chmod 700 "${user_home}/.ssh"
+    authorized_keys_file="${user_home}/.ssh/authorized_keys"
+
+    if [ -n "${SSH_AUTHORIZED_KEYS:-}" ]; then
+        printf '%s\n' "${SSH_AUTHORIZED_KEYS}" > "${authorized_keys_file}"
+    elif [ -n "${SSH_AUTHORIZED_KEYS_FILE:-}" ] && [ -r "${SSH_AUTHORIZED_KEYS_FILE}" ]; then
+        cp "${SSH_AUTHORIZED_KEYS_FILE}" "${authorized_keys_file}"
+    fi
+
+    if [ -f "${authorized_keys_file}" ]; then
+        chmod 600 "${authorized_keys_file}"
+        chown -R "${SSHD_USER}:${SSHD_USER}" "${user_home}/.ssh" 2>/dev/null || true
+    fi
+}
+
+start_sshd() {
+    local sshd_path
+
+    if [ "${SSHD_ENABLE}" != "true" ]; then
+        return 0
+    fi
+
+    if ! sshd_path="$(sshd_bin)"; then
+        return 0
+    fi
+
+    mkdir -p "${SSHD_RUN_DIR}"
+    ensure_sshd_host_keys
+    configure_authorized_keys
+
+    if pgrep -x sshd >/dev/null 2>&1; then
+        return 0
+    fi
+
+    "${sshd_path}" -D -e &
+}
 
 ensure_tun_device() {
     if [ -c /dev/net/tun ]; then
@@ -108,6 +187,7 @@ run_tailscale_up() {
     tailscale_up_args args
 
     if [ -n "${auth_key}" ]; then
+        args+=(--reset)
         args+=(--auth-key="${auth_key}")
     fi
 
@@ -163,8 +243,12 @@ bring_tailscale_up() {
     log "WARNING: No TS_AUTH_KEY or TS_AUTHKEY provided; container will continue without joining Tailscale"
 }
 
-ensure_tun_device
-start_tailscaled
-bring_tailscale_up
+start_sshd
+
+if command -v tailscaled >/dev/null 2>&1 && command -v tailscale >/dev/null 2>&1; then
+    ensure_tun_device
+    start_tailscaled
+    bring_tailscale_up
+fi
 
 exec "$@"
