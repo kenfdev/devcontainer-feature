@@ -65,6 +65,12 @@ start_tailscaled() {
     wait_for_tailscaled || true
 }
 
+backend_state() {
+    tailscale --socket="${TS_SOCKET}" status --json 2>/dev/null \
+        | sed -n 's/.*"BackendState":[[:space:]]*"\([^"]*\)".*/\1/p' \
+        | head -n 1
+}
+
 has_existing_state() {
     find "${TS_STATE_DIR}" -mindepth 1 -type f -print -quit 2>/dev/null | grep -q .
 }
@@ -121,29 +127,40 @@ reset_tailscale_state() {
 }
 
 bring_tailscale_up() {
+    local state
+    state="$(backend_state || true)"
+
+    if [ "${state}" = "Running" ]; then
+        if run_tailscale_up ""; then
+            return 0
+        fi
+        log "WARNING: Failed to refresh Tailscale settings with existing login"
+    fi
+
+    if [ -n "${AUTH_KEY}" ]; then
+        if run_tailscale_up "${AUTH_KEY}"; then
+            return 0
+        fi
+
+        if [ "${TS_RESET_ON_AUTH_FAILURE}" = "true" ]; then
+            reset_tailscale_state
+            run_tailscale_up "${AUTH_KEY}" || log "WARNING: Tailscale authentication failed after reset; continuing container startup"
+            return 0
+        fi
+
+        log "WARNING: Tailscale authentication failed; continuing container startup"
+        return 0
+    fi
+
     if has_existing_state; then
         if run_tailscale_up ""; then
             return 0
         fi
         log "WARNING: Failed to bring Tailscale up with existing state"
-    fi
-
-    if [ -z "${AUTH_KEY}" ]; then
-        log "WARNING: No TS_AUTH_KEY or TS_AUTHKEY provided; container will continue without joining Tailscale"
         return 0
     fi
 
-    if run_tailscale_up "${AUTH_KEY}"; then
-        return 0
-    fi
-
-    if [ "${TS_RESET_ON_AUTH_FAILURE}" = "true" ]; then
-        reset_tailscale_state
-        run_tailscale_up "${AUTH_KEY}" || log "WARNING: Tailscale authentication failed after reset; continuing container startup"
-        return 0
-    fi
-
-    log "WARNING: Tailscale authentication failed; continuing container startup"
+    log "WARNING: No TS_AUTH_KEY or TS_AUTHKEY provided; container will continue without joining Tailscale"
 }
 
 ensure_tun_device
