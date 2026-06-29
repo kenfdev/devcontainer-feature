@@ -3,7 +3,7 @@ set -e
 
 # tools feature install script
 # Installs lazygit, neovim (with supporting tools: ripgrep, fd, fzf), gh,
-# Claude Code, Codex, fdsx, rtk, pi, and optional Tailscale SSH access
+# Claude Code, Codex, fdsx, rtk, pi, optional Tailscale access, and OpenSSH
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
@@ -17,6 +17,7 @@ INSTALL_FDSX="${INSTALLFDSX:-true}"
 INSTALL_RTK="${INSTALLRTK:-true}"
 INSTALL_PI="${INSTALLPI:-true}"
 INSTALL_TAILSCALE="${INSTALLTAILSCALE:-true}"
+INSTALL_SSHD="${INSTALLSSHD:-true}"
 LAZYGIT_VERSION="${LAZYGITVERSION:-latest}"
 NVIM_VERSION="${NVIMVERSION:-latest}"
 
@@ -173,6 +174,45 @@ install_tailscale() {
 
     apt-get clean
     rm -rf /var/lib/apt/lists/*
+}
+
+install_sshd() {
+    if [ "$INSTALL_SSHD" != "true" ]; then
+        echo "Skipping OpenSSH server installation (disabled)"
+        return 0
+    fi
+
+    echo "Installing OpenSSH server..."
+    if command -v apt-get &>/dev/null; then
+        export DEBIAN_FRONTEND=noninteractive
+        apt-get update
+        apt-get install -y --no-install-recommends openssh-server
+        apt-get clean
+        rm -rf /var/lib/apt/lists/*
+    elif command -v apk &>/dev/null; then
+        apk add --no-cache openssh-server
+    elif command -v dnf &>/dev/null; then
+        dnf install -y openssh-server
+    else
+        echo "WARNING: Could not find a supported package manager for OpenSSH server" >&2
+        return 0
+    fi
+
+    mkdir -p /run/sshd /var/lib/ssh-host-keys
+    chmod 755 /run/sshd
+
+    if [ -f /etc/ssh/sshd_config ]; then
+        sed -i \
+            -e 's/^[#[:space:]]*PermitRootLogin.*/PermitRootLogin prohibit-password/' \
+            -e 's/^[#[:space:]]*PasswordAuthentication.*/PasswordAuthentication no/' \
+            -e 's/^[#[:space:]]*PubkeyAuthentication.*/PubkeyAuthentication yes/' \
+            -e 's/^[#[:space:]]*KbdInteractiveAuthentication.*/KbdInteractiveAuthentication no/' \
+            /etc/ssh/sshd_config
+    fi
+
+    # Runtime entrypoint creates stable per-volume host keys instead of baking
+    # build-time keys into the image.
+    rm -f /etc/ssh/ssh_host_*_key /etc/ssh/ssh_host_*_key.pub
 }
 
 # Install lazygit from GitHub Releases
@@ -740,6 +780,7 @@ main() {
     echo "  INSTALL_RTK=$INSTALL_RTK"
     echo "  INSTALL_PI=$INSTALL_PI"
     echo "  INSTALL_TAILSCALE=$INSTALL_TAILSCALE"
+    echo "  INSTALL_SSHD=$INSTALL_SSHD"
     echo "  LAZYGIT_VERSION=$LAZYGIT_VERSION"
     echo "  NVIM_VERSION=$NVIM_VERSION"
 
@@ -752,6 +793,7 @@ main() {
 
     install_dependencies
     install_tailscale
+    install_sshd
     install_lazygit
     install_nvim
     install_claude_code

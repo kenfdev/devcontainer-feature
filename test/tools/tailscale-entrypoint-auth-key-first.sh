@@ -105,6 +105,7 @@ TS_STATE_DIR="${tmpdir}/state" \
 TS_SOCKET="${tmpdir}/tailscaled.sock" \
 TS_AUTH_KEY="tskey-auth-test" \
 TS_ENABLE_SSH=false \
+SSHD_ENABLE=false \
 TS_TAG= \
     "${BASH}" "${repo_root}/src/tools/tailscale-entrypoint.sh" true
 

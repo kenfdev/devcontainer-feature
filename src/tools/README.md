@@ -1,7 +1,7 @@
 
 # tools (tools)
 
-A minimal dev container feature that bundles terminal-based development tools and optional Tailscale SSH access.
+A minimal dev container feature that bundles terminal-based development tools, Tailscale access, and an optional OpenSSH server.
 
 ## Example Usage
 
@@ -26,6 +26,7 @@ A minimal dev container feature that bundles terminal-based development tools an
 | installRtk | Install rtk (Rust Token Killer - token-optimized CLI proxy) | boolean | true |
 | installPi | Install pi coding agent | boolean | true |
 | installTailscale | Install Tailscale and configure the tools entrypoint for Tailscale SSH | boolean | true |
+| installSshd | Install and start OpenSSH server for normal SSH access | boolean | true |
 
 
 
