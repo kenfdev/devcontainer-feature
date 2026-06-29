@@ -1,8 +1,8 @@
 {
     "name": "tools",
     "id": "tools",
-    "version": "1.4.0",
-    "description": "A minimal dev container feature that bundles terminal-based development tools, Tailscale access, and an optional OpenSSH server.",
+    "version": "1.5.0",
+    "description": "A minimal dev container feature that bundles terminal-based development tools, C/C++ build tools, Tailscale access, and an optional OpenSSH server.",
     "entrypoint": "/usr/local/bin/tailscale-entrypoint.sh",
     "capAdd": [
         "NET_ADMIN",
@@ -87,6 +87,11 @@
         "installSshd": {
             "type": "boolean",
             "description": "Install and start OpenSSH server for normal SSH access",
+            "default": true
+        },
+        "installBuildTools": {
+            "type": "boolean",
+            "description": "Install python3, make, and a C++ compiler when missing",
             "default": true
         }
     }

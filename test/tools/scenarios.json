@@ -12,7 +12,8 @@
                 "installRtk": false,
                 "installPi": false,
                 "installTailscale": false,
-                "installSshd": false
+                "installSshd": false,
+                "installBuildTools": false
             }
         }
     },
@@ -28,7 +29,8 @@
                 "installRtk": false,
                 "installPi": false,
                 "installTailscale": false,
-                "installSshd": false
+                "installSshd": false,
+                "installBuildTools": false
             }
         }
     },
@@ -44,7 +46,8 @@
                 "installRtk": false,
                 "installPi": false,
                 "installTailscale": false,
-                "installSshd": false
+                "installSshd": false,
+                "installBuildTools": false
             }
         }
     },
@@ -60,7 +63,8 @@
                 "installRtk": false,
                 "installPi": false,
                 "installTailscale": false,
-                "installSshd": false
+                "installSshd": false,
+                "installBuildTools": false
             }
         }
     },
@@ -76,7 +80,8 @@
                 "installRtk": false,
                 "installPi": false,
                 "installTailscale": false,
-                "installSshd": false
+                "installSshd": false,
+                "installBuildTools": false
             }
         }
     },
@@ -92,7 +97,8 @@
                 "installRtk": false,
                 "installPi": false,
                 "installTailscale": false,
-                "installSshd": false
+                "installSshd": false,
+                "installBuildTools": false
             }
         }
     },
@@ -108,7 +114,8 @@
                 "installRtk": false,
                 "installPi": false,
                 "installTailscale": false,
-                "installSshd": false
+                "installSshd": false,
+                "installBuildTools": false
             }
         }
     },
@@ -124,7 +131,8 @@
                 "installRtk": false,
                 "installPi": false,
                 "installTailscale": false,
-                "installSshd": false
+                "installSshd": false,
+                "installBuildTools": false
             }
         }
     },
@@ -140,7 +148,8 @@
                 "installFdsx": false,
                 "installPi": false,
                 "installTailscale": false,
-                "installSshd": false
+                "installSshd": false,
+                "installBuildTools": false
             }
         }
     },
@@ -156,7 +165,8 @@
                 "installFdsx": false,
                 "installRtk": false,
                 "installTailscale": false,
-                "installSshd": false
+                "installSshd": false,
+                "installBuildTools": false
             }
         }
     },
@@ -172,7 +182,8 @@
                 "installFdsx": false,
                 "installRtk": false,
                 "installPi": false,
-                "installSshd": false
+                "installSshd": false,
+                "installBuildTools": false
             }
         }
     },
@@ -188,7 +199,25 @@
                 "installFdsx": false,
                 "installRtk": false,
                 "installPi": false,
-                "installTailscale": false
+                "installTailscale": false,
+                "installBuildTools": false
+            }
+        }
+    },
+    "build-tools-only": {
+        "image": "debian:trixie-slim",
+        "features": {
+            "tools": {
+                "installLazygit": false,
+                "installNvim": false,
+                "installClaudeCode": false,
+                "installCodex": false,
+                "installGh": false,
+                "installFdsx": false,
+                "installRtk": false,
+                "installPi": false,
+                "installTailscale": false,
+                "installSshd": false
             }
         }
     }
