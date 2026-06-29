@@ -5,7 +5,7 @@ Custom [Dev Container Features](https://containers.dev/features) published to Gi
 ## Available Features
 
 - [`devenv`](./src/devenv) - terminal-focused development environment with tmux, lazygit, Neovim, GitHub CLI, and AI coding CLIs.
-- [`tools`](./src/tools) - minimal terminal-focused tool bundle with lazygit, Neovim, GitHub CLI, AI coding CLIs, Tailscale access, and optional normal SSH access.
+- [`tools`](./src/tools) - minimal terminal-focused tool bundle with lazygit, Neovim, GitHub CLI, AI coding CLIs, C/C++ build tools, Tailscale access, and optional normal SSH access.
 - [`tig`](./src/tig) - installs [`tig`](https://jonas.github.io/tig/), the text-mode interface for Git.
 
 ## `devenv`
@@ -68,7 +68,7 @@ Disable individual tools or pin supported tool versions as needed:
 
 ## `tools`
 
-A minimal dev container feature that bundles terminal-based development tools: lazygit, neovim (with ripgrep, fd, fzf), gh, Claude Code, Codex, fdsx, rtk, pi, Tailscale access, and an optional OpenSSH server for normal SSH clients.
+A minimal dev container feature that bundles terminal-based development tools: lazygit, neovim (with ripgrep, fd, fzf), gh, Claude Code, Codex, fdsx, rtk, pi, C/C++ build tools, Tailscale access, and an optional OpenSSH server for normal SSH clients.
 
 ### Example Usage
 
@@ -104,7 +104,8 @@ Disable individual tools or pin supported tool versions as needed:
       "installRtk": true,
       "installPi": true,
       "installTailscale": true,
-      "installSshd": true
+      "installSshd": true,
+      "installBuildTools": true
     }
   }
 }
@@ -126,8 +127,9 @@ Disable individual tools or pin supported tool versions as needed:
 | `installPi` | Install pi coding agent | boolean | `true` |
 | `installTailscale` | Install Tailscale and configure the tools entrypoint for Tailscale SSH | boolean | `true` |
 | `installSshd` | Install and start OpenSSH server for normal SSH access | boolean | `true` |
+| `installBuildTools` | Install python3, make, and a C++ compiler when missing | boolean | `true` |
 
-The `tools` feature metadata sets `/usr/local/bin/tailscale-entrypoint.sh` as the entrypoint and adds `NET_ADMIN`, `NET_RAW`, and `MKNOD`. It persists Tailscale state in `/var/lib/tailscale` and SSH host keys in `/var/lib/ssh-host-keys`. For normal SSH access, provide a public key with `SSH_AUTHORIZED_KEYS` or `SSH_AUTHORIZED_KEYS_FILE`. For Dockerfile-only usage, set `INSTALLTAILSCALE=false` or `INSTALLSSHD=false` to skip either service installation.
+The `tools` feature metadata sets `/usr/local/bin/tailscale-entrypoint.sh` as the entrypoint and adds `NET_ADMIN`, `NET_RAW`, and `MKNOD`. It persists Tailscale state in `/var/lib/tailscale` and SSH host keys in `/var/lib/ssh-host-keys`. For normal SSH access, provide a public key with `SSH_AUTHORIZED_KEYS` or `SSH_AUTHORIZED_KEYS_FILE`. For Dockerfile-only usage, set `INSTALLTAILSCALE=false`, `INSTALLSSHD=false`, or `INSTALLBUILDTOOLS=false` to skip specific service or build-tool installation.
 
 ## `tig`
 

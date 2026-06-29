@@ -19,6 +19,9 @@ check "tailscale is installed" tailscale version
 check "tailscaled is installed" tailscaled --version
 check "tailscale entrypoint is installed" test -x /usr/local/bin/tailscale-entrypoint.sh
 check "sshd is installed" sh -c 'command -v sshd >/dev/null || test -x /usr/sbin/sshd'
+check "python3 is installed" python3 --version
+check "make is installed" make --version
+check "C++ compiler is installed" sh -c 'command -v g++ >/dev/null || command -v clang++ >/dev/null'
 
 # Report result
 reportResults

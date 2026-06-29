@@ -3,7 +3,7 @@ set -e
 
 # tools feature install script
 # Installs lazygit, neovim (with supporting tools: ripgrep, fd, fzf), gh,
-# Claude Code, Codex, fdsx, rtk, pi, optional Tailscale access, and OpenSSH
+# Claude Code, Codex, fdsx, rtk, pi, build tools, optional Tailscale access, and OpenSSH
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
@@ -18,6 +18,7 @@ INSTALL_RTK="${INSTALLRTK:-true}"
 INSTALL_PI="${INSTALLPI:-true}"
 INSTALL_TAILSCALE="${INSTALLTAILSCALE:-true}"
 INSTALL_SSHD="${INSTALLSSHD:-true}"
+INSTALL_BUILD_TOOLS="${INSTALLBUILDTOOLS:-true}"
 LAZYGIT_VERSION="${LAZYGITVERSION:-latest}"
 NVIM_VERSION="${NVIMVERSION:-latest}"
 
@@ -118,6 +119,40 @@ install_dependencies() {
         apk add --no-cache curl ca-certificates tar gzip xz
     elif command -v dnf &>/dev/null; then
         dnf install -y curl ca-certificates tar gzip xz
+    fi
+}
+
+has_build_tools() {
+    command -v python3 &>/dev/null \
+        && command -v make &>/dev/null \
+        && { command -v g++ &>/dev/null || command -v clang++ &>/dev/null; }
+}
+
+install_build_tools() {
+    if [ "$INSTALL_BUILD_TOOLS" != "true" ]; then
+        echo "Skipping C/C++ build tools installation (disabled)"
+        return 0
+    fi
+
+    if has_build_tools; then
+        echo "C/C++ build tools are already installed, skipping"
+        return 0
+    fi
+
+    echo "Installing C/C++ build tools..."
+    if command -v apt-get &>/dev/null; then
+        export DEBIAN_FRONTEND=noninteractive
+        apt-get update
+        apt-get install -y --no-install-recommends build-essential python3
+        apt-get clean
+        rm -rf /var/lib/apt/lists/*
+    elif command -v apk &>/dev/null; then
+        apk add --no-cache build-base python3
+    elif command -v dnf &>/dev/null; then
+        dnf install -y make gcc-c++ python3
+    else
+        echo "WARNING: Could not find a supported package manager for C/C++ build tools" >&2
+        return 0
     fi
 }
 
@@ -781,6 +816,7 @@ main() {
     echo "  INSTALL_PI=$INSTALL_PI"
     echo "  INSTALL_TAILSCALE=$INSTALL_TAILSCALE"
     echo "  INSTALL_SSHD=$INSTALL_SSHD"
+    echo "  INSTALL_BUILD_TOOLS=$INSTALL_BUILD_TOOLS"
     echo "  LAZYGIT_VERSION=$LAZYGIT_VERSION"
     echo "  NVIM_VERSION=$NVIM_VERSION"
 
@@ -792,6 +828,7 @@ main() {
     mkdir -p /etc/profile.d
 
     install_dependencies
+    install_build_tools
     install_tailscale
     install_sshd
     install_lazygit

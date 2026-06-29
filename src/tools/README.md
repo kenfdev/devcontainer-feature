@@ -1,7 +1,7 @@
 
 # tools (tools)
 
-A minimal dev container feature that bundles terminal-based development tools, Tailscale access, and an optional OpenSSH server.
+A minimal dev container feature that bundles terminal-based development tools, C/C++ build tools, Tailscale access, and an optional OpenSSH server.
 
 ## Example Usage
 
@@ -27,6 +27,7 @@ A minimal dev container feature that bundles terminal-based development tools, T
 | installPi | Install pi coding agent | boolean | true |
 | installTailscale | Install Tailscale and configure the tools entrypoint for Tailscale SSH | boolean | true |
 | installSshd | Install and start OpenSSH server for normal SSH access | boolean | true |
+| installBuildTools | Install python3, make, and a C++ compiler when missing | boolean | true |
 
 
 
