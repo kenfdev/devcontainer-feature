@@ -108,6 +108,7 @@ run_tailscale_up() {
     tailscale_up_args args
 
     if [ -n "${auth_key}" ]; then
+        args+=(--reset)
         args+=(--auth-key="${auth_key}")
     fi
 

@@ -115,4 +115,11 @@ if ! grep -q -- '--auth-key=tskey-auth-test' "${tmpdir}/tailscale-up.log"; then
     exit 1
 fi
 
+if ! grep -q -- '--reset' "${tmpdir}/tailscale-up.log"; then
+    echo "FAIL: first tailscale up did not reset existing state when TS_AUTH_KEY was provided"
+    echo "Recorded invocations:"
+    cat "${tmpdir}/tailscale-up.log"
+    exit 1
+fi
+
 echo "PASS: tailscale entrypoint uses TS_AUTH_KEY before state-only login"
