@@ -22,7 +22,7 @@ A dev container feature that bundles essential terminal-based development tools:
 | lazygitVersion | lazygit version to install (e.g., '0.40.2', 'latest') | string | latest |
 | nvimVersion | neovim version to install (e.g., '0.9.5', 'latest') | string | latest |
 | installClaudeCode | Install Claude Code CLI (AI coding assistant) | boolean | true |
-| installCodex | Install OpenAI Codex CLI (requires npm) | boolean | true |
+| installCodex | Install OpenAI Codex CLI | boolean | true |
 | installGh | Install GitHub CLI (gh) | boolean | true |
 | installOpencode | Install opencode (AI coding assistant) | boolean | false |
 | installFdsx | Install fdsx (fast data serialization tool) | boolean | true |
