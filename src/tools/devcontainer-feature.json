@@ -1,7 +1,7 @@
 {
     "name": "tools",
     "id": "tools",
-    "version": "1.5.1",
+    "version": "1.5.2",
     "description": "A minimal dev container feature that bundles terminal-based development tools, C/C++ build tools, Tailscale access, and an optional OpenSSH server.",
     "entrypoint": "/usr/local/bin/tailscale-entrypoint.sh",
     "capAdd": [
@@ -77,6 +77,16 @@
         "installPi": {
             "type": "boolean",
             "description": "Install pi coding agent",
+            "default": true
+        },
+        "installJust": {
+            "type": "boolean",
+            "description": "Install just command runner",
+            "default": true
+        },
+        "installDirenv": {
+            "type": "boolean",
+            "description": "Install direnv environment switcher",
             "default": true
         },
         "installTailscale": {

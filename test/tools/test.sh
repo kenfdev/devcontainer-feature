@@ -14,6 +14,8 @@ source dev-container-features-test-lib
 check "lazygit is installed" lazygit --version
 check "nvim is installed" nvim --version
 check "gh is installed" gh --version
+check "just is installed" just --version
+check "direnv is installed" direnv version
 check "codex is installed" codex --version
 check "tailscale entrypoint is installed" test -x /usr/local/bin/tailscale-entrypoint.sh
 check "tailscale is not installed by default" sh -c '! command -v tailscale >/dev/null'
