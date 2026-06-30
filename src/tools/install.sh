@@ -16,7 +16,7 @@ INSTALL_GH="${INSTALLGH:-true}"
 INSTALL_FDSX="${INSTALLFDSX:-true}"
 INSTALL_RTK="${INSTALLRTK:-true}"
 INSTALL_PI="${INSTALLPI:-true}"
-INSTALL_TAILSCALE="${INSTALLTAILSCALE:-true}"
+INSTALL_TAILSCALE="${INSTALLTAILSCALE:-false}"
 INSTALL_SSHD="${INSTALLSSHD:-true}"
 INSTALL_BUILD_TOOLS="${INSTALLBUILDTOOLS:-true}"
 LAZYGIT_VERSION="${LAZYGITVERSION:-latest}"
@@ -534,21 +534,16 @@ install_codex() {
         return 0
     fi
 
-    if ! command -v npm &>/dev/null && ! ensure_node; then
-        echo "WARNING: npm is not installed, skipping Codex installation" >&2
-        return 0
-    fi
-
-    # Try installing as remote user if they have npm available
-    if [ "$REMOTE_USER" != "root" ] && su - "$REMOTE_USER" -c "command -v npm" &>/dev/null; then
-        if su - "$REMOTE_USER" -c "npm i -g @openai/codex"; then
+    if [ "$REMOTE_USER" != "root" ]; then
+        if su - "$REMOTE_USER" -c "curl -fsSL https://chatgpt.com/codex/install.sh | CODEX_NON_INTERACTIVE=1 sh"; then
+            link_user_bin "codex" "$REMOTE_USER_HOME"
             echo "Codex installed successfully for user $REMOTE_USER"
         else
             echo "WARNING: Failed to install Codex" >&2
         fi
-    elif command -v npm &>/dev/null; then
-        # Fallback: install as root (system-wide)
-        if npm i -g @openai/codex; then
+    else
+        if curl -fsSL https://chatgpt.com/codex/install.sh | CODEX_NON_INTERACTIVE=1 sh; then
+            link_user_bin "codex" "$REMOTE_USER_HOME"
             echo "Codex installed successfully"
         else
             echo "WARNING: Failed to install Codex" >&2
