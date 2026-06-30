@@ -14,6 +14,7 @@ source dev-container-features-test-lib
 check "lazygit is installed" lazygit --version
 check "nvim is installed" nvim --version
 check "gh is installed" gh --version
+check "op is installed" op --version
 check "just is installed" just --version
 check "direnv is installed" direnv version
 check "codex is installed" codex --version

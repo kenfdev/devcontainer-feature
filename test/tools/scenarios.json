@@ -15,7 +15,8 @@
                 "installDirenv": false,
                 "installTailscale": false,
                 "installSshd": false,
-                "installBuildTools": false
+                "installBuildTools": false,
+                "installOp": false
             }
         }
     },
@@ -34,7 +35,8 @@
                 "installDirenv": false,
                 "installTailscale": false,
                 "installSshd": false,
-                "installBuildTools": false
+                "installBuildTools": false,
+                "installOp": false
             }
         }
     },
@@ -53,7 +55,8 @@
                 "installDirenv": false,
                 "installTailscale": false,
                 "installSshd": false,
-                "installBuildTools": false
+                "installBuildTools": false,
+                "installOp": false
             }
         }
     },
@@ -72,7 +75,8 @@
                 "installDirenv": false,
                 "installTailscale": false,
                 "installSshd": false,
-                "installBuildTools": false
+                "installBuildTools": false,
+                "installOp": false
             }
         }
     },
@@ -91,7 +95,8 @@
                 "installDirenv": false,
                 "installTailscale": false,
                 "installSshd": false,
-                "installBuildTools": false
+                "installBuildTools": false,
+                "installOp": false
             }
         }
     },
@@ -110,7 +115,8 @@
                 "installDirenv": false,
                 "installTailscale": false,
                 "installSshd": false,
-                "installBuildTools": false
+                "installBuildTools": false,
+                "installOp": false
             }
         }
     },
@@ -129,7 +135,8 @@
                 "installDirenv": false,
                 "installTailscale": false,
                 "installSshd": false,
-                "installBuildTools": false
+                "installBuildTools": false,
+                "installOp": false
             }
         }
     },
@@ -148,7 +155,8 @@
                 "installDirenv": false,
                 "installTailscale": false,
                 "installSshd": false,
-                "installBuildTools": false
+                "installBuildTools": false,
+                "installOp": false
             }
         }
     },
@@ -167,7 +175,8 @@
                 "installDirenv": false,
                 "installTailscale": false,
                 "installSshd": false,
-                "installBuildTools": false
+                "installBuildTools": false,
+                "installOp": false
             }
         }
     },
@@ -186,7 +195,8 @@
                 "installDirenv": false,
                 "installTailscale": false,
                 "installSshd": false,
-                "installBuildTools": false
+                "installBuildTools": false,
+                "installOp": false
             }
         }
     },
@@ -205,7 +215,8 @@
                 "installJust": false,
                 "installDirenv": false,
                 "installSshd": false,
-                "installBuildTools": false
+                "installBuildTools": false,
+                "installOp": false
             }
         }
     },
@@ -224,7 +235,8 @@
                 "installJust": false,
                 "installDirenv": false,
                 "installTailscale": false,
-                "installBuildTools": false
+                "installBuildTools": false,
+                "installOp": false
             }
         }
     },
@@ -243,7 +255,8 @@
                 "installJust": false,
                 "installDirenv": false,
                 "installTailscale": false,
-                "installSshd": false
+                "installSshd": false,
+                "installOp": false
             }
         }
     },
@@ -262,7 +275,8 @@
                 "installDirenv": false,
                 "installTailscale": false,
                 "installSshd": false,
-                "installBuildTools": false
+                "installBuildTools": false,
+                "installOp": false
             }
         }
     },
@@ -279,6 +293,27 @@
                 "installRtk": false,
                 "installPi": false,
                 "installJust": false,
+                "installTailscale": false,
+                "installSshd": false,
+                "installBuildTools": false,
+                "installOp": false
+            }
+        }
+    },
+    "op-only": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "tools": {
+                "installLazygit": false,
+                "installNvim": false,
+                "installClaudeCode": false,
+                "installCodex": false,
+                "installGh": false,
+                "installFdsx": false,
+                "installRtk": false,
+                "installPi": false,
+                "installJust": false,
+                "installDirenv": false,
                 "installTailscale": false,
                 "installSshd": false,
                 "installBuildTools": false

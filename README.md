@@ -5,7 +5,7 @@ Custom [Dev Container Features](https://containers.dev/features) published to Gi
 ## Available Features
 
 - [`devenv`](./src/devenv) - terminal-focused development environment with tmux, lazygit, Neovim, GitHub CLI, and AI coding CLIs.
-- [`tools`](./src/tools) - minimal terminal-focused tool bundle with lazygit, Neovim, GitHub CLI, AI coding CLIs, C/C++ build tools, Tailscale access, and optional normal SSH access.
+- [`tools`](./src/tools) - minimal terminal-focused tool bundle with lazygit, Neovim, GitHub CLI, 1Password CLI, AI coding CLIs, C/C++ build tools, Tailscale access, and optional normal SSH access.
 - [`tig`](./src/tig) - installs [`tig`](https://jonas.github.io/tig/), the text-mode interface for Git.
 
 ## `devenv`
@@ -68,7 +68,7 @@ Disable individual tools or pin supported tool versions as needed:
 
 ## `tools`
 
-A minimal dev container feature that bundles terminal-based development tools: lazygit, neovim (with ripgrep, fd, fzf), gh, Claude Code, Codex, fdsx, rtk, pi, C/C++ build tools, Tailscale access, and an optional OpenSSH server for normal SSH clients.
+A minimal dev container feature that bundles terminal-based development tools: lazygit, neovim (with ripgrep, fd, fzf), gh, 1Password CLI (`op`), Claude Code, Codex, fdsx, rtk, pi, C/C++ build tools, Tailscale access, and an optional OpenSSH server for normal SSH clients.
 
 ### Example Usage
 
@@ -100,6 +100,7 @@ Disable individual tools or pin supported tool versions as needed:
       "installClaudeCode": true,
       "installCodex": true,
       "installGh": true,
+      "installOp": true,
       "installFdsx": true,
       "installRtk": true,
       "installPi": true,
@@ -122,6 +123,7 @@ Disable individual tools or pin supported tool versions as needed:
 | `installClaudeCode` | Install Claude Code CLI (AI coding assistant) | boolean | `true` |
 | `installCodex` | Install OpenAI Codex CLI | boolean | `true` |
 | `installGh` | Install GitHub CLI (gh) | boolean | `true` |
+| `installOp` | Install 1Password CLI (op) | boolean | `true` |
 | `installFdsx` | Install fdsx | boolean | `true` |
 | `installRtk` | Install rtk (Rust Token Killer - token-optimized CLI proxy) | boolean | `true` |
 | `installPi` | Install pi coding agent | boolean | `true` |

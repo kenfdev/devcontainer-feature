@@ -2,7 +2,7 @@
 set -e
 
 # tools feature install script
-# Installs lazygit, neovim (with supporting tools: ripgrep, fd, fzf), gh,
+# Installs lazygit, neovim (with supporting tools: ripgrep, fd, fzf), gh, op,
 # Claude Code, Codex, fdsx, rtk, pi, just, direnv, build tools,
 # optional Tailscale access, and OpenSSH
 
@@ -14,6 +14,7 @@ INSTALL_NVIM="${INSTALLNVIM:-true}"
 INSTALL_CLAUDE_CODE="${INSTALLCLAUDECODE:-true}"
 INSTALL_CODEX="${INSTALLCODEX:-true}"
 INSTALL_GH="${INSTALLGH:-true}"
+INSTALL_OP="${INSTALLOP:-true}"
 INSTALL_FDSX="${INSTALLFDSX:-true}"
 INSTALL_RTK="${INSTALLRTK:-true}"
 INSTALL_PI="${INSTALLPI:-true}"
@@ -608,6 +609,53 @@ install_gh() {
     return 0
 }
 
+# Install 1Password CLI from the official apt repository
+install_op() {
+    if [ "$INSTALL_OP" != "true" ]; then
+        echo "Skipping 1Password CLI installation (disabled)"
+        return 0
+    fi
+
+    echo "Installing 1Password CLI..."
+
+    if command -v op &>/dev/null; then
+        echo "1Password CLI is already installed, skipping"
+        return 0
+    fi
+
+    if ! is_debian_or_ubuntu; then
+        echo "ERROR: installOp requires a Debian/Ubuntu based image. Set installOp=false to skip it." >&2
+        return 1
+    fi
+
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update
+    apt-get install -y --no-install-recommends ca-certificates curl gnupg
+
+    local dpkg_arch
+    dpkg_arch="$(dpkg --print-architecture)"
+
+    curl -fsSL https://downloads.1password.com/linux/keys/1password.asc \
+        | gpg --dearmor --yes --output /usr/share/keyrings/1password-archive-keyring.gpg
+
+    echo "deb [arch=${dpkg_arch} signed-by=/usr/share/keyrings/1password-archive-keyring.gpg] https://downloads.1password.com/linux/debian/${dpkg_arch} stable main" \
+        > /etc/apt/sources.list.d/1password.list
+
+    mkdir -p /etc/debsig/policies/AC2D62742012EA22 /usr/share/debsig/keyrings/AC2D62742012EA22
+    curl -fsSL https://downloads.1password.com/linux/debian/debsig/1password.pol \
+        -o /etc/debsig/policies/AC2D62742012EA22/1password.pol
+    curl -fsSL https://downloads.1password.com/linux/keys/1password.asc \
+        | gpg --dearmor --yes --output /usr/share/debsig/keyrings/AC2D62742012EA22/debsig.gpg
+
+    apt-get update
+    apt-get install -y --no-install-recommends 1password-cli
+    apt-get clean
+    rm -rf /var/lib/apt/lists/*
+
+    echo "1Password CLI installed successfully"
+    return 0
+}
+
 # Install fdsx via uv tool
 install_fdsx() {
     if [ "$INSTALL_FDSX" != "true" ]; then
@@ -883,6 +931,7 @@ main() {
     echo "  INSTALL_CLAUDE_CODE=$INSTALL_CLAUDE_CODE"
     echo "  INSTALL_CODEX=$INSTALL_CODEX"
     echo "  INSTALL_GH=$INSTALL_GH"
+    echo "  INSTALL_OP=$INSTALL_OP"
     echo "  INSTALL_FDSX=$INSTALL_FDSX"
     echo "  INSTALL_RTK=$INSTALL_RTK"
     echo "  INSTALL_PI=$INSTALL_PI"
@@ -910,6 +959,7 @@ main() {
     install_claude_code
     install_codex
     install_gh
+    install_op
     install_fdsx
     install_rtk
     install_pi
