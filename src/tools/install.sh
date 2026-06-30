@@ -3,7 +3,8 @@ set -e
 
 # tools feature install script
 # Installs lazygit, neovim (with supporting tools: ripgrep, fd, fzf), gh,
-# Claude Code, Codex, fdsx, rtk, pi, build tools, optional Tailscale access, and OpenSSH
+# Claude Code, Codex, fdsx, rtk, pi, just, direnv, build tools,
+# optional Tailscale access, and OpenSSH
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
@@ -16,7 +17,9 @@ INSTALL_GH="${INSTALLGH:-true}"
 INSTALL_FDSX="${INSTALLFDSX:-true}"
 INSTALL_RTK="${INSTALLRTK:-true}"
 INSTALL_PI="${INSTALLPI:-true}"
-INSTALL_TAILSCALE="${INSTALLTAILSCALE:-true}"
+INSTALL_JUST="${INSTALLJUST:-true}"
+INSTALL_DIRENV="${INSTALLDIRENV:-true}"
+INSTALL_TAILSCALE="${INSTALLTAILSCALE:-false}"
 INSTALL_SSHD="${INSTALLSSHD:-true}"
 INSTALL_BUILD_TOOLS="${INSTALLBUILDTOOLS:-true}"
 LAZYGIT_VERSION="${LAZYGITVERSION:-latest}"
@@ -534,21 +537,16 @@ install_codex() {
         return 0
     fi
 
-    if ! command -v npm &>/dev/null && ! ensure_node; then
-        echo "WARNING: npm is not installed, skipping Codex installation" >&2
-        return 0
-    fi
-
-    # Try installing as remote user if they have npm available
-    if [ "$REMOTE_USER" != "root" ] && su - "$REMOTE_USER" -c "command -v npm" &>/dev/null; then
-        if su - "$REMOTE_USER" -c "npm i -g @openai/codex"; then
+    if [ "$REMOTE_USER" != "root" ]; then
+        if su - "$REMOTE_USER" -c "curl -fsSL https://chatgpt.com/codex/install.sh | CODEX_NON_INTERACTIVE=1 sh"; then
+            link_user_bin "codex" "$REMOTE_USER_HOME"
             echo "Codex installed successfully for user $REMOTE_USER"
         else
             echo "WARNING: Failed to install Codex" >&2
         fi
-    elif command -v npm &>/dev/null; then
-        # Fallback: install as root (system-wide)
-        if npm i -g @openai/codex; then
+    else
+        if curl -fsSL https://chatgpt.com/codex/install.sh | CODEX_NON_INTERACTIVE=1 sh; then
+            link_user_bin "codex" "$REMOTE_USER_HOME"
             echo "Codex installed successfully"
         else
             echo "WARNING: Failed to install Codex" >&2
@@ -761,6 +759,80 @@ install_pi() {
     return 0
 }
 
+# Install just from GitHub Releases
+install_just() {
+    if [ "$INSTALL_JUST" != "true" ]; then
+        echo "Skipping just installation (disabled)"
+        return 0
+    fi
+
+    echo "Installing just..."
+
+    if command -v just &>/dev/null; then
+        echo "just is already installed, skipping"
+        return 0
+    fi
+
+    local version
+    version=$(get_latest_version "casey/just")
+
+    if [ -z "$version" ]; then
+        echo "WARNING: Could not determine just version, skipping" >&2
+        return 0
+    fi
+
+    local version_num="${version#v}"
+    echo "just version: $version_num"
+
+    local just_arch
+    if [ "$ARCH" = "amd64" ]; then
+        just_arch="x86_64-unknown-linux-musl"
+    elif [ "$ARCH" = "arm64" ]; then
+        just_arch="aarch64-unknown-linux-musl"
+    else
+        echo "WARNING: Unsupported architecture for just: $ARCH" >&2
+        return 0
+    fi
+
+    local url="https://github.com/casey/just/releases/download/${version_num}/just-${version_num}-${just_arch}.tar.gz"
+    local tmpdir
+    tmpdir=$(mktemp -d)
+
+    if download_file "$url" "$tmpdir/just.tar.gz"; then
+        tar -xzf "$tmpdir/just.tar.gz" -C "$tmpdir"
+        install -m 755 "$tmpdir/just" "$INSTALL_DIR/just"
+        echo "just installed successfully"
+    else
+        echo "WARNING: Failed to install just" >&2
+    fi
+
+    rm -rf "$tmpdir"
+    return 0
+}
+
+# Install direnv with the upstream installer
+install_direnv() {
+    if [ "$INSTALL_DIRENV" != "true" ]; then
+        echo "Skipping direnv installation (disabled)"
+        return 0
+    fi
+
+    echo "Installing direnv..."
+
+    if command -v direnv &>/dev/null; then
+        echo "direnv is already installed, skipping"
+        return 0
+    fi
+
+    if curl -sfL https://direnv.net/install.sh | bin_path="$INSTALL_DIR" bash; then
+        echo "direnv installed successfully"
+    else
+        echo "WARNING: Failed to install direnv" >&2
+    fi
+
+    return 0
+}
+
 # Install rtk (Rust Token Killer)
 install_rtk() {
     if [ "$INSTALL_RTK" != "true" ]; then
@@ -814,6 +886,8 @@ main() {
     echo "  INSTALL_FDSX=$INSTALL_FDSX"
     echo "  INSTALL_RTK=$INSTALL_RTK"
     echo "  INSTALL_PI=$INSTALL_PI"
+    echo "  INSTALL_JUST=$INSTALL_JUST"
+    echo "  INSTALL_DIRENV=$INSTALL_DIRENV"
     echo "  INSTALL_TAILSCALE=$INSTALL_TAILSCALE"
     echo "  INSTALL_SSHD=$INSTALL_SSHD"
     echo "  INSTALL_BUILD_TOOLS=$INSTALL_BUILD_TOOLS"
@@ -839,6 +913,8 @@ main() {
     install_fdsx
     install_rtk
     install_pi
+    install_just
+    install_direnv
 
     echo "tools feature installation complete"
 }

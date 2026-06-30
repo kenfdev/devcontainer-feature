@@ -11,6 +11,8 @@
                 "installFdsx": false,
                 "installRtk": false,
                 "installPi": false,
+                "installJust": false,
+                "installDirenv": false,
                 "installTailscale": false,
                 "installSshd": false,
                 "installBuildTools": false
@@ -28,6 +30,8 @@
                 "installFdsx": false,
                 "installRtk": false,
                 "installPi": false,
+                "installJust": false,
+                "installDirenv": false,
                 "installTailscale": false,
                 "installSshd": false,
                 "installBuildTools": false
@@ -45,6 +49,8 @@
                 "installFdsx": false,
                 "installRtk": false,
                 "installPi": false,
+                "installJust": false,
+                "installDirenv": false,
                 "installTailscale": false,
                 "installSshd": false,
                 "installBuildTools": false
@@ -62,6 +68,8 @@
                 "installFdsx": false,
                 "installRtk": false,
                 "installPi": false,
+                "installJust": false,
+                "installDirenv": false,
                 "installTailscale": false,
                 "installSshd": false,
                 "installBuildTools": false
@@ -79,6 +87,8 @@
                 "installFdsx": false,
                 "installRtk": false,
                 "installPi": false,
+                "installJust": false,
+                "installDirenv": false,
                 "installTailscale": false,
                 "installSshd": false,
                 "installBuildTools": false
@@ -96,6 +106,8 @@
                 "installFdsx": false,
                 "installRtk": false,
                 "installPi": false,
+                "installJust": false,
+                "installDirenv": false,
                 "installTailscale": false,
                 "installSshd": false,
                 "installBuildTools": false
@@ -113,6 +125,8 @@
                 "installFdsx": false,
                 "installRtk": false,
                 "installPi": false,
+                "installJust": false,
+                "installDirenv": false,
                 "installTailscale": false,
                 "installSshd": false,
                 "installBuildTools": false
@@ -130,6 +144,8 @@
                 "installGh": false,
                 "installRtk": false,
                 "installPi": false,
+                "installJust": false,
+                "installDirenv": false,
                 "installTailscale": false,
                 "installSshd": false,
                 "installBuildTools": false
@@ -147,6 +163,8 @@
                 "installGh": false,
                 "installFdsx": false,
                 "installPi": false,
+                "installJust": false,
+                "installDirenv": false,
                 "installTailscale": false,
                 "installSshd": false,
                 "installBuildTools": false
@@ -164,6 +182,8 @@
                 "installGh": false,
                 "installFdsx": false,
                 "installRtk": false,
+                "installJust": false,
+                "installDirenv": false,
                 "installTailscale": false,
                 "installSshd": false,
                 "installBuildTools": false
@@ -182,6 +202,8 @@
                 "installFdsx": false,
                 "installRtk": false,
                 "installPi": false,
+                "installJust": false,
+                "installDirenv": false,
                 "installSshd": false,
                 "installBuildTools": false
             }
@@ -199,6 +221,8 @@
                 "installFdsx": false,
                 "installRtk": false,
                 "installPi": false,
+                "installJust": false,
+                "installDirenv": false,
                 "installTailscale": false,
                 "installBuildTools": false
             }
@@ -216,8 +240,48 @@
                 "installFdsx": false,
                 "installRtk": false,
                 "installPi": false,
+                "installJust": false,
+                "installDirenv": false,
                 "installTailscale": false,
                 "installSshd": false
+            }
+        }
+    },
+    "just-only": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "tools": {
+                "installLazygit": false,
+                "installNvim": false,
+                "installClaudeCode": false,
+                "installCodex": false,
+                "installGh": false,
+                "installFdsx": false,
+                "installRtk": false,
+                "installPi": false,
+                "installDirenv": false,
+                "installTailscale": false,
+                "installSshd": false,
+                "installBuildTools": false
+            }
+        }
+    },
+    "direnv-only": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "tools": {
+                "installLazygit": false,
+                "installNvim": false,
+                "installClaudeCode": false,
+                "installCodex": false,
+                "installGh": false,
+                "installFdsx": false,
+                "installRtk": false,
+                "installPi": false,
+                "installJust": false,
+                "installTailscale": false,
+                "installSshd": false,
+                "installBuildTools": false
             }
         }
     }

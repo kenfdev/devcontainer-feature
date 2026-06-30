@@ -93,6 +93,20 @@ download_file() {
     return 0
 }
 
+link_user_bin() {
+    local command_name="$1"
+    local user_home="${2:-$REMOTE_USER_HOME}"
+    local source_path="${user_home}/.local/bin/${command_name}"
+
+    if command -v "$command_name" &>/dev/null; then
+        return 0
+    fi
+
+    if [ -x "$source_path" ]; then
+        ln -sf "$source_path" "$INSTALL_DIR/$command_name"
+    fi
+}
+
 # Install build dependencies (curl, tar, gzip are typically needed)
 install_dependencies() {
     echo "Installing build dependencies..."
@@ -463,22 +477,20 @@ install_codex() {
         return 0
     fi
 
-    # Try installing as remote user if they have npm available
-    if [ "$REMOTE_USER" != "root" ] && su - "$REMOTE_USER" -c "command -v npm" &>/dev/null; then
-        if su - "$REMOTE_USER" -c "npm i -g @openai/codex"; then
+    if [ "$REMOTE_USER" != "root" ]; then
+        if su - "$REMOTE_USER" -c "curl -fsSL https://chatgpt.com/codex/install.sh | CODEX_NON_INTERACTIVE=1 sh"; then
+            link_user_bin "codex" "$REMOTE_USER_HOME"
             echo "Codex installed successfully for user $REMOTE_USER"
         else
             echo "WARNING: Failed to install Codex" >&2
         fi
-    elif command -v npm &>/dev/null; then
-        # Fallback: install as root (system-wide)
-        if npm i -g @openai/codex; then
+    else
+        if curl -fsSL https://chatgpt.com/codex/install.sh | CODEX_NON_INTERACTIVE=1 sh; then
+            link_user_bin "codex" "$REMOTE_USER_HOME"
             echo "Codex installed successfully"
         else
             echo "WARNING: Failed to install Codex" >&2
         fi
-    else
-        echo "WARNING: npm is not installed, skipping Codex installation" >&2
     fi
 
     return 0

@@ -59,7 +59,7 @@ Disable individual tools or pin supported tool versions as needed:
 | `lazygitVersion` | lazygit version to install (e.g., `0.40.2`, `latest`) | string | `latest` |
 | `nvimVersion` | neovim version to install (e.g., `0.9.5`, `latest`) | string | `latest` |
 | `installClaudeCode` | Install Claude Code CLI (AI coding assistant) | boolean | `true` |
-| `installCodex` | Install OpenAI Codex CLI (requires npm) | boolean | `true` |
+| `installCodex` | Install OpenAI Codex CLI | boolean | `true` |
 | `installGh` | Install GitHub CLI (gh) | boolean | `true` |
 | `installOpencode` | Install opencode (AI coding assistant) | boolean | `false` |
 | `installFdsx` | Install fdsx | boolean | `true` |
@@ -103,7 +103,7 @@ Disable individual tools or pin supported tool versions as needed:
       "installFdsx": true,
       "installRtk": true,
       "installPi": true,
-      "installTailscale": true,
+      "installTailscale": false,
       "installSshd": true,
       "installBuildTools": true
     }
@@ -120,12 +120,12 @@ Disable individual tools or pin supported tool versions as needed:
 | `lazygitVersion` | lazygit version to install (e.g., `0.40.2`, `latest`) | string | `latest` |
 | `nvimVersion` | neovim version to install (e.g., `0.9.5`, `latest`) | string | `latest` |
 | `installClaudeCode` | Install Claude Code CLI (AI coding assistant) | boolean | `true` |
-| `installCodex` | Install OpenAI Codex CLI (requires npm) | boolean | `true` |
+| `installCodex` | Install OpenAI Codex CLI | boolean | `true` |
 | `installGh` | Install GitHub CLI (gh) | boolean | `true` |
 | `installFdsx` | Install fdsx | boolean | `true` |
 | `installRtk` | Install rtk (Rust Token Killer - token-optimized CLI proxy) | boolean | `true` |
 | `installPi` | Install pi coding agent | boolean | `true` |
-| `installTailscale` | Install Tailscale and configure the tools entrypoint for Tailscale SSH | boolean | `true` |
+| `installTailscale` | Install Tailscale and configure the tools entrypoint for Tailscale SSH | boolean | `false` |
 | `installSshd` | Install and start OpenSSH server for normal SSH access | boolean | `true` |
 | `installBuildTools` | Install python3, make, and a C++ compiler when missing | boolean | `true` |
 

@@ -1,7 +1,7 @@
 {
     "name": "tools",
     "id": "tools",
-    "version": "1.5.0",
+    "version": "1.5.2",
     "description": "A minimal dev container feature that bundles terminal-based development tools, C/C++ build tools, Tailscale access, and an optional OpenSSH server.",
     "entrypoint": "/usr/local/bin/tailscale-entrypoint.sh",
     "capAdd": [
@@ -56,7 +56,7 @@
         },
         "installCodex": {
             "type": "boolean",
-            "description": "Install OpenAI Codex CLI (requires npm)",
+            "description": "Install OpenAI Codex CLI",
             "default": true
         },
         "installGh": {
@@ -79,10 +79,20 @@
             "description": "Install pi coding agent",
             "default": true
         },
+        "installJust": {
+            "type": "boolean",
+            "description": "Install just command runner",
+            "default": true
+        },
+        "installDirenv": {
+            "type": "boolean",
+            "description": "Install direnv environment switcher",
+            "default": true
+        },
         "installTailscale": {
             "type": "boolean",
             "description": "Install Tailscale and configure the tools entrypoint for Tailscale SSH",
-            "default": true
+            "default": false
         },
         "installSshd": {
             "type": "boolean",
