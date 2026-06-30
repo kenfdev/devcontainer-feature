@@ -1,8 +1,8 @@
 {
     "name": "tools",
     "id": "tools",
-    "version": "1.5.2",
-    "description": "A minimal dev container feature that bundles terminal-based development tools, C/C++ build tools, Tailscale access, and an optional OpenSSH server.",
+    "version": "1.5.3",
+    "description": "A minimal dev container feature that bundles terminal-based development tools, 1Password CLI, C/C++ build tools, Tailscale access, and an optional OpenSSH server.",
     "entrypoint": "/usr/local/bin/tailscale-entrypoint.sh",
     "capAdd": [
         "NET_ADMIN",
@@ -62,6 +62,11 @@
         "installGh": {
             "type": "boolean",
             "description": "Install GitHub CLI (gh)",
+            "default": true
+        },
+        "installOp": {
+            "type": "boolean",
+            "description": "Install 1Password CLI (op)",
             "default": true
         },
         "installFdsx": {
