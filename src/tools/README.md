@@ -1,7 +1,7 @@
 
 # tools (tools)
 
-A minimal dev container feature that bundles terminal-based development tools, C/C++ build tools, Tailscale access, and an optional OpenSSH server.
+A minimal dev container feature that bundles terminal-based development tools, 1Password CLI, C/C++ build tools, Tailscale access, and an optional OpenSSH server.
 
 ## Example Usage
 
@@ -22,6 +22,7 @@ A minimal dev container feature that bundles terminal-based development tools, C
 | installClaudeCode | Install Claude Code CLI (AI coding assistant) | boolean | true |
 | installCodex | Install OpenAI Codex CLI | boolean | true |
 | installGh | Install GitHub CLI (gh) | boolean | true |
+| installOp | Install 1Password CLI (op) | boolean | true |
 | installFdsx | Install fdsx (fast data serialization tool) | boolean | true |
 | installRtk | Install rtk (Rust Token Killer - token-optimized CLI proxy) | boolean | true |
 | installPi | Install pi coding agent | boolean | true |
