@@ -1,33 +1,8 @@
 {
     "name": "tools",
     "id": "tools",
-    "version": "1.5.3",
-    "description": "A minimal dev container feature that bundles terminal-based development tools, 1Password CLI, C/C++ build tools, Tailscale access, and an optional OpenSSH server.",
-    "entrypoint": "/usr/local/bin/tailscale-entrypoint.sh",
-    "capAdd": [
-        "NET_ADMIN",
-        "NET_RAW",
-        "MKNOD"
-    ],
-    "mounts": [
-        {
-            "source": "tools-tailscale-state",
-            "target": "/var/lib/tailscale",
-            "type": "volume"
-        },
-        {
-            "source": "tools-ssh-host-keys",
-            "target": "/var/lib/ssh-host-keys",
-            "type": "volume"
-        }
-    ],
-    "containerEnv": {
-        "TS_STATE_DIR": "/var/lib/tailscale",
-        "TS_ENABLE_SSH": "true",
-        "TS_TAG": "tag:dev-container",
-        "SSHD_ENABLE": "true",
-        "SSHD_USER": "root"
-    },
+    "version": "1.6.0",
+    "description": "A minimal dev container feature that bundles terminal-based development tools and 1Password CLI.",
     "options": {
         "installLazygit": {
             "type": "boolean",
@@ -82,31 +57,6 @@
         "installPi": {
             "type": "boolean",
             "description": "Install pi coding agent",
-            "default": true
-        },
-        "installJust": {
-            "type": "boolean",
-            "description": "Install just command runner",
-            "default": true
-        },
-        "installDirenv": {
-            "type": "boolean",
-            "description": "Install direnv environment switcher",
-            "default": true
-        },
-        "installTailscale": {
-            "type": "boolean",
-            "description": "Install Tailscale and configure the tools entrypoint for Tailscale SSH",
-            "default": false
-        },
-        "installSshd": {
-            "type": "boolean",
-            "description": "Install and start OpenSSH server for normal SSH access",
-            "default": true
-        },
-        "installBuildTools": {
-            "type": "boolean",
-            "description": "Install python3, make, and a C++ compiler when missing",
             "default": true
         }
     }

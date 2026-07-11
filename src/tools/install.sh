@@ -3,10 +3,7 @@ set -e
 
 # tools feature install script
 # Installs lazygit, neovim (with supporting tools: ripgrep, fd, fzf), gh, op,
-# Claude Code, Codex, fdsx, rtk, pi, just, direnv, build tools,
-# optional Tailscale access, and OpenSSH
-
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Claude Code, Codex, fdsx, rtk, and pi
 
 # Options (passed as environment variables)
 INSTALL_LAZYGIT="${INSTALLLAZYGIT:-true}"
@@ -18,11 +15,6 @@ INSTALL_OP="${INSTALLOP:-true}"
 INSTALL_FDSX="${INSTALLFDSX:-true}"
 INSTALL_RTK="${INSTALLRTK:-true}"
 INSTALL_PI="${INSTALLPI:-true}"
-INSTALL_JUST="${INSTALLJUST:-true}"
-INSTALL_DIRENV="${INSTALLDIRENV:-true}"
-INSTALL_TAILSCALE="${INSTALLTAILSCALE:-false}"
-INSTALL_SSHD="${INSTALLSSHD:-true}"
-INSTALL_BUILD_TOOLS="${INSTALLBUILDTOOLS:-true}"
 LAZYGIT_VERSION="${LAZYGITVERSION:-latest}"
 NVIM_VERSION="${NVIMVERSION:-latest}"
 
@@ -126,40 +118,6 @@ install_dependencies() {
     fi
 }
 
-has_build_tools() {
-    command -v python3 &>/dev/null \
-        && command -v make &>/dev/null \
-        && { command -v g++ &>/dev/null || command -v clang++ &>/dev/null; }
-}
-
-install_build_tools() {
-    if [ "$INSTALL_BUILD_TOOLS" != "true" ]; then
-        echo "Skipping C/C++ build tools installation (disabled)"
-        return 0
-    fi
-
-    if has_build_tools; then
-        echo "C/C++ build tools are already installed, skipping"
-        return 0
-    fi
-
-    echo "Installing C/C++ build tools..."
-    if command -v apt-get &>/dev/null; then
-        export DEBIAN_FRONTEND=noninteractive
-        apt-get update
-        apt-get install -y --no-install-recommends build-essential python3
-        apt-get clean
-        rm -rf /var/lib/apt/lists/*
-    elif command -v apk &>/dev/null; then
-        apk add --no-cache build-base python3
-    elif command -v dnf &>/dev/null; then
-        dnf install -y make gcc-c++ python3
-    else
-        echo "WARNING: Could not find a supported package manager for C/C++ build tools" >&2
-        return 0
-    fi
-}
-
 is_debian_or_ubuntu() {
     if [ ! -r /etc/os-release ]; then
         return 1
@@ -175,83 +133,6 @@ is_debian_or_ubuntu() {
     esac
 
     return 1
-}
-
-install_tailscale() {
-    if [ "$INSTALL_TAILSCALE" != "true" ]; then
-        if [ -f "${SCRIPT_DIR}/tailscale-entrypoint.sh" ]; then
-            install -m 755 "${SCRIPT_DIR}/tailscale-entrypoint.sh" /usr/local/bin/tailscale-entrypoint.sh
-        fi
-        echo "Skipping Tailscale installation (disabled)"
-        return 0
-    fi
-
-    if [ ! -f "${SCRIPT_DIR}/tailscale-entrypoint.sh" ]; then
-        echo "ERROR: tailscale-entrypoint.sh must be in the same directory as install.sh when installTailscale is enabled." >&2
-        return 1
-    fi
-
-    install -m 755 "${SCRIPT_DIR}/tailscale-entrypoint.sh" /usr/local/bin/tailscale-entrypoint.sh
-
-    if ! is_debian_or_ubuntu; then
-        echo "ERROR: installTailscale requires a Debian/Ubuntu based image. Set installTailscale=false to skip it." >&2
-        return 1
-    fi
-
-    echo "Installing Tailscale..."
-    export DEBIAN_FRONTEND=noninteractive
-    apt-get update
-    apt-get install -y --no-install-recommends \
-        bash \
-        ca-certificates \
-        curl \
-        iproute2 \
-        iptables \
-        procps
-
-    curl -fsSL https://tailscale.com/install.sh | sh
-
-    apt-get clean
-    rm -rf /var/lib/apt/lists/*
-}
-
-install_sshd() {
-    if [ "$INSTALL_SSHD" != "true" ]; then
-        echo "Skipping OpenSSH server installation (disabled)"
-        return 0
-    fi
-
-    echo "Installing OpenSSH server..."
-    if command -v apt-get &>/dev/null; then
-        export DEBIAN_FRONTEND=noninteractive
-        apt-get update
-        apt-get install -y --no-install-recommends openssh-server
-        apt-get clean
-        rm -rf /var/lib/apt/lists/*
-    elif command -v apk &>/dev/null; then
-        apk add --no-cache openssh-server
-    elif command -v dnf &>/dev/null; then
-        dnf install -y openssh-server
-    else
-        echo "WARNING: Could not find a supported package manager for OpenSSH server" >&2
-        return 0
-    fi
-
-    mkdir -p /run/sshd /var/lib/ssh-host-keys
-    chmod 755 /run/sshd
-
-    if [ -f /etc/ssh/sshd_config ]; then
-        sed -i \
-            -e 's/^[#[:space:]]*PermitRootLogin.*/PermitRootLogin prohibit-password/' \
-            -e 's/^[#[:space:]]*PasswordAuthentication.*/PasswordAuthentication no/' \
-            -e 's/^[#[:space:]]*PubkeyAuthentication.*/PubkeyAuthentication yes/' \
-            -e 's/^[#[:space:]]*KbdInteractiveAuthentication.*/KbdInteractiveAuthentication no/' \
-            /etc/ssh/sshd_config
-    fi
-
-    # Runtime entrypoint creates stable per-volume host keys instead of baking
-    # build-time keys into the image.
-    rm -f /etc/ssh/ssh_host_*_key /etc/ssh/ssh_host_*_key.pub
 }
 
 # Install lazygit from GitHub Releases
@@ -807,80 +688,6 @@ install_pi() {
     return 0
 }
 
-# Install just from GitHub Releases
-install_just() {
-    if [ "$INSTALL_JUST" != "true" ]; then
-        echo "Skipping just installation (disabled)"
-        return 0
-    fi
-
-    echo "Installing just..."
-
-    if command -v just &>/dev/null; then
-        echo "just is already installed, skipping"
-        return 0
-    fi
-
-    local version
-    version=$(get_latest_version "casey/just")
-
-    if [ -z "$version" ]; then
-        echo "WARNING: Could not determine just version, skipping" >&2
-        return 0
-    fi
-
-    local version_num="${version#v}"
-    echo "just version: $version_num"
-
-    local just_arch
-    if [ "$ARCH" = "amd64" ]; then
-        just_arch="x86_64-unknown-linux-musl"
-    elif [ "$ARCH" = "arm64" ]; then
-        just_arch="aarch64-unknown-linux-musl"
-    else
-        echo "WARNING: Unsupported architecture for just: $ARCH" >&2
-        return 0
-    fi
-
-    local url="https://github.com/casey/just/releases/download/${version_num}/just-${version_num}-${just_arch}.tar.gz"
-    local tmpdir
-    tmpdir=$(mktemp -d)
-
-    if download_file "$url" "$tmpdir/just.tar.gz"; then
-        tar -xzf "$tmpdir/just.tar.gz" -C "$tmpdir"
-        install -m 755 "$tmpdir/just" "$INSTALL_DIR/just"
-        echo "just installed successfully"
-    else
-        echo "WARNING: Failed to install just" >&2
-    fi
-
-    rm -rf "$tmpdir"
-    return 0
-}
-
-# Install direnv with the upstream installer
-install_direnv() {
-    if [ "$INSTALL_DIRENV" != "true" ]; then
-        echo "Skipping direnv installation (disabled)"
-        return 0
-    fi
-
-    echo "Installing direnv..."
-
-    if command -v direnv &>/dev/null; then
-        echo "direnv is already installed, skipping"
-        return 0
-    fi
-
-    if curl -sfL https://direnv.net/install.sh | bin_path="$INSTALL_DIR" bash; then
-        echo "direnv installed successfully"
-    else
-        echo "WARNING: Failed to install direnv" >&2
-    fi
-
-    return 0
-}
-
 # Install rtk (Rust Token Killer)
 install_rtk() {
     if [ "$INSTALL_RTK" != "true" ]; then
@@ -935,11 +742,6 @@ main() {
     echo "  INSTALL_FDSX=$INSTALL_FDSX"
     echo "  INSTALL_RTK=$INSTALL_RTK"
     echo "  INSTALL_PI=$INSTALL_PI"
-    echo "  INSTALL_JUST=$INSTALL_JUST"
-    echo "  INSTALL_DIRENV=$INSTALL_DIRENV"
-    echo "  INSTALL_TAILSCALE=$INSTALL_TAILSCALE"
-    echo "  INSTALL_SSHD=$INSTALL_SSHD"
-    echo "  INSTALL_BUILD_TOOLS=$INSTALL_BUILD_TOOLS"
     echo "  LAZYGIT_VERSION=$LAZYGIT_VERSION"
     echo "  NVIM_VERSION=$NVIM_VERSION"
 
@@ -951,9 +753,6 @@ main() {
     mkdir -p /etc/profile.d
 
     install_dependencies
-    install_build_tools
-    install_tailscale
-    install_sshd
     install_lazygit
     install_nvim
     install_claude_code
@@ -963,8 +762,6 @@ main() {
     install_fdsx
     install_rtk
     install_pi
-    install_just
-    install_direnv
 
     echo "tools feature installation complete"
 }

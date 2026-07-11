@@ -5,7 +5,7 @@ Custom [Dev Container Features](https://containers.dev/features) published to Gi
 ## Available Features
 
 - [`devenv`](./src/devenv) - terminal-focused development environment with tmux, lazygit, Neovim, GitHub CLI, and AI coding CLIs.
-- [`tools`](./src/tools) - minimal terminal-focused tool bundle with lazygit, Neovim, GitHub CLI, 1Password CLI, AI coding CLIs, C/C++ build tools, Tailscale access, and optional normal SSH access.
+- [`tools`](./src/tools) - minimal terminal-focused tool bundle with lazygit, Neovim, GitHub CLI, 1Password CLI, and AI coding CLIs.
 - [`tig`](./src/tig) - installs [`tig`](https://jonas.github.io/tig/), the text-mode interface for Git.
 
 ## `devenv`
@@ -68,7 +68,7 @@ Disable individual tools or pin supported tool versions as needed:
 
 ## `tools`
 
-A minimal dev container feature that bundles terminal-based development tools: lazygit, neovim (with ripgrep, fd, fzf), gh, 1Password CLI (`op`), Claude Code, Codex, fdsx, rtk, pi, C/C++ build tools, Tailscale access, and an optional OpenSSH server for normal SSH clients.
+A minimal dev container feature that bundles terminal-based development tools: lazygit, neovim (with ripgrep, fd, fzf), gh, 1Password CLI (`op`), Claude Code, Codex, fdsx, rtk, and pi.
 
 ### Example Usage
 
@@ -77,11 +77,6 @@ A minimal dev container feature that bundles terminal-based development tools: l
   "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
   "features": {
     "ghcr.io/kenfdev/devcontainer-feature/tools:1": {}
-  },
-  "containerEnv": {
-    "TS_AUTH_KEY": "${localEnv:TS_AUTH_KEY}",
-    "TS_HOSTNAME": "dev-myrepo",
-    "TS_TAG": "tag:dev-container"
   }
 }
 ```
@@ -103,10 +98,7 @@ Disable individual tools or pin supported tool versions as needed:
       "installOp": true,
       "installFdsx": true,
       "installRtk": true,
-      "installPi": true,
-      "installTailscale": false,
-      "installSshd": true,
-      "installBuildTools": true
+      "installPi": true
     }
   }
 }
@@ -127,11 +119,6 @@ Disable individual tools or pin supported tool versions as needed:
 | `installFdsx` | Install fdsx | boolean | `true` |
 | `installRtk` | Install rtk (Rust Token Killer - token-optimized CLI proxy) | boolean | `true` |
 | `installPi` | Install pi coding agent | boolean | `true` |
-| `installTailscale` | Install Tailscale and configure the tools entrypoint for Tailscale SSH | boolean | `false` |
-| `installSshd` | Install and start OpenSSH server for normal SSH access | boolean | `true` |
-| `installBuildTools` | Install python3, make, and a C++ compiler when missing | boolean | `true` |
-
-The `tools` feature metadata sets `/usr/local/bin/tailscale-entrypoint.sh` as the entrypoint and adds `NET_ADMIN`, `NET_RAW`, and `MKNOD`. It persists Tailscale state in `/var/lib/tailscale` and SSH host keys in `/var/lib/ssh-host-keys`. For normal SSH access, provide a public key with `SSH_AUTHORIZED_KEYS` or `SSH_AUTHORIZED_KEYS_FILE`. For Dockerfile-only usage, set `INSTALLTAILSCALE=false`, `INSTALLSSHD=false`, or `INSTALLBUILDTOOLS=false` to skip specific service or build-tool installation.
 
 ## `tig`
 

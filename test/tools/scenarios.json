@@ -11,11 +11,6 @@
                 "installFdsx": false,
                 "installRtk": false,
                 "installPi": false,
-                "installJust": false,
-                "installDirenv": false,
-                "installTailscale": false,
-                "installSshd": false,
-                "installBuildTools": false,
                 "installOp": false
             }
         }
@@ -31,11 +26,6 @@
                 "installFdsx": false,
                 "installRtk": false,
                 "installPi": false,
-                "installJust": false,
-                "installDirenv": false,
-                "installTailscale": false,
-                "installSshd": false,
-                "installBuildTools": false,
                 "installOp": false
             }
         }
@@ -51,11 +41,6 @@
                 "installFdsx": false,
                 "installRtk": false,
                 "installPi": false,
-                "installJust": false,
-                "installDirenv": false,
-                "installTailscale": false,
-                "installSshd": false,
-                "installBuildTools": false,
                 "installOp": false
             }
         }
@@ -71,11 +56,6 @@
                 "installFdsx": false,
                 "installRtk": false,
                 "installPi": false,
-                "installJust": false,
-                "installDirenv": false,
-                "installTailscale": false,
-                "installSshd": false,
-                "installBuildTools": false,
                 "installOp": false
             }
         }
@@ -91,11 +71,6 @@
                 "installFdsx": false,
                 "installRtk": false,
                 "installPi": false,
-                "installJust": false,
-                "installDirenv": false,
-                "installTailscale": false,
-                "installSshd": false,
-                "installBuildTools": false,
                 "installOp": false
             }
         }
@@ -111,11 +86,6 @@
                 "installFdsx": false,
                 "installRtk": false,
                 "installPi": false,
-                "installJust": false,
-                "installDirenv": false,
-                "installTailscale": false,
-                "installSshd": false,
-                "installBuildTools": false,
                 "installOp": false
             }
         }
@@ -131,11 +101,6 @@
                 "installFdsx": false,
                 "installRtk": false,
                 "installPi": false,
-                "installJust": false,
-                "installDirenv": false,
-                "installTailscale": false,
-                "installSshd": false,
-                "installBuildTools": false,
                 "installOp": false
             }
         }
@@ -151,11 +116,6 @@
                 "installGh": false,
                 "installRtk": false,
                 "installPi": false,
-                "installJust": false,
-                "installDirenv": false,
-                "installTailscale": false,
-                "installSshd": false,
-                "installBuildTools": false,
                 "installOp": false
             }
         }
@@ -171,11 +131,6 @@
                 "installGh": false,
                 "installFdsx": false,
                 "installPi": false,
-                "installJust": false,
-                "installDirenv": false,
-                "installTailscale": false,
-                "installSshd": false,
-                "installBuildTools": false,
                 "installOp": false
             }
         }
@@ -191,111 +146,6 @@
                 "installGh": false,
                 "installFdsx": false,
                 "installRtk": false,
-                "installJust": false,
-                "installDirenv": false,
-                "installTailscale": false,
-                "installSshd": false,
-                "installBuildTools": false,
-                "installOp": false
-            }
-        }
-    },
-    "tailscale-only": {
-        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
-        "features": {
-            "tools": {
-                "installLazygit": false,
-                "installNvim": false,
-                "installClaudeCode": false,
-                "installCodex": false,
-                "installGh": false,
-                "installFdsx": false,
-                "installRtk": false,
-                "installPi": false,
-                "installJust": false,
-                "installDirenv": false,
-                "installSshd": false,
-                "installBuildTools": false,
-                "installOp": false
-            }
-        }
-    },
-    "sshd-only": {
-        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
-        "features": {
-            "tools": {
-                "installLazygit": false,
-                "installNvim": false,
-                "installClaudeCode": false,
-                "installCodex": false,
-                "installGh": false,
-                "installFdsx": false,
-                "installRtk": false,
-                "installPi": false,
-                "installJust": false,
-                "installDirenv": false,
-                "installTailscale": false,
-                "installBuildTools": false,
-                "installOp": false
-            }
-        }
-    },
-    "build-tools-only": {
-        "image": "debian:trixie-slim",
-        "features": {
-            "tools": {
-                "installLazygit": false,
-                "installNvim": false,
-                "installClaudeCode": false,
-                "installCodex": false,
-                "installGh": false,
-                "installFdsx": false,
-                "installRtk": false,
-                "installPi": false,
-                "installJust": false,
-                "installDirenv": false,
-                "installTailscale": false,
-                "installSshd": false,
-                "installOp": false
-            }
-        }
-    },
-    "just-only": {
-        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
-        "features": {
-            "tools": {
-                "installLazygit": false,
-                "installNvim": false,
-                "installClaudeCode": false,
-                "installCodex": false,
-                "installGh": false,
-                "installFdsx": false,
-                "installRtk": false,
-                "installPi": false,
-                "installDirenv": false,
-                "installTailscale": false,
-                "installSshd": false,
-                "installBuildTools": false,
-                "installOp": false
-            }
-        }
-    },
-    "direnv-only": {
-        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
-        "features": {
-            "tools": {
-                "installLazygit": false,
-                "installNvim": false,
-                "installClaudeCode": false,
-                "installCodex": false,
-                "installGh": false,
-                "installFdsx": false,
-                "installRtk": false,
-                "installPi": false,
-                "installJust": false,
-                "installTailscale": false,
-                "installSshd": false,
-                "installBuildTools": false,
                 "installOp": false
             }
         }
@@ -311,12 +161,7 @@
                 "installGh": false,
                 "installFdsx": false,
                 "installRtk": false,
-                "installPi": false,
-                "installJust": false,
-                "installDirenv": false,
-                "installTailscale": false,
-                "installSshd": false,
-                "installBuildTools": false
+                "installPi": false
             }
         }
     }
