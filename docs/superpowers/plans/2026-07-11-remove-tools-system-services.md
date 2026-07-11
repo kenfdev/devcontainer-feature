@@ -144,7 +144,7 @@ Expected: one implementation commit containing only the feature and test cleanup
 
 ```bash
 devcontainer features generate-docs \
-  --project-folder . \
+  --project-folder src \
   --namespace kenfdev/devcontainer-feature \
   --github-owner kenfdev \
   --github-repo devcontainer-feature

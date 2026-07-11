@@ -1,7 +1,7 @@
 
 # tools (tools)
 
-A minimal dev container feature that bundles terminal-based development tools, 1Password CLI, C/C++ build tools, Tailscale access, and an optional OpenSSH server.
+A minimal dev container feature that bundles terminal-based development tools and 1Password CLI.
 
 ## Example Usage
 
@@ -28,9 +28,6 @@ A minimal dev container feature that bundles terminal-based development tools, 1
 | installPi | Install pi coding agent | boolean | true |
 | installJust | Install just command runner | boolean | true |
 | installDirenv | Install direnv environment switcher | boolean | true |
-| installTailscale | Install Tailscale and configure the tools entrypoint for Tailscale SSH | boolean | false |
-| installSshd | Install and start OpenSSH server for normal SSH access | boolean | true |
-| installBuildTools | Install python3, make, and a C++ compiler when missing | boolean | true |
 
 
 
