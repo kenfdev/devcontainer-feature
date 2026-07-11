@@ -136,7 +136,7 @@
         }
     },
     "pi-only": {
-        "image": "mcr.microsoft.com/devcontainers/javascript-node:22",
+        "image": "mcr.microsoft.com/devcontainers/javascript-node:20-bookworm",
         "features": {
             "tools": {
                 "installLazygit": false,
