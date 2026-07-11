@@ -1,0 +1,183 @@
+# Remove Tools System Services Implementation Plan
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+
+**Goal:** Remove Tailscale, OpenSSH server, and C/C++ build-tools installation from the `tools` Dev Container Feature.
+
+**Architecture:** Delete the three public options and all installer/runtime support they activate, leaving `tools` as a collection of terminal and CLI installers. Keep the existing feature and test structure intact, removing only dedicated scenarios, scripts, and shared assertions that refer to the deleted capabilities.
+
+**Tech Stack:** Dev Container Feature JSON, Bash, Dev Container CLI, GitHub Actions documentation generator
+
+## Global Constraints
+
+- Other features in this repository are unchanged.
+- `src/tools/README.md` is generated content and must not be edited manually.
+- Bump `src/tools/devcontainer-feature.json` from version `1.5.3` to `1.6.0`.
+- Existing `installTailscale`, `installSshd`, and `installBuildTools` configuration keys become unsupported.
+
+---
+
+### Task 1: Remove the system-service feature surface
+
+**Files:**
+- Modify: `src/tools/devcontainer-feature.json`
+- Modify: `src/tools/install.sh`
+- Delete: `src/tools/tailscale-entrypoint.sh`
+- Modify: `test/tools/scenarios.json`
+- Modify: `test/tools/test.sh`
+- Modify: `test/tools/all-disabled.sh`
+- Delete: `test/tools/tailscale-only.sh`
+- Delete: `test/tools/sshd-only.sh`
+- Delete: `test/tools/build-tools-only.sh`
+- Delete: `test/tools/build-tools-install.sh`
+- Delete: `test/tools/tailscale-entrypoint-auth-key-first.sh`
+- Delete: `test/tools/sshd-entrypoint.sh`
+
+**Interfaces:**
+- Consumes: Dev Container Feature options are exposed as uppercased environment variables to `install.sh`.
+- Produces: A `tools` feature whose manifest and installer contain no Tailscale, SSHD, or build-tools interface or runtime behavior.
+
+- [ ] **Step 1: Run the absence contract and verify it fails**
+
+```bash
+test ! -e src/tools/tailscale-entrypoint.sh \
+  && ! rg -n -i 'tailscale|sshd|installBuildTools|INSTALL_BUILD_TOOLS|build-tools-only|build tools' \
+    src/tools/devcontainer-feature.json src/tools/install.sh test/tools
+```
+
+Expected: FAIL because the runtime asset exists and the manifest, installer, and tests still reference the removed capabilities.
+
+- [ ] **Step 2: Remove manifest metadata and bump the version**
+
+In `src/tools/devcontainer-feature.json`, set the header fields to:
+
+```json
+{
+    "name": "tools",
+    "id": "tools",
+    "version": "1.6.0",
+    "description": "A minimal dev container feature that bundles terminal-based development tools and 1Password CLI."
+}
+```
+
+Preserve the existing options from `installLazygit` through `installDirenv`. Remove `entrypoint`, `capAdd`, `mounts`, `containerEnv`, `installTailscale`, `installSshd`, and `installBuildTools`.
+
+- [ ] **Step 3: Remove installer implementation**
+
+In `src/tools/install.sh`, remove:
+
+```bash
+INSTALL_TAILSCALE="${INSTALLTAILSCALE:-false}"
+INSTALL_SSHD="${INSTALLSSHD:-true}"
+INSTALL_BUILD_TOOLS="${INSTALLBUILDTOOLS:-true}"
+```
+
+Delete the complete `has_build_tools`, `install_build_tools`, `is_debian_or_ubuntu`, `install_tailscale`, and `install_sshd` functions. Remove their option log lines and these calls from `main`:
+
+```bash
+install_build_tools
+install_tailscale
+install_sshd
+```
+
+Update the header comment so its installer list ends with `just` and `direnv`.
+
+- [ ] **Step 4: Remove runtime and dedicated test files**
+
+Delete the seven files listed above that exclusively cover Tailscale, SSHD, or build tools. Do not alter unrelated feature scripts.
+
+- [ ] **Step 5: Remove stale shared test configuration**
+
+Delete the `tailscale-only`, `sshd-only`, and `build-tools-only` scenario objects from `test/tools/scenarios.json`. From every remaining scenario, delete these properties:
+
+```json
+"installTailscale": false,
+"installSshd": false,
+"installBuildTools": false
+```
+
+Remove Tailscale, Tailscaled, SSHD, Python, Make, compiler, and entrypoint checks from `test/tools/test.sh`. Remove `tailscale`, `tailscaled`, and `sshd` from the command list in `test/tools/all-disabled.sh`.
+
+- [ ] **Step 6: Run the absence contract and syntax checks**
+
+```bash
+test ! -e src/tools/tailscale-entrypoint.sh \
+  && ! rg -n -i 'tailscale|sshd|installBuildTools|INSTALL_BUILD_TOOLS|build-tools-only|build tools' \
+    src/tools/devcontainer-feature.json src/tools/install.sh test/tools
+jq empty src/tools/devcontainer-feature.json test/tools/scenarios.json
+bash -n src/tools/install.sh test/tools/*.sh
+```
+
+Expected: all commands exit 0 with no matching removed references or syntax errors.
+
+- [ ] **Step 7: Run focused Dev Container Feature tests**
+
+```bash
+devcontainer features test --skip-scenarios -f tools -i mcr.microsoft.com/devcontainers/base:ubuntu .
+devcontainer features test -f tools --skip-autogenerated --skip-duplicated .
+```
+
+Expected: autogenerated and scenario-based tools tests pass.
+
+- [ ] **Step 8: Commit the feature removal**
+
+```bash
+git add src/tools test/tools
+git commit -m "Remove system services from tools feature"
+```
+
+Expected: one implementation commit containing only the feature and test cleanup.
+
+---
+
+### Task 2: Regenerate documentation and verify release state
+
+**Files:**
+- Modify through the Dev Container CLI: `src/tools/README.md`
+- Verify: `src/tools/devcontainer-feature.json`
+
+**Interfaces:**
+- Consumes: `src/tools/devcontainer-feature.json` option metadata.
+- Produces: Release-ready metadata and generated `src/tools/README.md` documentation.
+
+- [ ] **Step 1: Regenerate feature documentation**
+
+```bash
+devcontainer features generate-docs \
+  --project-folder . \
+  --namespace kenfdev/devcontainer-feature \
+  --github-owner kenfdev \
+  --github-repo devcontainer-feature
+```
+
+Expected: `src/tools/README.md` describes only the retained options and no longer mentions Tailscale, OpenSSH server, or C/C++ build tools. Any identical generated READMEs for unrelated features remain unchanged.
+
+- [ ] **Step 2: Verify and commit generated documentation**
+
+```bash
+! rg -n -i 'tailscale|sshd|OpenSSH|C/C\+\+ build tools|installBuildTools' src/tools/README.md
+git diff --check
+git add src/tools/README.md
+git commit -m "Update tools feature documentation"
+```
+
+Expected: the absence check and whitespace check pass, and one documentation commit is created.
+
+- [ ] **Step 3: Run final repository checks**
+
+```bash
+git diff --check origin/main..HEAD
+jq -r '.version, (.options | keys[])' src/tools/devcontainer-feature.json
+git status --short --branch
+```
+
+Expected: no whitespace errors; version is `1.6.0`; removed option names are absent; working tree is clean and the branch is ahead of its upstream.
+
+- [ ] **Step 4: Push and verify upstream state**
+
+```bash
+git push origin HEAD
+git status --short --branch
+```
+
+Expected: push succeeds and the branch reports no ahead/behind divergence from its upstream.
