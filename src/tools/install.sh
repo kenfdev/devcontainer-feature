@@ -605,42 +605,6 @@ install_fdsx() {
     return 0
 }
 
-# Ensure Node.js is available for npm-backed installers in non-interactive containers
-ensure_node() {
-    if command -v node &>/dev/null && command -v npm &>/dev/null && node -e 'const [major, minor] = process.versions.node.split(".").map(Number); process.exit(major > 22 || (major === 22 && minor >= 19) ? 0 : 1)' &>/dev/null; then
-        return 0
-    fi
-
-    echo "Installing Node.js..."
-    local version="22.19.0"
-    local node_arch
-    if [ "$ARCH" = "amd64" ]; then
-        node_arch="x64"
-    elif [ "$ARCH" = "arm64" ]; then
-        node_arch="arm64"
-    else
-        echo "WARNING: Unsupported architecture for Node.js: $ARCH" >&2
-        return 1
-    fi
-
-    local url="https://nodejs.org/dist/v${version}/node-v${version}-linux-${node_arch}.tar.xz"
-    local tmpdir
-    tmpdir=$(mktemp -d)
-
-    if download_file "$url" "$tmpdir/node.tar.xz"; then
-        tar -xJf "$tmpdir/node.tar.xz" -C "$tmpdir"
-        cp -r "$tmpdir/node-v${version}-linux-${node_arch}"/* /usr/local/
-        echo "Node.js installed successfully"
-    else
-        echo "WARNING: Failed to install Node.js" >&2
-        rm -rf "$tmpdir"
-        return 1
-    fi
-
-    rm -rf "$tmpdir"
-    return 0
-}
-
 # Install pi coding agent
 install_pi() {
     if [ "$INSTALL_PI" != "true" ]; then
@@ -661,29 +625,35 @@ install_pi() {
         return 0
     fi
 
-    if ! ensure_node; then
-        echo "WARNING: Node.js is required for pi installation, skipping pi" >&2
+    local pi_arch
+    if [ "$ARCH" = "amd64" ]; then
+        pi_arch="x64"
+    elif [ "$ARCH" = "arm64" ]; then
+        pi_arch="arm64"
+    else
+        echo "WARNING: Unsupported architecture for pi: $ARCH" >&2
         return 0
     fi
 
-    # Install as the remote user so binaries go to their home directory
-    if [ "$REMOTE_USER" != "root" ]; then
-        if su - "$REMOTE_USER" -c "curl -fsSL https://pi.dev/install.sh | sh"; then
-            # shellcheck disable=SC2016
-            echo 'export PATH="$HOME/.local/bin:$PATH"' >> /etc/profile.d/tools.sh
-            link_user_bin "pi" "$REMOTE_USER_HOME"
-            echo "pi installed successfully for user $REMOTE_USER"
-        else
-            echo "WARNING: Failed to install pi" >&2
-        fi
-    else
-        if curl -fsSL https://pi.dev/install.sh | sh; then
-            link_user_bin "pi" "$REMOTE_USER_HOME"
-            echo "pi installed successfully"
-        else
-            echo "WARNING: Failed to install pi" >&2
-        fi
+    local url="https://github.com/earendil-works/pi/releases/latest/download/pi-linux-${pi_arch}.tar.gz"
+    local tmpdir
+    tmpdir=$(mktemp -d)
+
+    if ! download_file "$url" "$tmpdir/pi.tar.gz"; then
+        echo "WARNING: Failed to download pi" >&2
+        rm -rf "$tmpdir"
+        return 0
     fi
+
+    tar -xzf "$tmpdir/pi.tar.gz" -C "$tmpdir"
+    rm -rf /opt/pi
+    mkdir -p /opt/pi
+    cp -a "$tmpdir/pi/." /opt/pi/
+    chmod 755 /opt/pi/pi
+    ln -sf /opt/pi/pi "$INSTALL_DIR/pi"
+    rm -rf "$tmpdir"
+
+    echo "pi installed successfully"
 
     return 0
 }
