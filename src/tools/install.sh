@@ -3,10 +3,7 @@ set -e
 
 # tools feature install script
 # Installs lazygit, neovim (with supporting tools: ripgrep, fd, fzf), gh, op,
-# Claude Code, Codex, fdsx, rtk, pi, just, direnv, build tools,
-# optional Tailscale access, and OpenSSH
-
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Claude Code, Codex, fdsx, rtk, pi, just, and direnv
 
 # Options (passed as environment variables)
 INSTALL_LAZYGIT="${INSTALLLAZYGIT:-true}"
@@ -20,9 +17,6 @@ INSTALL_RTK="${INSTALLRTK:-true}"
 INSTALL_PI="${INSTALLPI:-true}"
 INSTALL_JUST="${INSTALLJUST:-true}"
 INSTALL_DIRENV="${INSTALLDIRENV:-true}"
-INSTALL_TAILSCALE="${INSTALLTAILSCALE:-false}"
-INSTALL_SSHD="${INSTALLSSHD:-true}"
-INSTALL_BUILD_TOOLS="${INSTALLBUILDTOOLS:-true}"
 LAZYGIT_VERSION="${LAZYGITVERSION:-latest}"
 NVIM_VERSION="${NVIMVERSION:-latest}"
 
@@ -126,40 +120,6 @@ install_dependencies() {
     fi
 }
 
-has_build_tools() {
-    command -v python3 &>/dev/null \
-        && command -v make &>/dev/null \
-        && { command -v g++ &>/dev/null || command -v clang++ &>/dev/null; }
-}
-
-install_build_tools() {
-    if [ "$INSTALL_BUILD_TOOLS" != "true" ]; then
-        echo "Skipping C/C++ build tools installation (disabled)"
-        return 0
-    fi
-
-    if has_build_tools; then
-        echo "C/C++ build tools are already installed, skipping"
-        return 0
-    fi
-
-    echo "Installing C/C++ build tools..."
-    if command -v apt-get &>/dev/null; then
-        export DEBIAN_FRONTEND=noninteractive
-        apt-get update
-        apt-get install -y --no-install-recommends build-essential python3
-        apt-get clean
-        rm -rf /var/lib/apt/lists/*
-    elif command -v apk &>/dev/null; then
-        apk add --no-cache build-base python3
-    elif command -v dnf &>/dev/null; then
-        dnf install -y make gcc-c++ python3
-    else
-        echo "WARNING: Could not find a supported package manager for C/C++ build tools" >&2
-        return 0
-    fi
-}
-
 is_debian_or_ubuntu() {
     if [ ! -r /etc/os-release ]; then
         return 1
@@ -175,83 +135,6 @@ is_debian_or_ubuntu() {
     esac
 
     return 1
-}
-
-install_tailscale() {
-    if [ "$INSTALL_TAILSCALE" != "true" ]; then
-        if [ -f "${SCRIPT_DIR}/tailscale-entrypoint.sh" ]; then
-            install -m 755 "${SCRIPT_DIR}/tailscale-entrypoint.sh" /usr/local/bin/tailscale-entrypoint.sh
-        fi
-        echo "Skipping Tailscale installation (disabled)"
-        return 0
-    fi
-
-    if [ ! -f "${SCRIPT_DIR}/tailscale-entrypoint.sh" ]; then
-        echo "ERROR: tailscale-entrypoint.sh must be in the same directory as install.sh when installTailscale is enabled." >&2
-        return 1
-    fi
-
-    install -m 755 "${SCRIPT_DIR}/tailscale-entrypoint.sh" /usr/local/bin/tailscale-entrypoint.sh
-
-    if ! is_debian_or_ubuntu; then
-        echo "ERROR: installTailscale requires a Debian/Ubuntu based image. Set installTailscale=false to skip it." >&2
-        return 1
-    fi
-
-    echo "Installing Tailscale..."
-    export DEBIAN_FRONTEND=noninteractive
-    apt-get update
-    apt-get install -y --no-install-recommends \
-        bash \
-        ca-certificates \
-        curl \
-        iproute2 \
-        iptables \
-        procps
-
-    curl -fsSL https://tailscale.com/install.sh | sh
-
-    apt-get clean
-    rm -rf /var/lib/apt/lists/*
-}
-
-install_sshd() {
-    if [ "$INSTALL_SSHD" != "true" ]; then
-        echo "Skipping OpenSSH server installation (disabled)"
-        return 0
-    fi
-
-    echo "Installing OpenSSH server..."
-    if command -v apt-get &>/dev/null; then
-        export DEBIAN_FRONTEND=noninteractive
-        apt-get update
-        apt-get install -y --no-install-recommends openssh-server
-        apt-get clean
-        rm -rf /var/lib/apt/lists/*
-    elif command -v apk &>/dev/null; then
-        apk add --no-cache openssh-server
-    elif command -v dnf &>/dev/null; then
-        dnf install -y openssh-server
-    else
-        echo "WARNING: Could not find a supported package manager for OpenSSH server" >&2
-        return 0
-    fi
-
-    mkdir -p /run/sshd /var/lib/ssh-host-keys
-    chmod 755 /run/sshd
-
-    if [ -f /etc/ssh/sshd_config ]; then
-        sed -i \
-            -e 's/^[#[:space:]]*PermitRootLogin.*/PermitRootLogin prohibit-password/' \
-            -e 's/^[#[:space:]]*PasswordAuthentication.*/PasswordAuthentication no/' \
-            -e 's/^[#[:space:]]*PubkeyAuthentication.*/PubkeyAuthentication yes/' \
-            -e 's/^[#[:space:]]*KbdInteractiveAuthentication.*/KbdInteractiveAuthentication no/' \
-            /etc/ssh/sshd_config
-    fi
-
-    # Runtime entrypoint creates stable per-volume host keys instead of baking
-    # build-time keys into the image.
-    rm -f /etc/ssh/ssh_host_*_key /etc/ssh/ssh_host_*_key.pub
 }
 
 # Install lazygit from GitHub Releases
@@ -937,9 +820,6 @@ main() {
     echo "  INSTALL_PI=$INSTALL_PI"
     echo "  INSTALL_JUST=$INSTALL_JUST"
     echo "  INSTALL_DIRENV=$INSTALL_DIRENV"
-    echo "  INSTALL_TAILSCALE=$INSTALL_TAILSCALE"
-    echo "  INSTALL_SSHD=$INSTALL_SSHD"
-    echo "  INSTALL_BUILD_TOOLS=$INSTALL_BUILD_TOOLS"
     echo "  LAZYGIT_VERSION=$LAZYGIT_VERSION"
     echo "  NVIM_VERSION=$NVIM_VERSION"
 
@@ -951,9 +831,6 @@ main() {
     mkdir -p /etc/profile.d
 
     install_dependencies
-    install_build_tools
-    install_tailscale
-    install_sshd
     install_lazygit
     install_nvim
     install_claude_code
