@@ -68,7 +68,7 @@ Disable individual tools or pin supported tool versions as needed:
 
 ## `tools`
 
-A minimal dev container feature that bundles terminal-based development tools: lazygit, neovim (with ripgrep, fd, fzf), gh, 1Password CLI (`op`), Claude Code, Codex, fdsx, rtk, pi, just, and direnv.
+A minimal dev container feature that bundles terminal-based development tools: lazygit, neovim (with ripgrep, fd, fzf), gh, 1Password CLI (`op`), Claude Code, Codex, fdsx, rtk, and pi.
 
 ### Example Usage
 
@@ -98,9 +98,7 @@ Disable individual tools or pin supported tool versions as needed:
       "installOp": true,
       "installFdsx": true,
       "installRtk": true,
-      "installPi": true,
-      "installJust": true,
-      "installDirenv": true
+      "installPi": true
     }
   }
 }
@@ -121,8 +119,6 @@ Disable individual tools or pin supported tool versions as needed:
 | `installFdsx` | Install fdsx | boolean | `true` |
 | `installRtk` | Install rtk (Rust Token Killer - token-optimized CLI proxy) | boolean | `true` |
 | `installPi` | Install pi coding agent | boolean | `true` |
-| `installJust` | Install just command runner | boolean | `true` |
-| `installDirenv` | Install direnv environment switcher | boolean | `true` |
 
 ## `tig`
 

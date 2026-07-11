@@ -11,8 +11,6 @@
                 "installFdsx": false,
                 "installRtk": false,
                 "installPi": false,
-                "installJust": false,
-                "installDirenv": false,
                 "installOp": false
             }
         }
@@ -28,8 +26,6 @@
                 "installFdsx": false,
                 "installRtk": false,
                 "installPi": false,
-                "installJust": false,
-                "installDirenv": false,
                 "installOp": false
             }
         }
@@ -45,8 +41,6 @@
                 "installFdsx": false,
                 "installRtk": false,
                 "installPi": false,
-                "installJust": false,
-                "installDirenv": false,
                 "installOp": false
             }
         }
@@ -62,8 +56,6 @@
                 "installFdsx": false,
                 "installRtk": false,
                 "installPi": false,
-                "installJust": false,
-                "installDirenv": false,
                 "installOp": false
             }
         }
@@ -79,8 +71,6 @@
                 "installFdsx": false,
                 "installRtk": false,
                 "installPi": false,
-                "installJust": false,
-                "installDirenv": false,
                 "installOp": false
             }
         }
@@ -96,8 +86,6 @@
                 "installFdsx": false,
                 "installRtk": false,
                 "installPi": false,
-                "installJust": false,
-                "installDirenv": false,
                 "installOp": false
             }
         }
@@ -113,8 +101,6 @@
                 "installFdsx": false,
                 "installRtk": false,
                 "installPi": false,
-                "installJust": false,
-                "installDirenv": false,
                 "installOp": false
             }
         }
@@ -130,8 +116,6 @@
                 "installGh": false,
                 "installRtk": false,
                 "installPi": false,
-                "installJust": false,
-                "installDirenv": false,
                 "installOp": false
             }
         }
@@ -147,8 +131,6 @@
                 "installGh": false,
                 "installFdsx": false,
                 "installPi": false,
-                "installJust": false,
-                "installDirenv": false,
                 "installOp": false
             }
         }
@@ -164,42 +146,6 @@
                 "installGh": false,
                 "installFdsx": false,
                 "installRtk": false,
-                "installJust": false,
-                "installDirenv": false,
-                "installOp": false
-            }
-        }
-    },
-    "just-only": {
-        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
-        "features": {
-            "tools": {
-                "installLazygit": false,
-                "installNvim": false,
-                "installClaudeCode": false,
-                "installCodex": false,
-                "installGh": false,
-                "installFdsx": false,
-                "installRtk": false,
-                "installPi": false,
-                "installDirenv": false,
-                "installOp": false
-            }
-        }
-    },
-    "direnv-only": {
-        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
-        "features": {
-            "tools": {
-                "installLazygit": false,
-                "installNvim": false,
-                "installClaudeCode": false,
-                "installCodex": false,
-                "installGh": false,
-                "installFdsx": false,
-                "installRtk": false,
-                "installPi": false,
-                "installJust": false,
                 "installOp": false
             }
         }
@@ -215,9 +161,7 @@
                 "installGh": false,
                 "installFdsx": false,
                 "installRtk": false,
-                "installPi": false,
-                "installJust": false,
-                "installDirenv": false
+                "installPi": false
             }
         }
     }

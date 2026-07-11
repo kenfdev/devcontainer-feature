@@ -58,16 +58,6 @@
             "type": "boolean",
             "description": "Install pi coding agent",
             "default": true
-        },
-        "installJust": {
-            "type": "boolean",
-            "description": "Install just command runner",
-            "default": true
-        },
-        "installDirenv": {
-            "type": "boolean",
-            "description": "Install direnv environment switcher",
-            "default": true
         }
     }
 }

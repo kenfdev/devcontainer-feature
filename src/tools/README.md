@@ -26,8 +26,6 @@ A minimal dev container feature that bundles terminal-based development tools an
 | installFdsx | Install fdsx (fast data serialization tool) | boolean | true |
 | installRtk | Install rtk (Rust Token Killer - token-optimized CLI proxy) | boolean | true |
 | installPi | Install pi coding agent | boolean | true |
-| installJust | Install just command runner | boolean | true |
-| installDirenv | Install direnv environment switcher | boolean | true |
 
 
 
