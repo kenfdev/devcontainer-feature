@@ -15,6 +15,7 @@ check "tmux is not installed by default" bash -c '! command -v tmux'
 check "lazygit is installed" lazygit --version
 check "nvim is installed" nvim --version
 check "gh is installed" gh --version
+check "codex is not installed" bash -c '! command -v codex >/dev/null 2>&1'
 
 # Report result
 reportResults
