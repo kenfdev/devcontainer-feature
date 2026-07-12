@@ -113,7 +113,7 @@ Disable individual tools or pin supported tool versions as needed:
 | `lazygitVersion` | lazygit version to install (e.g., `0.40.2`, `latest`) | string | `latest` |
 | `nvimVersion` | neovim version to install (e.g., `0.9.5`, `latest`) | string | `latest` |
 | `installClaudeCode` | Install Claude Code CLI (AI coding assistant) | boolean | `true` |
-| `installCodex` | Install OpenAI Codex CLI | boolean | `true` |
+| `installCodex` | Install OpenAI Codex CLI | boolean | `false` |
 | `installGh` | Install GitHub CLI (gh) | boolean | `true` |
 | `installOp` | Install 1Password CLI (op) | boolean | `true` |
 | `installFdsx` | Install fdsx | boolean | `true` |

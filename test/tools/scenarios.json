@@ -97,6 +97,7 @@
                 "installLazygit": false,
                 "installNvim": false,
                 "installClaudeCode": false,
+                "installCodex": true,
                 "installGh": false,
                 "installFdsx": false,
                 "installRtk": false,
