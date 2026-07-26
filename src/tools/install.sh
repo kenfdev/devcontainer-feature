@@ -460,19 +460,23 @@ install_grok() {
     fi
 
     if [ "$REMOTE_USER" != "root" ]; then
-        if su - "$REMOTE_USER" -c "curl -fsSL https://x.ai/cli/install.sh | bash"; then
-            if [ -x "$REMOTE_USER_HOME/.grok/bin/grok" ]; then
-                ln -sf "$REMOTE_USER_HOME/.grok/bin/grok" "$INSTALL_DIR/grok"
+        if su - "$REMOTE_USER" -c "bash -o pipefail -c 'curl -fsSL https://x.ai/cli/install.sh | bash'"; then
+            if [ ! -x "$REMOTE_USER_HOME/.grok/bin/grok" ]; then
+                echo "WARNING: Grok installer completed without creating $REMOTE_USER_HOME/.grok/bin/grok" >&2
+                return 0
             fi
+            ln -sf "$REMOTE_USER_HOME/.grok/bin/grok" "$INSTALL_DIR/grok"
             echo "Grok installed successfully for user $REMOTE_USER"
         else
             echo "WARNING: Failed to install Grok" >&2
         fi
     else
-        if curl -fsSL https://x.ai/cli/install.sh | bash; then
-            if [ -x "$REMOTE_USER_HOME/.grok/bin/grok" ]; then
-                ln -sf "$REMOTE_USER_HOME/.grok/bin/grok" "$INSTALL_DIR/grok"
+        if bash -o pipefail -c 'curl -fsSL https://x.ai/cli/install.sh | bash'; then
+            if [ ! -x "$REMOTE_USER_HOME/.grok/bin/grok" ]; then
+                echo "WARNING: Grok installer completed without creating $REMOTE_USER_HOME/.grok/bin/grok" >&2
+                return 0
             fi
+            ln -sf "$REMOTE_USER_HOME/.grok/bin/grok" "$INSTALL_DIR/grok"
             echo "Grok installed successfully"
         else
             echo "WARNING: Failed to install Grok" >&2
