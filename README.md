@@ -68,7 +68,7 @@ Disable individual tools or pin supported tool versions as needed:
 
 ## `tools`
 
-A minimal dev container feature that bundles terminal-based development tools: lazygit, neovim (with ripgrep, fd, fzf), gh, 1Password CLI (`op`), Claude Code, Codex, fdsx, rtk, and pi.
+A minimal dev container feature that bundles terminal-based development tools: lazygit, neovim (with ripgrep, fd, fzf), gh, 1Password CLI (`op`), Claude Code, Codex, Grok, fdsx, rtk, and pi.
 
 ### Example Usage
 
@@ -94,6 +94,7 @@ Disable individual tools or pin supported tool versions as needed:
       "nvimVersion": "0.9.5",
       "installClaudeCode": true,
       "installCodex": true,
+      "installGrok": true,
       "installGh": true,
       "installOp": true,
       "installFdsx": true,
@@ -114,6 +115,7 @@ Disable individual tools or pin supported tool versions as needed:
 | `nvimVersion` | neovim version to install (e.g., `0.9.5`, `latest`) | string | `latest` |
 | `installClaudeCode` | Install Claude Code CLI (AI coding assistant) | boolean | `true` |
 | `installCodex` | Install OpenAI Codex CLI | boolean | `false` |
+| `installGrok` | Install Grok CLI | boolean | `true` |
 | `installGh` | Install GitHub CLI (gh) | boolean | `true` |
 | `installOp` | Install 1Password CLI (op) | boolean | `true` |
 | `installFdsx` | Install fdsx | boolean | `true` |
