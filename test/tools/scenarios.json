@@ -165,5 +165,22 @@
                 "installPi": false
             }
         }
+    },
+    "grok-only": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "tools": {
+                "installLazygit": false,
+                "installNvim": false,
+                "installClaudeCode": false,
+                "installCodex": false,
+                "installGrok": true,
+                "installGh": false,
+                "installFdsx": false,
+                "installRtk": false,
+                "installPi": false,
+                "installOp": false
+            }
+        }
     }
 }
