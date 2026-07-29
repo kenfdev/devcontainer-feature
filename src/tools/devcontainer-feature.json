@@ -1,8 +1,8 @@
 {
     "name": "tools",
     "id": "tools",
-    "version": "1.7.2",
-    "description": "A minimal dev container feature that bundles terminal-based development tools and 1Password CLI.",
+    "version": "1.8.0",
+    "description": "A minimal dev container feature that bundles terminal-based development tools, AI coding CLIs, and 1Password CLI.",
     "options": {
         "installLazygit": {
             "type": "boolean",
@@ -33,6 +33,11 @@
             "type": "boolean",
             "description": "Install OpenAI Codex CLI",
             "default": false
+        },
+        "installGrok": {
+            "type": "boolean",
+            "description": "Install Grok CLI",
+            "default": true
         },
         "installGh": {
             "type": "boolean",

@@ -3,13 +3,14 @@ set -e
 
 # tools feature install script
 # Installs lazygit, neovim (with supporting tools: ripgrep, fd, fzf), gh, op,
-# Claude Code, Codex, fdsx, rtk, and pi
+# Claude Code, Codex, Grok, fdsx, rtk, and pi
 
 # Options (passed as environment variables)
 INSTALL_LAZYGIT="${INSTALLLAZYGIT:-true}"
 INSTALL_NVIM="${INSTALLNVIM:-true}"
 INSTALL_CLAUDE_CODE="${INSTALLCLAUDECODE:-true}"
 INSTALL_CODEX="${INSTALLCODEX:-false}"
+INSTALL_GROK="${INSTALLGROK:-true}"
 INSTALL_GH="${INSTALLGH:-true}"
 INSTALL_OP="${INSTALLOP:-true}"
 INSTALL_FDSX="${INSTALLFDSX:-true}"
@@ -438,6 +439,53 @@ install_codex() {
     return 0
 }
 
+# Install Grok CLI
+install_grok() {
+    if [ "$INSTALL_GROK" != "true" ]; then
+        echo "Skipping Grok installation (disabled)"
+        return 0
+    fi
+
+    echo "Installing Grok..."
+
+    # Check as the remote user because Grok installs into that user's home.
+    if [ "$REMOTE_USER" != "root" ]; then
+        if su - "$REMOTE_USER" -c "command -v grok" &>/dev/null; then
+            echo "Grok is already installed, skipping"
+            return 0
+        fi
+    elif command -v grok &>/dev/null; then
+        echo "Grok is already installed, skipping"
+        return 0
+    fi
+
+    if [ "$REMOTE_USER" != "root" ]; then
+        if su - "$REMOTE_USER" -c "bash -o pipefail -c 'curl -fsSL https://x.ai/cli/install.sh | bash'"; then
+            if [ ! -x "$REMOTE_USER_HOME/.grok/bin/grok" ]; then
+                echo "WARNING: Grok installer completed without creating $REMOTE_USER_HOME/.grok/bin/grok" >&2
+                return 0
+            fi
+            ln -sf "$REMOTE_USER_HOME/.grok/bin/grok" "$INSTALL_DIR/grok"
+            echo "Grok installed successfully for user $REMOTE_USER"
+        else
+            echo "WARNING: Failed to install Grok" >&2
+        fi
+    else
+        if bash -o pipefail -c 'curl -fsSL https://x.ai/cli/install.sh | bash'; then
+            if [ ! -x "$REMOTE_USER_HOME/.grok/bin/grok" ]; then
+                echo "WARNING: Grok installer completed without creating $REMOTE_USER_HOME/.grok/bin/grok" >&2
+                return 0
+            fi
+            ln -sf "$REMOTE_USER_HOME/.grok/bin/grok" "$INSTALL_DIR/grok"
+            echo "Grok installed successfully"
+        else
+            echo "WARNING: Failed to install Grok" >&2
+        fi
+    fi
+
+    return 0
+}
+
 # Install GitHub CLI from GitHub Releases
 install_gh() {
     if [ "$INSTALL_GH" != "true" ]; then
@@ -707,6 +755,7 @@ main() {
     echo "  INSTALL_NVIM=$INSTALL_NVIM"
     echo "  INSTALL_CLAUDE_CODE=$INSTALL_CLAUDE_CODE"
     echo "  INSTALL_CODEX=$INSTALL_CODEX"
+    echo "  INSTALL_GROK=$INSTALL_GROK"
     echo "  INSTALL_GH=$INSTALL_GH"
     echo "  INSTALL_OP=$INSTALL_OP"
     echo "  INSTALL_FDSX=$INSTALL_FDSX"
@@ -727,6 +776,7 @@ main() {
     install_nvim
     install_claude_code
     install_codex
+    install_grok
     install_gh
     install_op
     install_fdsx

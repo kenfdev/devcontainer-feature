@@ -7,6 +7,7 @@
                 "installNvim": false,
                 "installClaudeCode": false,
                 "installCodex": false,
+                "installGrok": false,
                 "installGh": false,
                 "installFdsx": false,
                 "installRtk": false,
@@ -22,6 +23,7 @@
                 "installNvim": false,
                 "installClaudeCode": false,
                 "installCodex": false,
+                "installGrok": false,
                 "installGh": false,
                 "installFdsx": false,
                 "installRtk": false,
@@ -37,6 +39,7 @@
                 "installLazygit": false,
                 "installClaudeCode": false,
                 "installCodex": false,
+                "installGrok": false,
                 "installGh": false,
                 "installFdsx": false,
                 "installRtk": false,
@@ -53,6 +56,7 @@
                 "installNvim": false,
                 "installClaudeCode": false,
                 "installCodex": false,
+                "installGrok": false,
                 "installFdsx": false,
                 "installRtk": false,
                 "installPi": false,
@@ -68,6 +72,7 @@
                 "nvimVersion": "v0.10.4",
                 "installClaudeCode": false,
                 "installCodex": false,
+                "installGrok": false,
                 "installFdsx": false,
                 "installRtk": false,
                 "installPi": false,
@@ -82,6 +87,7 @@
                 "installLazygit": false,
                 "installNvim": false,
                 "installCodex": false,
+                "installGrok": false,
                 "installGh": false,
                 "installFdsx": false,
                 "installRtk": false,
@@ -98,6 +104,7 @@
                 "installNvim": false,
                 "installClaudeCode": false,
                 "installCodex": true,
+                "installGrok": false,
                 "installGh": false,
                 "installFdsx": false,
                 "installRtk": false,
@@ -114,6 +121,7 @@
                 "installNvim": false,
                 "installClaudeCode": false,
                 "installCodex": false,
+                "installGrok": false,
                 "installGh": false,
                 "installRtk": false,
                 "installPi": false,
@@ -129,6 +137,7 @@
                 "installNvim": false,
                 "installClaudeCode": false,
                 "installCodex": false,
+                "installGrok": false,
                 "installGh": false,
                 "installFdsx": false,
                 "installPi": false,
@@ -144,6 +153,7 @@
                 "installNvim": false,
                 "installClaudeCode": false,
                 "installCodex": false,
+                "installGrok": false,
                 "installGh": false,
                 "installFdsx": false,
                 "installRtk": false,
@@ -159,10 +169,28 @@
                 "installNvim": false,
                 "installClaudeCode": false,
                 "installCodex": false,
+                "installGrok": false,
                 "installGh": false,
                 "installFdsx": false,
                 "installRtk": false,
                 "installPi": false
+            }
+        }
+    },
+    "grok-only": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "tools": {
+                "installLazygit": false,
+                "installNvim": false,
+                "installClaudeCode": false,
+                "installCodex": false,
+                "installGrok": true,
+                "installGh": false,
+                "installFdsx": false,
+                "installRtk": false,
+                "installPi": false,
+                "installOp": false
             }
         }
     }
