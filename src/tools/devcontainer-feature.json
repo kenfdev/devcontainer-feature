@@ -1,7 +1,7 @@
 {
     "name": "tools",
     "id": "tools",
-    "version": "1.8.0",
+    "version": "1.8.1",
     "description": "A minimal dev container feature that bundles terminal-based development tools, AI coding CLIs, and 1Password CLI.",
     "options": {
         "installLazygit": {
@@ -37,6 +37,11 @@
         "installGrok": {
             "type": "boolean",
             "description": "Install Grok CLI",
+            "default": true
+        },
+        "installCursor": {
+            "type": "boolean",
+            "description": "Install Cursor Agent CLI",
             "default": true
         },
         "installGh": {

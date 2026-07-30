@@ -3,7 +3,7 @@ set -e
 
 # tools feature install script
 # Installs lazygit, neovim (with supporting tools: ripgrep, fd, fzf), gh, op,
-# Claude Code, Codex, Grok, fdsx, rtk, and pi
+# Claude Code, Codex, Grok, Cursor Agent, fdsx, rtk, and pi
 
 # Options (passed as environment variables)
 INSTALL_LAZYGIT="${INSTALLLAZYGIT:-true}"
@@ -11,6 +11,7 @@ INSTALL_NVIM="${INSTALLNVIM:-true}"
 INSTALL_CLAUDE_CODE="${INSTALLCLAUDECODE:-true}"
 INSTALL_CODEX="${INSTALLCODEX:-false}"
 INSTALL_GROK="${INSTALLGROK:-true}"
+INSTALL_CURSOR="${INSTALLCURSOR:-true}"
 INSTALL_GH="${INSTALLGH:-true}"
 INSTALL_OP="${INSTALLOP:-true}"
 INSTALL_FDSX="${INSTALLFDSX:-true}"
@@ -440,6 +441,24 @@ install_codex() {
 }
 
 # Install Grok CLI
+remove_grok_agent_aliases() {
+    local grok_agent="$REMOTE_USER_HOME/.grok/bin/agent"
+    local grok_agent_target
+    local candidate
+    local candidate_target
+
+    grok_agent_target=$(readlink -f "$grok_agent" 2>/dev/null || true)
+
+    for candidate in "$REMOTE_USER_HOME/.local/bin/agent" "$INSTALL_DIR/agent"; do
+        candidate_target=$(readlink "$candidate" 2>/dev/null || true)
+        if [ "$candidate_target" = "$grok_agent" ] || { [ -n "$grok_agent_target" ] && [ "$(readlink -f "$candidate" 2>/dev/null || true)" = "$grok_agent_target" ]; }; then
+            rm -f "$candidate"
+        fi
+    done
+
+    rm -f "$grok_agent"
+}
+
 install_grok() {
     if [ "$INSTALL_GROK" != "true" ]; then
         echo "Skipping Grok installation (disabled)"
@@ -452,10 +471,12 @@ install_grok() {
     if [ "$REMOTE_USER" != "root" ]; then
         if su - "$REMOTE_USER" -c "command -v grok" &>/dev/null; then
             echo "Grok is already installed, skipping"
+            remove_grok_agent_aliases
             return 0
         fi
     elif command -v grok &>/dev/null; then
         echo "Grok is already installed, skipping"
+        remove_grok_agent_aliases
         return 0
     fi
 
@@ -463,9 +484,11 @@ install_grok() {
         if su - "$REMOTE_USER" -c "bash -o pipefail -c 'curl -fsSL https://x.ai/cli/install.sh | bash'"; then
             if [ ! -x "$REMOTE_USER_HOME/.grok/bin/grok" ]; then
                 echo "WARNING: Grok installer completed without creating $REMOTE_USER_HOME/.grok/bin/grok" >&2
+                remove_grok_agent_aliases
                 return 0
             fi
             ln -sf "$REMOTE_USER_HOME/.grok/bin/grok" "$INSTALL_DIR/grok"
+            remove_grok_agent_aliases
             echo "Grok installed successfully for user $REMOTE_USER"
         else
             echo "WARNING: Failed to install Grok" >&2
@@ -474,12 +497,59 @@ install_grok() {
         if bash -o pipefail -c 'curl -fsSL https://x.ai/cli/install.sh | bash'; then
             if [ ! -x "$REMOTE_USER_HOME/.grok/bin/grok" ]; then
                 echo "WARNING: Grok installer completed without creating $REMOTE_USER_HOME/.grok/bin/grok" >&2
+                remove_grok_agent_aliases
                 return 0
             fi
             ln -sf "$REMOTE_USER_HOME/.grok/bin/grok" "$INSTALL_DIR/grok"
+            remove_grok_agent_aliases
             echo "Grok installed successfully"
         else
             echo "WARNING: Failed to install Grok" >&2
+        fi
+    fi
+
+    return 0
+}
+
+# Install Cursor Agent CLI
+install_cursor() {
+    if [ "$INSTALL_CURSOR" != "true" ]; then
+        echo "Skipping Cursor Agent installation (disabled)"
+        return 0
+    fi
+
+    echo "Installing Cursor Agent..."
+
+    local cursor_agent="$REMOTE_USER_HOME/.local/bin/agent"
+    local cursor_install_dir="$REMOTE_USER_HOME/.local/share/cursor-agent"
+
+    if [ -x "$cursor_agent" ] && [ -d "$cursor_install_dir" ]; then
+        ln -sf "$cursor_agent" "$INSTALL_DIR/agent"
+        echo "Cursor Agent is already installed, skipping"
+        return 0
+    fi
+
+    if [ "$REMOTE_USER" != "root" ]; then
+        if su - "$REMOTE_USER" -c "bash -o pipefail -c 'curl https://cursor.com/install -fsS | bash'"; then
+            if [ ! -x "$cursor_agent" ]; then
+                echo "WARNING: Cursor installer completed without creating $cursor_agent" >&2
+                return 0
+            fi
+            ln -sf "$cursor_agent" "$INSTALL_DIR/agent"
+            echo "Cursor Agent installed successfully for user $REMOTE_USER"
+        else
+            echo "WARNING: Failed to install Cursor Agent" >&2
+        fi
+    else
+        if bash -o pipefail -c 'curl https://cursor.com/install -fsS | bash'; then
+            if [ ! -x "$cursor_agent" ]; then
+                echo "WARNING: Cursor installer completed without creating $cursor_agent" >&2
+                return 0
+            fi
+            ln -sf "$cursor_agent" "$INSTALL_DIR/agent"
+            echo "Cursor Agent installed successfully"
+        else
+            echo "WARNING: Failed to install Cursor Agent" >&2
         fi
     fi
 
@@ -756,6 +826,7 @@ main() {
     echo "  INSTALL_CLAUDE_CODE=$INSTALL_CLAUDE_CODE"
     echo "  INSTALL_CODEX=$INSTALL_CODEX"
     echo "  INSTALL_GROK=$INSTALL_GROK"
+    echo "  INSTALL_CURSOR=$INSTALL_CURSOR"
     echo "  INSTALL_GH=$INSTALL_GH"
     echo "  INSTALL_OP=$INSTALL_OP"
     echo "  INSTALL_FDSX=$INSTALL_FDSX"
@@ -777,6 +848,7 @@ main() {
     install_claude_code
     install_codex
     install_grok
+    install_cursor
     install_gh
     install_op
     install_fdsx

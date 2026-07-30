@@ -5,6 +5,8 @@ echo "Testing grok-only installation..."
 
 command -v grok &>/dev/null || { echo "FAIL: grok is not installed"; exit 1; }
 grok --version &>/dev/null || { echo "FAIL: grok cannot run"; exit 1; }
+[ ! -e "$HOME/.grok/bin/agent" ] && [ ! -L "$HOME/.grok/bin/agent" ] || { echo "FAIL: Grok agent alias should be absent"; exit 1; }
+command -v agent &>/dev/null && { echo "FAIL: agent should not be installed"; exit 1; }
 
 command -v lazygit &>/dev/null && { echo "FAIL: lazygit should not be installed"; exit 1; }
 command -v nvim &>/dev/null && { echo "FAIL: nvim should not be installed"; exit 1; }
