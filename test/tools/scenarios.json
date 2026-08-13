@@ -12,6 +12,7 @@
                 "installFdsx": false,
                 "installRtk": false,
                 "installPi": false,
+                "installOhMyPi": false,
                 "installCursor": false,
                 "installOp": false
             }
@@ -29,6 +30,7 @@
                 "installFdsx": false,
                 "installRtk": false,
                 "installPi": false,
+                "installOhMyPi": false,
                 "installCursor": false,
                 "installOp": false
             }
@@ -46,6 +48,7 @@
                 "installFdsx": false,
                 "installRtk": false,
                 "installPi": false,
+                "installOhMyPi": false,
                 "installCursor": false,
                 "installOp": false
             }
@@ -63,6 +66,7 @@
                 "installFdsx": false,
                 "installRtk": false,
                 "installPi": false,
+                "installOhMyPi": false,
                 "installCursor": false,
                 "installOp": false
             }
@@ -80,6 +84,7 @@
                 "installFdsx": false,
                 "installRtk": false,
                 "installPi": false,
+                "installOhMyPi": false,
                 "installCursor": false,
                 "installOp": false
             }
@@ -97,6 +102,7 @@
                 "installFdsx": false,
                 "installRtk": false,
                 "installPi": false,
+                "installOhMyPi": false,
                 "installCursor": false,
                 "installOp": false
             }
@@ -115,6 +121,7 @@
                 "installFdsx": false,
                 "installRtk": false,
                 "installPi": false,
+                "installOhMyPi": false,
                 "installCursor": false,
                 "installOp": false
             }
@@ -132,6 +139,7 @@
                 "installGh": false,
                 "installRtk": false,
                 "installPi": false,
+                "installOhMyPi": false,
                 "installCursor": false,
                 "installOp": false
             }
@@ -149,6 +157,7 @@
                 "installGh": false,
                 "installFdsx": false,
                 "installPi": false,
+                "installOhMyPi": false,
                 "installCursor": false,
                 "installOp": false
             }
@@ -166,6 +175,7 @@
                 "installGh": false,
                 "installFdsx": false,
                 "installRtk": false,
+                "installOhMyPi": false,
                 "installCursor": false,
                 "installOp": false
             }
@@ -184,6 +194,7 @@
                 "installFdsx": false,
                 "installRtk": false,
                 "installPi": false,
+                "installOhMyPi": false,
                 "installCursor": false
             }
         }
@@ -201,6 +212,7 @@
                 "installFdsx": false,
                 "installRtk": false,
                 "installPi": false,
+                "installOhMyPi": false,
                 "installCursor": false,
                 "installOp": false
             }
@@ -219,6 +231,7 @@
                 "installFdsx": false,
                 "installRtk": false,
                 "installPi": false,
+                "installOhMyPi": false,
                 "installCursor": true,
                 "installOp": false
             }
@@ -237,7 +250,26 @@
                 "installFdsx": false,
                 "installRtk": false,
                 "installPi": false,
+                "installOhMyPi": false,
                 "installCursor": true,
+                "installOp": false
+            }
+        }
+    },
+    "oh-my-pi-only": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "tools": {
+                "installLazygit": false,
+                "installNvim": false,
+                "installClaudeCode": false,
+                "installCodex": false,
+                "installGrok": false,
+                "installGh": false,
+                "installFdsx": false,
+                "installRtk": false,
+                "installPi": false,
+                "installCursor": false,
                 "installOp": false
             }
         }
