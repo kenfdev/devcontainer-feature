@@ -3,7 +3,7 @@ set -e
 
 # tools feature install script
 # Installs lazygit, neovim (with supporting tools: ripgrep, fd, fzf), gh, op,
-# Claude Code, Codex, Grok, Cursor Agent, fdsx, rtk, and pi
+# Claude Code, Codex, Grok, Cursor Agent, fdsx, rtk, pi, and Oh My Pi
 
 # Options (passed as environment variables)
 INSTALL_LAZYGIT="${INSTALLLAZYGIT:-true}"
@@ -17,6 +17,7 @@ INSTALL_OP="${INSTALLOP:-true}"
 INSTALL_FDSX="${INSTALLFDSX:-true}"
 INSTALL_RTK="${INSTALLRTK:-true}"
 INSTALL_PI="${INSTALLPI:-true}"
+INSTALL_OH_MY_PI="${INSTALLOHMYPI:-true}"
 LAZYGIT_VERSION="${LAZYGITVERSION:-latest}"
 NVIM_VERSION="${NVIMVERSION:-latest}"
 
@@ -816,6 +817,48 @@ install_rtk() {
     return 0
 }
 
+# Install Oh My Pi coding agent
+install_oh_my_pi() {
+    if [ "$INSTALL_OH_MY_PI" != "true" ]; then
+        echo "Skipping Oh My Pi installation (disabled)"
+        return 0
+    fi
+
+    echo "Installing Oh My Pi..."
+
+    if [ "$REMOTE_USER" != "root" ]; then
+        if su - "$REMOTE_USER" -c "command -v omp" &>/dev/null; then
+            echo "Oh My Pi is already installed, skipping"
+            return 0
+        fi
+    elif command -v omp &>/dev/null; then
+        echo "Oh My Pi is already installed, skipping"
+        return 0
+    fi
+
+    if command -v apk &>/dev/null; then
+        apk add --no-cache libstdc++ libgcc
+    fi
+
+    if [ "$REMOTE_USER" != "root" ]; then
+        if su - "$REMOTE_USER" -c "curl -fsSL https://omp.sh/install | sh"; then
+            link_user_bin "omp" "$REMOTE_USER_HOME"
+            echo "Oh My Pi installed successfully for user $REMOTE_USER"
+        else
+            echo "WARNING: Failed to install Oh My Pi" >&2
+        fi
+    else
+        if curl -fsSL https://omp.sh/install | sh; then
+            link_user_bin "omp" "$REMOTE_USER_HOME"
+            echo "Oh My Pi installed successfully"
+        else
+            echo "WARNING: Failed to install Oh My Pi" >&2
+        fi
+    fi
+
+    return 0
+}
+
 # Main installation
 main() {
     echo "Starting tools feature installation..."
@@ -832,6 +875,7 @@ main() {
     echo "  INSTALL_FDSX=$INSTALL_FDSX"
     echo "  INSTALL_RTK=$INSTALL_RTK"
     echo "  INSTALL_PI=$INSTALL_PI"
+    echo "  INSTALL_OH_MY_PI=$INSTALL_OH_MY_PI"
     echo "  LAZYGIT_VERSION=$LAZYGIT_VERSION"
     echo "  NVIM_VERSION=$NVIM_VERSION"
 
@@ -854,6 +898,7 @@ main() {
     install_fdsx
     install_rtk
     install_pi
+    install_oh_my_pi
 
     echo "tools feature installation complete"
 }
