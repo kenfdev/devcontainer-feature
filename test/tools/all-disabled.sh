@@ -3,7 +3,7 @@ set -e
 
 echo "Testing all-disabled installation..."
 
-for tool in lazygit nvim rg fd fzf claude codex grok agent gh op fdsx rtk pi omp; do
+for tool in lazygit nvim rg fd fzf claude codex grok agent gh op fdsx rtk witr pi omp; do
     if command -v "$tool" &>/dev/null; then
         echo "FAIL: $tool should not be installed"
         exit 1

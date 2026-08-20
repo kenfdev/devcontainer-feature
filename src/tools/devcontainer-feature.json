@@ -1,7 +1,7 @@
 {
     "name": "tools",
     "id": "tools",
-    "version": "1.9.0",
+    "version": "1.10.0",
     "description": "A minimal dev container feature that bundles terminal-based development tools, AI coding CLIs, and 1Password CLI.",
     "options": {
         "installLazygit": {
@@ -62,6 +62,11 @@
         "installRtk": {
             "type": "boolean",
             "description": "Install rtk (Rust Token Killer - token-optimized CLI proxy)",
+            "default": true
+        },
+        "installWitr": {
+            "type": "boolean",
+            "description": "Install witr process tracing CLI and TUI",
             "default": true
         },
         "installPi": {
