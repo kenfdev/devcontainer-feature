@@ -3,7 +3,7 @@ set -e
 
 # tools feature install script
 # Installs lazygit, neovim (with supporting tools: ripgrep, fd, fzf), gh, op,
-# Claude Code, Codex, Grok, Cursor Agent, fdsx, rtk, pi, and Oh My Pi
+# Claude Code, Codex, Grok, Cursor Agent, fdsx, rtk, witr, pi, and Oh My Pi
 
 # Options (passed as environment variables)
 INSTALL_LAZYGIT="${INSTALLLAZYGIT:-true}"
@@ -16,6 +16,7 @@ INSTALL_GH="${INSTALLGH:-true}"
 INSTALL_OP="${INSTALLOP:-true}"
 INSTALL_FDSX="${INSTALLFDSX:-true}"
 INSTALL_RTK="${INSTALLRTK:-true}"
+INSTALL_WITR="${INSTALLWITR:-true}"
 INSTALL_PI="${INSTALLPI:-true}"
 INSTALL_OH_MY_PI="${INSTALLOHMYPI:-true}"
 LAZYGIT_VERSION="${LAZYGITVERSION:-latest}"
@@ -817,6 +818,29 @@ install_rtk() {
     return 0
 }
 
+# Install witr process tracing CLI and TUI
+install_witr() {
+    if [ "$INSTALL_WITR" != "true" ]; then
+        echo "Skipping witr installation (disabled)"
+        return 0
+    fi
+
+    echo "Installing witr..."
+
+    if command -v witr &>/dev/null; then
+        echo "witr is already installed, skipping"
+        return 0
+    fi
+
+    if curl -fsSL https://raw.githubusercontent.com/pranshuparmar/witr/main/install.sh | bash; then
+        echo "witr installed successfully"
+    else
+        echo "WARNING: Failed to install witr" >&2
+    fi
+
+    return 0
+}
+
 # Install Oh My Pi coding agent
 install_oh_my_pi() {
     if [ "$INSTALL_OH_MY_PI" != "true" ]; then
@@ -874,6 +898,7 @@ main() {
     echo "  INSTALL_OP=$INSTALL_OP"
     echo "  INSTALL_FDSX=$INSTALL_FDSX"
     echo "  INSTALL_RTK=$INSTALL_RTK"
+    echo "  INSTALL_WITR=$INSTALL_WITR"
     echo "  INSTALL_PI=$INSTALL_PI"
     echo "  INSTALL_OH_MY_PI=$INSTALL_OH_MY_PI"
     echo "  LAZYGIT_VERSION=$LAZYGIT_VERSION"
@@ -897,6 +922,7 @@ main() {
     install_op
     install_fdsx
     install_rtk
+    install_witr
     install_pi
     install_oh_my_pi
 

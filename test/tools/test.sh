@@ -17,6 +17,7 @@ check "gh is installed" gh --version
 check "op is installed" op --version
 check "grok is installed" grok --version
 check "Cursor agent is installed" agent --version
+check "witr is installed" witr --version
 check "Grok agent alias is absent" bash -c '! test -e "$HOME/.grok/bin/agent" && ! test -L "$HOME/.grok/bin/agent"'
 check "codex is not installed" bash -c '! command -v codex >/dev/null 2>&1'
 
