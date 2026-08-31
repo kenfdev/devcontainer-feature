@@ -1,7 +1,7 @@
 
 # tools (tools)
 
-A minimal dev container feature that bundles terminal-based development tools and 1Password CLI.
+A minimal dev container feature that bundles terminal-based development tools, AI coding CLIs, and 1Password CLI.
 
 ## Example Usage
 
@@ -20,7 +20,8 @@ A minimal dev container feature that bundles terminal-based development tools an
 | lazygitVersion | lazygit version to install (e.g., '0.40.2', 'latest') | string | latest |
 | nvimVersion | neovim version to install (e.g., '0.9.5', 'latest') | string | latest |
 | installClaudeCode | Install Claude Code CLI (AI coding assistant) | boolean | true |
-| installCodex | Install OpenAI Codex CLI | boolean | true |
+| installCodex | Install OpenAI Codex CLI | boolean | false |
+| installGrok | Install Grok CLI | boolean | true |
 | installGh | Install GitHub CLI (gh) | boolean | true |
 | installOp | Install 1Password CLI (op) | boolean | true |
 | installFdsx | Install fdsx (fast data serialization tool) | boolean | true |
