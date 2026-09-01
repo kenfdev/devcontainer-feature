@@ -21,6 +21,7 @@ INSTALL_PI="${INSTALLPI:-true}"
 INSTALL_OH_MY_PI="${INSTALLOHMYPI:-true}"
 LAZYGIT_VERSION="${LAZYGITVERSION:-latest}"
 NVIM_VERSION="${NVIMVERSION:-latest}"
+WITR_VERSION="${WITRVERSION:-0.3.3}"
 
 # Installation target
 INSTALL_DIR="/usr/local/bin"
@@ -818,7 +819,7 @@ install_rtk() {
     return 0
 }
 
-# Install witr process tracing CLI and TUI
+# Install witr process tracing CLI and TUI from GitHub Releases
 install_witr() {
     if [ "$INSTALL_WITR" != "true" ]; then
         echo "Skipping witr installation (disabled)"
@@ -832,12 +833,69 @@ install_witr() {
         return 0
     fi
 
-    if curl -fsSL https://raw.githubusercontent.com/pranshuparmar/witr/main/install.sh | bash; then
-        echo "witr installed successfully"
-    else
-        echo "WARNING: Failed to install witr" >&2
+    local version="$WITR_VERSION"
+    if [ "$version" = "latest" ]; then
+        version=$(get_latest_version "pranshuparmar/witr")
     fi
 
+    if [ -z "$version" ]; then
+        echo "WARNING: Could not determine witr version, skipping" >&2
+        return 0
+    fi
+
+    local version_num="${version#v}"
+    echo "witr version: $version_num"
+
+    local witr_arch
+    if [ "$ARCH" = "amd64" ]; then
+        witr_arch="amd64"
+    elif [ "$ARCH" = "arm64" ]; then
+        witr_arch="arm64"
+    else
+        echo "WARNING: Unsupported architecture for witr: $ARCH" >&2
+        return 0
+    fi
+
+    local asset="witr-linux-${witr_arch}"
+    local release_url="https://github.com/pranshuparmar/witr/releases/download/v${version_num}"
+    local tmpdir
+    tmpdir=$(mktemp -d)
+
+    if ! download_file "$release_url/$asset" "$tmpdir/$asset"; then
+        echo "WARNING: Failed to download witr" >&2
+        rm -rf "$tmpdir"
+        return 0
+    fi
+
+    if download_file "$release_url/SHA256SUMS" "$tmpdir/SHA256SUMS"; then
+        if grep "  ${asset}$" "$tmpdir/SHA256SUMS" > "$tmpdir/SHA256SUMS.selected"; then
+            if ! (cd "$tmpdir" && sha256sum -c SHA256SUMS.selected); then
+                echo "WARNING: Checksum verification failed for $asset, skipping witr installation" >&2
+                rm -rf "$tmpdir"
+                return 0
+            fi
+        else
+            echo "WARNING: Checksum for $asset not found, skipping witr installation" >&2
+            rm -rf "$tmpdir"
+            return 0
+        fi
+    else
+        echo "WARNING: Could not download witr checksums, skipping witr installation" >&2
+        rm -rf "$tmpdir"
+        return 0
+    fi
+
+    install -m 755 "$tmpdir/$asset" "$INSTALL_DIR/witr"
+
+    if download_file "$release_url/witr.1" "$tmpdir/witr.1"; then
+        install -d /usr/local/share/man/man1
+        install -m 644 "$tmpdir/witr.1" /usr/local/share/man/man1/witr.1
+    else
+        echo "WARNING: Failed to install witr man page" >&2
+    fi
+
+    rm -rf "$tmpdir"
+    echo "witr installed successfully"
     return 0
 }
 
@@ -903,6 +961,7 @@ main() {
     echo "  INSTALL_OH_MY_PI=$INSTALL_OH_MY_PI"
     echo "  LAZYGIT_VERSION=$LAZYGIT_VERSION"
     echo "  NVIM_VERSION=$NVIM_VERSION"
+    echo "  WITR_VERSION=$WITR_VERSION"
 
     if [ "$ARCH" = "unknown" ]; then
         echo "WARNING: Unknown architecture, some tools may not install correctly" >&2
