@@ -1,7 +1,7 @@
 {
     "name": "tools",
     "id": "tools",
-    "version": "1.10.0",
+    "version": "1.10.1",
     "description": "A minimal dev container feature that bundles terminal-based development tools, AI coding CLIs, and 1Password CLI.",
     "options": {
         "installLazygit": {
@@ -68,6 +68,11 @@
             "type": "boolean",
             "description": "Install witr process tracing CLI and TUI",
             "default": true
+        },
+        "witrVersion": {
+            "type": "string",
+            "description": "witr version to install (e.g., '0.3.3', 'latest')",
+            "default": "0.3.3"
         },
         "installPi": {
             "type": "boolean",
