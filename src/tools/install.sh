@@ -3,13 +3,14 @@ set -e
 
 # tools feature install script
 # Installs lazygit, neovim (with supporting tools: ripgrep, fd, fzf), gh, op,
-# Claude Code, Codex, Grok, Cursor Agent, fdsx, rtk, witr, pi, and Oh My Pi
+# Claude Code, Codex, opencode, Grok, Cursor Agent, fdsx, rtk, witr, pi, and Oh My Pi
 
 # Options (passed as environment variables)
 INSTALL_LAZYGIT="${INSTALLLAZYGIT:-true}"
 INSTALL_NVIM="${INSTALLNVIM:-true}"
 INSTALL_CLAUDE_CODE="${INSTALLCLAUDECODE:-true}"
 INSTALL_CODEX="${INSTALLCODEX:-false}"
+INSTALL_OPENCODE="${INSTALLOPENCODE:-true}"
 INSTALL_GROK="${INSTALLGROK:-true}"
 INSTALL_CURSOR="${INSTALLCURSOR:-true}"
 INSTALL_GH="${INSTALLGH:-true}"
@@ -436,6 +437,57 @@ install_codex() {
             echo "Codex installed successfully"
         else
             echo "WARNING: Failed to install Codex" >&2
+        fi
+    fi
+
+    return 0
+}
+
+# Install opencode
+link_opencode_bin() {
+    local user_home="${1:-$REMOTE_USER_HOME}"
+    if [ -x "${user_home}/.opencode/bin/opencode" ]; then
+        ln -sf "${user_home}/.opencode/bin/opencode" "$INSTALL_DIR/opencode"
+    else
+        link_user_bin "opencode" "$user_home"
+    fi
+}
+
+install_opencode() {
+    if [ "$INSTALL_OPENCODE" != "true" ]; then
+        echo "Skipping opencode installation (disabled)"
+        return 0
+    fi
+
+    echo "Installing opencode..."
+
+    # Check if opencode is already installed (check as remote user first)
+    if [ "$REMOTE_USER" != "root" ]; then
+        if su - "$REMOTE_USER" -c "command -v opencode" &>/dev/null; then
+            echo "opencode is already installed, skipping"
+            link_opencode_bin "$REMOTE_USER_HOME"
+            return 0
+        fi
+    elif command -v opencode &>/dev/null; then
+        echo "opencode is already installed, skipping"
+        link_opencode_bin "$REMOTE_USER_HOME"
+        return 0
+    fi
+
+    # Install as the remote user so binaries go to their home directory
+    if [ "$REMOTE_USER" != "root" ]; then
+        if su - "$REMOTE_USER" -c "curl -fsSL https://opencode.ai/install | bash"; then
+            link_opencode_bin "$REMOTE_USER_HOME"
+            echo "opencode installed successfully for user $REMOTE_USER"
+        else
+            echo "WARNING: Failed to install opencode" >&2
+        fi
+    else
+        if curl -fsSL https://opencode.ai/install | bash; then
+            link_opencode_bin "$REMOTE_USER_HOME"
+            echo "opencode installed successfully"
+        else
+            echo "WARNING: Failed to install opencode" >&2
         fi
     fi
 
@@ -892,6 +944,7 @@ main() {
     echo "  INSTALL_NVIM=$INSTALL_NVIM"
     echo "  INSTALL_CLAUDE_CODE=$INSTALL_CLAUDE_CODE"
     echo "  INSTALL_CODEX=$INSTALL_CODEX"
+    echo "  INSTALL_OPENCODE=$INSTALL_OPENCODE"
     echo "  INSTALL_GROK=$INSTALL_GROK"
     echo "  INSTALL_CURSOR=$INSTALL_CURSOR"
     echo "  INSTALL_GH=$INSTALL_GH"
@@ -916,6 +969,7 @@ main() {
     install_nvim
     install_claude_code
     install_codex
+    install_opencode
     install_grok
     install_cursor
     install_gh
