@@ -15,7 +15,8 @@
                 "installPi": false,
                 "installOhMyPi": false,
                 "installCursor": false,
-                "installOp": false
+                "installOp": false,
+                "installOpencode": false
             }
         }
     },
@@ -34,7 +35,8 @@
                 "installPi": false,
                 "installOhMyPi": false,
                 "installCursor": false,
-                "installOp": false
+                "installOp": false,
+                "installOpencode": false
             }
         }
     },
@@ -53,7 +55,8 @@
                 "installPi": false,
                 "installOhMyPi": false,
                 "installCursor": false,
-                "installOp": false
+                "installOp": false,
+                "installOpencode": false
             }
         }
     },
@@ -72,7 +75,8 @@
                 "installPi": false,
                 "installOhMyPi": false,
                 "installCursor": false,
-                "installOp": false
+                "installOp": false,
+                "installOpencode": false
             }
         }
     },
@@ -91,7 +95,8 @@
                 "installPi": false,
                 "installOhMyPi": false,
                 "installCursor": false,
-                "installOp": false
+                "installOp": false,
+                "installOpencode": false
             }
         }
     },
@@ -110,7 +115,8 @@
                 "installPi": false,
                 "installOhMyPi": false,
                 "installCursor": false,
-                "installOp": false
+                "installOp": false,
+                "installOpencode": false
             }
         }
     },
@@ -130,7 +136,8 @@
                 "installPi": false,
                 "installOhMyPi": false,
                 "installCursor": false,
-                "installOp": false
+                "installOp": false,
+                "installOpencode": false
             }
         }
     },
@@ -149,7 +156,8 @@
                 "installPi": false,
                 "installOhMyPi": false,
                 "installCursor": false,
-                "installOp": false
+                "installOp": false,
+                "installOpencode": false
             }
         }
     },
@@ -168,7 +176,8 @@
                 "installPi": false,
                 "installOhMyPi": false,
                 "installCursor": false,
-                "installOp": false
+                "installOp": false,
+                "installOpencode": false
             }
         }
     },
@@ -187,7 +196,8 @@
                 "installWitr": false,
                 "installOhMyPi": false,
                 "installCursor": false,
-                "installOp": false
+                "installOp": false,
+                "installOpencode": false
             }
         }
     },
@@ -201,6 +211,27 @@
                 "installCodex": false,
                 "installGrok": false,
                 "installGh": false,
+                "installFdsx": false,
+                "installRtk": false,
+                "installWitr": false,
+                "installPi": false,
+                "installOhMyPi": false,
+                "installCursor": false,
+                "installOpencode": false
+            }
+        }
+    },
+    "opencode-only": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "tools": {
+                "installLazygit": false,
+                "installNvim": false,
+                "installClaudeCode": false,
+                "installCodex": false,
+                "installGrok": false,
+                "installGh": false,
+                "installOp": false,
                 "installFdsx": false,
                 "installRtk": false,
                 "installWitr": false,
@@ -226,7 +257,8 @@
                 "installPi": false,
                 "installOhMyPi": false,
                 "installCursor": false,
-                "installOp": false
+                "installOp": false,
+                "installOpencode": false
             }
         }
     },
@@ -246,7 +278,8 @@
                 "installPi": false,
                 "installOhMyPi": false,
                 "installCursor": true,
-                "installOp": false
+                "installOp": false,
+                "installOpencode": false
             }
         }
     },
@@ -266,7 +299,8 @@
                 "installPi": false,
                 "installOhMyPi": false,
                 "installCursor": true,
-                "installOp": false
+                "installOp": false,
+                "installOpencode": false
             }
         }
     },
@@ -285,7 +319,8 @@
                 "installWitr": false,
                 "installPi": false,
                 "installCursor": false,
-                "installOp": false
+                "installOp": false,
+                "installOpencode": false
             }
         }
     },
@@ -304,7 +339,8 @@
                 "installPi": false,
                 "installOhMyPi": false,
                 "installCursor": false,
-                "installOp": false
+                "installOp": false,
+                "installOpencode": false
             }
         }
     }

@@ -15,6 +15,7 @@ check "lazygit is installed" lazygit --version
 check "nvim is installed" nvim --version
 check "gh is installed" gh --version
 check "op is installed" op --version
+check "opencode is installed" opencode --version
 check "grok is installed" grok --version
 check "Cursor agent is installed" agent --version
 check "witr is installed" witr --version

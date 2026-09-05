@@ -34,6 +34,11 @@
             "description": "Install OpenAI Codex CLI",
             "default": false
         },
+        "installOpencode": {
+            "type": "boolean",
+            "description": "Install opencode (AI coding assistant)",
+            "default": true
+        },
         "installGrok": {
             "type": "boolean",
             "description": "Install Grok CLI",
