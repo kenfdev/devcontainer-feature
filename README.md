@@ -7,6 +7,7 @@ Custom [Dev Container Features](https://containers.dev/features) published to Gi
 - [`devenv`](./src/devenv) - terminal-focused development environment with tmux, lazygit, Neovim, GitHub CLI, and AI coding CLIs.
 - [`tools`](./src/tools) - minimal terminal-focused tool bundle with lazygit, Neovim, GitHub CLI, 1Password CLI, and AI coding CLIs.
 - [`tig`](./src/tig) - installs [`tig`](https://jonas.github.io/tig/), the text-mode interface for Git.
+- [`openwiki`](./src/openwiki) - installs the [`OpenWiki`](https://github.com/langchain-ai/openwiki) CLI for maintaining agent documentation.
 
 ## `devenv`
 
@@ -140,6 +141,21 @@ Disable individual tools or pin supported tool versions as needed:
 | Option | Description | Type | Default |
 | --- | --- | --- | --- |
 | `customprefix` | The prefix to use where to install tig | string | `/usr/local` |
+
+## `openwiki`
+
+Installs the OpenWiki CLI from npm. Node.js 22 or newer is installed as a feature dependency.
+
+### Example Usage
+
+```jsonc
+{
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "features": {
+    "ghcr.io/kenfdev/devcontainer-feature/openwiki:1": {}
+  }
+}
+```
 
 ## Development
 

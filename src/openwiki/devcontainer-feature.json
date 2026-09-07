@@ -1,0 +1,11 @@
+{
+    "name": "openwiki",
+    "id": "openwiki",
+    "version": "1.0.0",
+    "description": "A dev container feature that installs the OpenWiki CLI.",
+    "dependsOn": {
+        "ghcr.io/devcontainers/features/node:1": {
+            "version": "22"
+        }
+    }
+}
