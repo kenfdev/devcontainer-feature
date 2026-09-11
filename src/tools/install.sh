@@ -3,7 +3,7 @@ set -e
 
 # tools feature install script
 # Installs lazygit, neovim (with supporting tools: ripgrep, fd, fzf), gh, op,
-# Claude Code, Codex, Grok, Cursor Agent, fdsx, rtk, witr, pi, and Oh My Pi
+# Claude Code, Codex, Grok, Cursor Agent, fdsx, rtk, witr, herdr, pi, and Oh My Pi
 
 # Options (passed as environment variables)
 INSTALL_LAZYGIT="${INSTALLLAZYGIT:-true}"
@@ -17,6 +17,7 @@ INSTALL_OP="${INSTALLOP:-true}"
 INSTALL_FDSX="${INSTALLFDSX:-true}"
 INSTALL_RTK="${INSTALLRTK:-true}"
 INSTALL_WITR="${INSTALLWITR:-true}"
+INSTALL_HERDR="${INSTALLHERDR:-true}"
 INSTALL_PI="${INSTALLPI:-true}"
 INSTALL_OH_MY_PI="${INSTALLOHMYPI:-true}"
 LAZYGIT_VERSION="${LAZYGITVERSION:-latest}"
@@ -841,6 +842,45 @@ install_witr() {
     return 0
 }
 
+# Install Herdr coding agent runtime
+install_herdr() {
+    if [ "$INSTALL_HERDR" != "true" ]; then
+        echo "Skipping Herdr installation (disabled)"
+        return 0
+    fi
+
+    echo "Installing Herdr..."
+
+    if command -v herdr &>/dev/null; then
+        echo "Herdr is already installed, skipping"
+        return 0
+    fi
+
+    local herdr_arch
+    if [ "$ARCH" = "amd64" ]; then
+        herdr_arch="x86_64"
+    elif [ "$ARCH" = "arm64" ]; then
+        herdr_arch="aarch64"
+    else
+        echo "WARNING: Unsupported architecture for Herdr: $ARCH" >&2
+        return 0
+    fi
+
+    local url="https://github.com/herdrdev/herdr/releases/latest/download/herdr-linux-${herdr_arch}"
+    local tmpdir
+    tmpdir=$(mktemp -d)
+
+    if download_file "$url" "$tmpdir/herdr"; then
+        install -m 755 "$tmpdir/herdr" "$INSTALL_DIR/herdr"
+        echo "Herdr installed successfully"
+    else
+        echo "WARNING: Failed to install Herdr" >&2
+    fi
+
+    rm -rf "$tmpdir"
+    return 0
+}
+
 # Install Oh My Pi coding agent
 install_oh_my_pi() {
     if [ "$INSTALL_OH_MY_PI" != "true" ]; then
@@ -899,6 +939,7 @@ main() {
     echo "  INSTALL_FDSX=$INSTALL_FDSX"
     echo "  INSTALL_RTK=$INSTALL_RTK"
     echo "  INSTALL_WITR=$INSTALL_WITR"
+    echo "  INSTALL_HERDR=$INSTALL_HERDR"
     echo "  INSTALL_PI=$INSTALL_PI"
     echo "  INSTALL_OH_MY_PI=$INSTALL_OH_MY_PI"
     echo "  LAZYGIT_VERSION=$LAZYGIT_VERSION"
@@ -923,6 +964,7 @@ main() {
     install_fdsx
     install_rtk
     install_witr
+    install_herdr
     install_pi
     install_oh_my_pi
 
