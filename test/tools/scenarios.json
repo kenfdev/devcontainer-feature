@@ -298,6 +298,7 @@
                 "installRtk": false,
                 "installWitr": false,
                 "installPi": false,
+                "installOhMyPi": true,
                 "installCursor": false,
                 "installOp": false,
                 "installHerdr": false
