@@ -1,7 +1,7 @@
 {
     "name": "tools",
     "id": "tools",
-    "version": "1.10.1",
+    "version": "1.11.1",
     "description": "A minimal dev container feature that bundles terminal-based development tools, AI coding CLIs, and 1Password CLI.",
     "options": {
         "installLazygit": {
@@ -74,6 +74,11 @@
             "description": "witr version to install (e.g., '0.3.3', 'latest')",
             "default": "0.3.3"
         },
+        "installHerdr": {
+            "type": "boolean",
+            "description": "Install Herdr coding agent runtime",
+            "default": true
+        },
         "installPi": {
             "type": "boolean",
             "description": "Install pi coding agent",
@@ -82,7 +87,7 @@
         "installOhMyPi": {
             "type": "boolean",
             "description": "Install Oh My Pi coding agent",
-            "default": true
+            "default": false
         }
     }
 }

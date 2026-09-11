@@ -15,7 +15,8 @@
                 "installPi": false,
                 "installOhMyPi": false,
                 "installCursor": false,
-                "installOp": false
+                "installOp": false,
+                "installHerdr": false
             }
         }
     },
@@ -34,7 +35,8 @@
                 "installPi": false,
                 "installOhMyPi": false,
                 "installCursor": false,
-                "installOp": false
+                "installOp": false,
+                "installHerdr": false
             }
         }
     },
@@ -53,7 +55,8 @@
                 "installPi": false,
                 "installOhMyPi": false,
                 "installCursor": false,
-                "installOp": false
+                "installOp": false,
+                "installHerdr": false
             }
         }
     },
@@ -72,7 +75,8 @@
                 "installPi": false,
                 "installOhMyPi": false,
                 "installCursor": false,
-                "installOp": false
+                "installOp": false,
+                "installHerdr": false
             }
         }
     },
@@ -91,7 +95,8 @@
                 "installPi": false,
                 "installOhMyPi": false,
                 "installCursor": false,
-                "installOp": false
+                "installOp": false,
+                "installHerdr": false
             }
         }
     },
@@ -110,7 +115,8 @@
                 "installPi": false,
                 "installOhMyPi": false,
                 "installCursor": false,
-                "installOp": false
+                "installOp": false,
+                "installHerdr": false
             }
         }
     },
@@ -130,7 +136,8 @@
                 "installPi": false,
                 "installOhMyPi": false,
                 "installCursor": false,
-                "installOp": false
+                "installOp": false,
+                "installHerdr": false
             }
         }
     },
@@ -149,7 +156,8 @@
                 "installPi": false,
                 "installOhMyPi": false,
                 "installCursor": false,
-                "installOp": false
+                "installOp": false,
+                "installHerdr": false
             }
         }
     },
@@ -168,7 +176,8 @@
                 "installPi": false,
                 "installOhMyPi": false,
                 "installCursor": false,
-                "installOp": false
+                "installOp": false,
+                "installHerdr": false
             }
         }
     },
@@ -187,7 +196,8 @@
                 "installWitr": false,
                 "installOhMyPi": false,
                 "installCursor": false,
-                "installOp": false
+                "installOp": false,
+                "installHerdr": false
             }
         }
     },
@@ -206,7 +216,8 @@
                 "installWitr": false,
                 "installPi": false,
                 "installOhMyPi": false,
-                "installCursor": false
+                "installCursor": false,
+                "installHerdr": false
             }
         }
     },
@@ -226,7 +237,8 @@
                 "installPi": false,
                 "installOhMyPi": false,
                 "installCursor": false,
-                "installOp": false
+                "installOp": false,
+                "installHerdr": false
             }
         }
     },
@@ -246,7 +258,8 @@
                 "installPi": false,
                 "installOhMyPi": false,
                 "installCursor": true,
-                "installOp": false
+                "installOp": false,
+                "installHerdr": false
             }
         }
     },
@@ -266,7 +279,8 @@
                 "installPi": false,
                 "installOhMyPi": false,
                 "installCursor": true,
-                "installOp": false
+                "installOp": false,
+                "installHerdr": false
             }
         }
     },
@@ -284,8 +298,10 @@
                 "installRtk": false,
                 "installWitr": false,
                 "installPi": false,
+                "installOhMyPi": true,
                 "installCursor": false,
-                "installOp": false
+                "installOp": false,
+                "installHerdr": false
             }
         }
     },
@@ -304,7 +320,8 @@
                 "installPi": false,
                 "installOhMyPi": false,
                 "installCursor": false,
-                "installOp": false
+                "installOp": false,
+                "installHerdr": false
             }
         }
     }
