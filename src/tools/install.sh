@@ -2,7 +2,7 @@
 set -e
 
 # tools feature install script
-# Installs lazygit, neovim (with supporting tools: ripgrep, fd, fzf), gh, op,
+# Installs lazygit, neovim (with supporting tools: ripgrep, fd, fzf), gh with gh-stack, op,
 # Claude Code, Codex, Grok, Cursor Agent, fdsx, rtk, witr, herdr, pi, and Oh My Pi
 
 # Options (passed as environment variables)
@@ -116,11 +116,11 @@ install_dependencies() {
     echo "Installing build dependencies..."
     if command -v apt-get &>/dev/null; then
         apt-get update
-        apt-get install -y --no-install-recommends curl ca-certificates tar gzip xz-utils
+        apt-get install -y --no-install-recommends curl ca-certificates tar gzip xz-utils git
     elif command -v apk &>/dev/null; then
-        apk add --no-cache curl ca-certificates tar gzip xz
+        apk add --no-cache curl ca-certificates tar gzip xz git
     elif command -v dnf &>/dev/null; then
-        dnf install -y curl ca-certificates tar gzip xz
+        dnf install -y curl ca-certificates tar gzip xz git
     fi
 }
 
@@ -560,6 +560,44 @@ install_cursor() {
     return 0
 }
 
+# Install gh-stack extension for the remote user. The extension is public, so no
+# GitHub authentication is required for installation.
+install_gh_stack() {
+    if ! command -v gh &>/dev/null; then
+        echo "WARNING: gh is not installed, skipping gh-stack extension" >&2
+        return 0
+    fi
+
+    echo "Installing gh-stack extension..."
+
+    local extension_binary="$REMOTE_USER_HOME/.local/share/gh/extensions/gh-stack/gh-stack"
+
+    if [ -x "$extension_binary" ]; then
+        if [ "$REMOTE_USER" != "root" ]; then
+            echo "gh-stack extension is already installed for user $REMOTE_USER, skipping"
+        else
+            echo "gh-stack extension is already installed, skipping"
+        fi
+        return 0
+    fi
+
+    if [ "$REMOTE_USER" != "root" ]; then
+        if su - "$REMOTE_USER" -c "gh extension install github/gh-stack"; then
+            echo "gh-stack extension installed successfully for user $REMOTE_USER"
+        else
+            echo "WARNING: Failed to install gh-stack extension" >&2
+        fi
+    else
+        if gh extension install github/gh-stack; then
+            echo "gh-stack extension installed successfully"
+        else
+            echo "WARNING: Failed to install gh-stack extension" >&2
+        fi
+    fi
+
+    return 0
+}
+
 # Install GitHub CLI from GitHub Releases
 install_gh() {
     if [ "$INSTALL_GH" != "true" ]; then
@@ -572,6 +610,7 @@ install_gh() {
     # Check if gh is already installed
     if command -v gh &>/dev/null; then
         echo "GitHub CLI is already installed, skipping"
+        install_gh_stack
         return 0
     fi
 
@@ -609,6 +648,7 @@ install_gh() {
     fi
 
     rm -rf "$tmpdir"
+    install_gh_stack
     return 0
 }
 
