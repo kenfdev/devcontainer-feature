@@ -2,8 +2,8 @@
 set -e
 
 # tools feature install script
-# Installs lazygit, neovim (with supporting tools: ripgrep, fd, fzf), gh, op,
-# Claude Code, Codex, Grok, Cursor Agent, fdsx, rtk, witr, mise, pi, and Oh My Pi
+# Installs lazygit, neovim (with supporting tools: ripgrep, fd, fzf), gh with gh-stack, op,
+# Claude Code, Codex, Grok, Cursor Agent, fdsx, rtk, witr, herdr, mise, pi, and Oh My Pi
 
 # Options (passed as environment variables)
 INSTALL_LAZYGIT="${INSTALLLAZYGIT:-true}"
@@ -17,11 +17,13 @@ INSTALL_OP="${INSTALLOP:-true}"
 INSTALL_FDSX="${INSTALLFDSX:-true}"
 INSTALL_RTK="${INSTALLRTK:-true}"
 INSTALL_WITR="${INSTALLWITR:-true}"
+INSTALL_HERDR="${INSTALLHERDR:-true}"
 INSTALL_MISE="${INSTALLMISE:-true}"
 INSTALL_PI="${INSTALLPI:-true}"
-INSTALL_OH_MY_PI="${INSTALLOHMYPI:-true}"
+INSTALL_OH_MY_PI="${INSTALLOHMYPI:-false}"
 LAZYGIT_VERSION="${LAZYGITVERSION:-latest}"
 NVIM_VERSION="${NVIMVERSION:-latest}"
+WITR_VERSION="${WITRVERSION:-0.3.3}"
 
 # Installation target
 INSTALL_DIR="/usr/local/bin"
@@ -115,11 +117,11 @@ install_dependencies() {
     echo "Installing build dependencies..."
     if command -v apt-get &>/dev/null; then
         apt-get update
-        apt-get install -y --no-install-recommends curl ca-certificates tar gzip xz-utils
+        apt-get install -y --no-install-recommends curl ca-certificates tar gzip xz-utils git
     elif command -v apk &>/dev/null; then
-        apk add --no-cache curl ca-certificates tar gzip xz
+        apk add --no-cache curl ca-certificates tar gzip xz git
     elif command -v dnf &>/dev/null; then
-        dnf install -y curl ca-certificates tar gzip xz
+        dnf install -y curl ca-certificates tar gzip xz git
     fi
 }
 
@@ -559,6 +561,44 @@ install_cursor() {
     return 0
 }
 
+# Install gh-stack extension for the remote user. The extension is public, so no
+# GitHub authentication is required for installation.
+install_gh_stack() {
+    if ! command -v gh &>/dev/null; then
+        echo "WARNING: gh is not installed, skipping gh-stack extension" >&2
+        return 0
+    fi
+
+    echo "Installing gh-stack extension..."
+
+    local extension_binary="$REMOTE_USER_HOME/.local/share/gh/extensions/gh-stack/gh-stack"
+
+    if [ -x "$extension_binary" ]; then
+        if [ "$REMOTE_USER" != "root" ]; then
+            echo "gh-stack extension is already installed for user $REMOTE_USER, skipping"
+        else
+            echo "gh-stack extension is already installed, skipping"
+        fi
+        return 0
+    fi
+
+    if [ "$REMOTE_USER" != "root" ]; then
+        if su - "$REMOTE_USER" -c "gh extension install github/gh-stack"; then
+            echo "gh-stack extension installed successfully for user $REMOTE_USER"
+        else
+            echo "WARNING: Failed to install gh-stack extension" >&2
+        fi
+    else
+        if gh extension install github/gh-stack; then
+            echo "gh-stack extension installed successfully"
+        else
+            echo "WARNING: Failed to install gh-stack extension" >&2
+        fi
+    fi
+
+    return 0
+}
+
 # Install GitHub CLI from GitHub Releases
 install_gh() {
     if [ "$INSTALL_GH" != "true" ]; then
@@ -571,6 +611,7 @@ install_gh() {
     # Check if gh is already installed
     if command -v gh &>/dev/null; then
         echo "GitHub CLI is already installed, skipping"
+        install_gh_stack
         return 0
     fi
 
@@ -608,6 +649,7 @@ install_gh() {
     fi
 
     rm -rf "$tmpdir"
+    install_gh_stack
     return 0
 }
 
@@ -900,7 +942,7 @@ install_rtk() {
     return 0
 }
 
-# Install witr process tracing CLI and TUI
+# Install witr process tracing CLI and TUI from GitHub Releases
 install_witr() {
     if [ "$INSTALL_WITR" != "true" ]; then
         echo "Skipping witr installation (disabled)"
@@ -914,12 +956,108 @@ install_witr() {
         return 0
     fi
 
-    if curl -fsSL https://raw.githubusercontent.com/pranshuparmar/witr/main/install.sh | bash; then
-        echo "witr installed successfully"
-    else
-        echo "WARNING: Failed to install witr" >&2
+    local version="$WITR_VERSION"
+    if [ "$version" = "latest" ]; then
+        version=$(get_latest_version "pranshuparmar/witr")
     fi
 
+    if [ -z "$version" ]; then
+        echo "WARNING: Could not determine witr version, skipping" >&2
+        return 0
+    fi
+
+    local version_num="${version#v}"
+    echo "witr version: $version_num"
+
+    local witr_arch
+    if [ "$ARCH" = "amd64" ]; then
+        witr_arch="amd64"
+    elif [ "$ARCH" = "arm64" ]; then
+        witr_arch="arm64"
+    else
+        echo "WARNING: Unsupported architecture for witr: $ARCH" >&2
+        return 0
+    fi
+
+    local asset="witr-linux-${witr_arch}"
+    local release_url="https://github.com/pranshuparmar/witr/releases/download/v${version_num}"
+    local tmpdir
+    tmpdir=$(mktemp -d)
+
+    if ! download_file "$release_url/$asset" "$tmpdir/$asset"; then
+        echo "WARNING: Failed to download witr" >&2
+        rm -rf "$tmpdir"
+        return 0
+    fi
+
+    if download_file "$release_url/SHA256SUMS" "$tmpdir/SHA256SUMS"; then
+        if grep "  ${asset}$" "$tmpdir/SHA256SUMS" > "$tmpdir/SHA256SUMS.selected"; then
+            if ! (cd "$tmpdir" && sha256sum -c SHA256SUMS.selected); then
+                echo "WARNING: Checksum verification failed for $asset, skipping witr installation" >&2
+                rm -rf "$tmpdir"
+                return 0
+            fi
+        else
+            echo "WARNING: Checksum for $asset not found, skipping witr installation" >&2
+            rm -rf "$tmpdir"
+            return 0
+        fi
+    else
+        echo "WARNING: Could not download witr checksums, skipping witr installation" >&2
+        rm -rf "$tmpdir"
+        return 0
+    fi
+
+    install -m 755 "$tmpdir/$asset" "$INSTALL_DIR/witr"
+
+    if download_file "$release_url/witr.1" "$tmpdir/witr.1"; then
+        install -d /usr/local/share/man/man1
+        install -m 644 "$tmpdir/witr.1" /usr/local/share/man/man1/witr.1
+    else
+        echo "WARNING: Failed to install witr man page" >&2
+    fi
+
+    rm -rf "$tmpdir"
+    echo "witr installed successfully"
+    return 0
+}
+
+# Install Herdr coding agent runtime
+install_herdr() {
+    if [ "$INSTALL_HERDR" != "true" ]; then
+        echo "Skipping Herdr installation (disabled)"
+        return 0
+    fi
+
+    echo "Installing Herdr..."
+
+    if command -v herdr &>/dev/null; then
+        echo "Herdr is already installed, skipping"
+        return 0
+    fi
+
+    local herdr_arch
+    if [ "$ARCH" = "amd64" ]; then
+        herdr_arch="x86_64"
+    elif [ "$ARCH" = "arm64" ]; then
+        herdr_arch="aarch64"
+    else
+        echo "WARNING: Unsupported architecture for Herdr: $ARCH" >&2
+        return 0
+    fi
+
+    local url="https://github.com/herdrdev/herdr/releases/latest/download/herdr-linux-${herdr_arch}"
+    local tmpdir
+    tmpdir=$(mktemp -d)
+
+    if download_file "$url" "$tmpdir/herdr"; then
+        install -m 755 "$tmpdir/herdr" "$INSTALL_DIR/herdr"
+        echo "Herdr installed successfully"
+    else
+        echo "WARNING: Failed to install Herdr" >&2
+    fi
+
+    rm -rf "$tmpdir"
     return 0
 }
 
@@ -981,11 +1119,13 @@ main() {
     echo "  INSTALL_FDSX=$INSTALL_FDSX"
     echo "  INSTALL_RTK=$INSTALL_RTK"
     echo "  INSTALL_WITR=$INSTALL_WITR"
+    echo "  INSTALL_HERDR=$INSTALL_HERDR"
     echo "  INSTALL_MISE=$INSTALL_MISE"
     echo "  INSTALL_PI=$INSTALL_PI"
     echo "  INSTALL_OH_MY_PI=$INSTALL_OH_MY_PI"
     echo "  LAZYGIT_VERSION=$LAZYGIT_VERSION"
     echo "  NVIM_VERSION=$NVIM_VERSION"
+    echo "  WITR_VERSION=$WITR_VERSION"
 
     if [ "$ARCH" = "unknown" ]; then
         echo "WARNING: Unknown architecture, some tools may not install correctly" >&2
@@ -1006,6 +1146,7 @@ main() {
     install_fdsx
     install_rtk
     install_witr
+    install_herdr
     install_mise
     install_pi
     install_oh_my_pi

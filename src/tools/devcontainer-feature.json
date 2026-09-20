@@ -1,7 +1,7 @@
 {
     "name": "tools",
     "id": "tools",
-    "version": "1.11.0",
+    "version": "1.12.0",
     "description": "A minimal dev container feature that bundles terminal-based development tools, AI coding CLIs, and 1Password CLI.",
     "options": {
         "installLazygit": {
@@ -46,7 +46,7 @@
         },
         "installGh": {
             "type": "boolean",
-            "description": "Install GitHub CLI (gh)",
+            "description": "Install GitHub CLI (gh) and gh-stack extension",
             "default": true
         },
         "installOp": {
@@ -69,6 +69,16 @@
             "description": "Install witr process tracing CLI and TUI",
             "default": true
         },
+        "witrVersion": {
+            "type": "string",
+            "description": "witr version to install (e.g., '0.3.3', 'latest')",
+            "default": "0.3.3"
+        },
+        "installHerdr": {
+            "type": "boolean",
+            "description": "Install Herdr coding agent runtime",
+            "default": true
+        },
         "installMise": {
             "type": "boolean",
             "description": "Install mise version manager",
@@ -82,7 +92,7 @@
         "installOhMyPi": {
             "type": "boolean",
             "description": "Install Oh My Pi coding agent",
-            "default": true
+            "default": false
         }
     }
 }

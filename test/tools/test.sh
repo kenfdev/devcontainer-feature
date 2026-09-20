@@ -14,10 +14,13 @@ source dev-container-features-test-lib
 check "lazygit is installed" lazygit --version
 check "nvim is installed" nvim --version
 check "gh is installed" gh --version
+check "gh-stack extension is installed" test -x "$HOME/.local/share/gh/extensions/gh-stack/gh-stack"
+check "gh-stack command is usable" gh stack --help
 check "op is installed" op --version
 check "grok is installed" grok --version
 check "Cursor agent is installed" agent --version
 check "witr is installed" witr --version
+check "herdr is installed" herdr --version
 check "mise is installed" mise --version
 check "Grok agent alias is absent" bash -c '! test -e "$HOME/.grok/bin/agent" && ! test -L "$HOME/.grok/bin/agent"'
 check "codex is not installed" bash -c '! command -v codex >/dev/null 2>&1'
