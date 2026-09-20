@@ -23,16 +23,15 @@ A minimal dev container feature that bundles terminal-based development tools, A
 | installCodex | Install OpenAI Codex CLI | boolean | false |
 | installGrok | Install Grok CLI | boolean | true |
 | installCursor | Install Cursor Agent CLI | boolean | true |
-| installGh | Install GitHub CLI (gh) and gh-stack extension | boolean | true |
+| installGh | Install GitHub CLI (gh) | boolean | true |
 | installOp | Install 1Password CLI (op) | boolean | true |
 | installFdsx | Install fdsx (fast data serialization tool) | boolean | true |
 | installRtk | Install rtk (Rust Token Killer - token-optimized CLI proxy) | boolean | true |
 | installWitr | Install witr process tracing CLI and TUI | boolean | true |
 | witrVersion | witr version to install (e.g., '0.3.3', 'latest') | string | 0.3.3 |
-| installHerdr | Install Herdr coding agent runtime | boolean | true |
 | installMise | Install mise version manager | boolean | true |
 | installPi | Install pi coding agent | boolean | true |
-| installOhMyPi | Install Oh My Pi coding agent | boolean | false |
+| installOhMyPi | Install Oh My Pi coding agent | boolean | true |
 
 
 
