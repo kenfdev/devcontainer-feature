@@ -1,7 +1,7 @@
 {
     "name": "tools",
     "id": "tools",
-    "version": "1.11.2",
+    "version": "1.12.0",
     "description": "A minimal dev container feature that bundles terminal-based development tools, AI coding CLIs, and 1Password CLI.",
     "options": {
         "installLazygit": {
@@ -77,6 +77,11 @@
         "installHerdr": {
             "type": "boolean",
             "description": "Install Herdr coding agent runtime",
+            "default": true
+        },
+        "installMise": {
+            "type": "boolean",
+            "description": "Install mise version manager",
             "default": true
         },
         "installPi": {

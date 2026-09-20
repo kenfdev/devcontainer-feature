@@ -3,7 +3,7 @@ set -e
 
 # tools feature install script
 # Installs lazygit, neovim (with supporting tools: ripgrep, fd, fzf), gh with gh-stack, op,
-# Claude Code, Codex, Grok, Cursor Agent, fdsx, rtk, witr, herdr, pi, and Oh My Pi
+# Claude Code, Codex, Grok, Cursor Agent, fdsx, rtk, witr, herdr, mise, pi, and Oh My Pi
 
 # Options (passed as environment variables)
 INSTALL_LAZYGIT="${INSTALLLAZYGIT:-true}"
@@ -18,6 +18,7 @@ INSTALL_FDSX="${INSTALLFDSX:-true}"
 INSTALL_RTK="${INSTALLRTK:-true}"
 INSTALL_WITR="${INSTALLWITR:-true}"
 INSTALL_HERDR="${INSTALLHERDR:-true}"
+INSTALL_MISE="${INSTALLMISE:-true}"
 INSTALL_PI="${INSTALLPI:-true}"
 INSTALL_OH_MY_PI="${INSTALLOHMYPI:-false}"
 LAZYGIT_VERSION="${LAZYGITVERSION:-latest}"
@@ -767,6 +768,87 @@ install_fdsx() {
     return 0
 }
 
+# Install mise version manager from official GitHub Releases
+install_mise() {
+    if [ "$INSTALL_MISE" != "true" ]; then
+        echo "Skipping mise installation (disabled)"
+        return 0
+    fi
+
+    echo "Installing mise..."
+
+    cat > /etc/profile.d/mise.sh <<'EOF'
+# Enable mise for bash login shells and expose shims on PATH for other shells.
+if command -v mise >/dev/null 2>&1; then
+    if [ -n "${BASH_VERSION:-}" ]; then
+        eval "$(mise activate bash)"
+    else
+        case ":${PATH}:" in
+            *:"${HOME}/.local/share/mise/shims":*) ;;
+            *) export PATH="${HOME}/.local/share/mise/shims:${PATH}" ;;
+        esac
+    fi
+fi
+EOF
+    chmod 644 /etc/profile.d/mise.sh
+
+    if command -v mise &>/dev/null; then
+        echo "mise is already installed, skipping"
+        return 0
+    fi
+
+    local mise_arch
+    if [ "$ARCH" = "amd64" ]; then
+        mise_arch="x64"
+    elif [ "$ARCH" = "arm64" ]; then
+        mise_arch="arm64"
+    else
+        echo "WARNING: Unsupported architecture for mise: $ARCH" >&2
+        return 0
+    fi
+
+    local version
+    version=$(get_latest_version "jdx/mise")
+    if [ -z "$version" ]; then
+        echo "WARNING: Could not determine mise version, skipping" >&2
+        return 0
+    fi
+
+    local asset="mise-${version}-linux-${mise_arch}"
+    local base_url="https://github.com/jdx/mise/releases/download/${version}"
+    local tmpdir
+    tmpdir=$(mktemp -d)
+
+    if ! download_file "${base_url}/${asset}" "$tmpdir/${asset}"; then
+        echo "WARNING: Failed to download mise" >&2
+        rm -rf "$tmpdir"
+        return 0
+    fi
+
+    if download_file "${base_url}/SHASUMS256.txt" "$tmpdir/SHASUMS256.txt"; then
+        if ! awk -v asset="$asset" '{ name=$2; sub(/^\.\//, "", name); if (name == asset) print }' "$tmpdir/SHASUMS256.txt" > "$tmpdir/mise.sha256" || [ ! -s "$tmpdir/mise.sha256" ]; then
+            echo "WARNING: Could not find mise checksum, skipping" >&2
+            rm -rf "$tmpdir"
+            return 0
+        fi
+        (cd "$tmpdir" && sha256sum -c mise.sha256) || {
+            echo "WARNING: mise checksum verification failed, skipping" >&2
+            rm -rf "$tmpdir"
+            return 0
+        }
+    else
+        echo "WARNING: Failed to download mise checksums, skipping" >&2
+        rm -rf "$tmpdir"
+        return 0
+    fi
+
+    install -m 755 "$tmpdir/${asset}" "$INSTALL_DIR/mise"
+    rm -rf "$tmpdir"
+
+    echo "mise installed successfully"
+    return 0
+}
+
 # Install pi coding agent
 install_pi() {
     if [ "$INSTALL_PI" != "true" ]; then
@@ -1038,6 +1120,7 @@ main() {
     echo "  INSTALL_RTK=$INSTALL_RTK"
     echo "  INSTALL_WITR=$INSTALL_WITR"
     echo "  INSTALL_HERDR=$INSTALL_HERDR"
+    echo "  INSTALL_MISE=$INSTALL_MISE"
     echo "  INSTALL_PI=$INSTALL_PI"
     echo "  INSTALL_OH_MY_PI=$INSTALL_OH_MY_PI"
     echo "  LAZYGIT_VERSION=$LAZYGIT_VERSION"
@@ -1064,6 +1147,7 @@ main() {
     install_rtk
     install_witr
     install_herdr
+    install_mise
     install_pi
     install_oh_my_pi
 
