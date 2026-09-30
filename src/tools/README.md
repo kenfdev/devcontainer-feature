@@ -29,8 +29,9 @@ A minimal dev container feature that bundles terminal-based development tools, A
 | installRtk | Install rtk (Rust Token Killer - token-optimized CLI proxy) | boolean | true |
 | installWitr | Install witr process tracing CLI and TUI | boolean | true |
 | witrVersion | witr version to install (e.g., '0.3.3', 'latest') | string | 0.3.3 |
+| installHerdr | Install Herdr coding agent runtime | boolean | true |
 | installPi | Install pi coding agent | boolean | true |
-| installOhMyPi | Install Oh My Pi coding agent | boolean | true |
+| installOhMyPi | Install Oh My Pi coding agent | boolean | false |
 
 
 
