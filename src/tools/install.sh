@@ -733,6 +733,33 @@ install_fdsx() {
         fi
     }
 
+    # Ensure Rust is installed (fdsx has Rust dependencies that require cargo)
+    ensure_rust_installed() {
+        local run_as="$1"
+        if [ -n "$run_as" ]; then
+            if ! su - "$run_as" -c "command -v cargo" &>/dev/null; then
+                echo "Installing Rust for fdsx dependencies..."
+                su - "$run_as" -c "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal" || {
+                    echo "WARNING: Failed to install Rust" >&2
+                    return 1
+                }
+                # Wait a moment for installation to complete
+                sleep 2
+            fi
+        else
+            if ! command -v cargo &>/dev/null; then
+                echo "Installing Rust for fdsx dependencies..."
+                curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal || {
+                    echo "WARNING: Failed to install Rust" >&2
+                    return 1
+                }
+                # Wait a moment for installation to complete
+                sleep 2
+            fi
+        fi
+        return 0
+    }
+
     # Install uv if not available, then install fdsx
     if [ "$REMOTE_USER" != "root" ]; then
         if ! su - "$REMOTE_USER" -c "command -v uv" &>/dev/null; then
@@ -742,6 +769,13 @@ install_fdsx() {
                 return 0
             }
         fi
+        
+        # Ensure Rust is installed before attempting fdsx installation
+        if ! ensure_rust_installed "$REMOTE_USER"; then
+            echo "WARNING: Skipping fdsx installation due to Rust installation failure" >&2
+            return 0
+        fi
+        
         if run_with_uv "$REMOTE_USER" "uv tool install fdsx"; then
             link_user_bin "fdsx" "$REMOTE_USER_HOME"
             echo "fdsx installed successfully for user $REMOTE_USER"
@@ -756,6 +790,13 @@ install_fdsx() {
                 return 0
             }
         fi
+        
+        # Ensure Rust is installed before attempting fdsx installation
+        if ! ensure_rust_installed ""; then
+            echo "WARNING: Skipping fdsx installation due to Rust installation failure" >&2
+            return 0
+        fi
+        
         if run_with_uv "" "uv tool install fdsx"; then
             link_user_bin "fdsx" "$REMOTE_USER_HOME"
             echo "fdsx installed successfully"
