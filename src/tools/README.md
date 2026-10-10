@@ -7,7 +7,7 @@ A minimal dev container feature that bundles terminal-based development tools, A
 
 ```json
 "features": {
-    "ghcr.io/kenfdev/devcontainer-feature/tools:1": {}
+    "ghcr.io/kenfdev/devcontainer-feature/tools:2": {}
 }
 ```
 
@@ -23,14 +23,15 @@ A minimal dev container feature that bundles terminal-based development tools, A
 | installCodex | Install OpenAI Codex CLI | boolean | false |
 | installGrok | Install Grok CLI | boolean | true |
 | installCursor | Install Cursor Agent CLI | boolean | true |
-| installGh | Install GitHub CLI (gh) | boolean | true |
+| installGh | Install GitHub CLI (gh) and gh-stack extension | boolean | true |
 | installOp | Install 1Password CLI (op) | boolean | true |
 | installFdsx | Install fdsx (fast data serialization tool) | boolean | false |
 | installRtk | Install rtk (Rust Token Killer - token-optimized CLI proxy) | boolean | true |
 | installWitr | Install witr process tracing CLI and TUI | boolean | true |
 | witrVersion | witr version to install (e.g., '0.3.3', 'latest') | string | 0.3.3 |
+| installHerdr | Install Herdr coding agent runtime | boolean | true |
 | installPi | Install pi coding agent | boolean | false |
-| installOhMyPi | Install Oh My Pi coding agent | boolean | true |
+| installOhMyPi | Install Oh My Pi coding agent | boolean | false |
 
 
 
