@@ -141,26 +141,6 @@
             }
         }
     },
-    "fdsx-only": {
-        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
-        "features": {
-            "tools": {
-                "installLazygit": false,
-                "installNvim": false,
-                "installClaudeCode": false,
-                "installCodex": false,
-                "installGrok": false,
-                "installGh": false,
-                "installRtk": false,
-                "installWitr": false,
-                "installPi": false,
-                "installOhMyPi": false,
-                "installCursor": false,
-                "installOp": false,
-                "installHerdr": false
-            }
-        }
-    },
     "rtk-only": {
         "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
         "features": {
@@ -194,6 +174,7 @@
                 "installFdsx": false,
                 "installRtk": false,
                 "installWitr": false,
+                "installPi": true,
                 "installOhMyPi": false,
                 "installCursor": false,
                 "installOp": false,

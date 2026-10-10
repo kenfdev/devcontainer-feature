@@ -40,9 +40,9 @@ Disable individual tools or pin supported tool versions as needed:
       "installCodex": true,
       "installGh": true,
       "installOpencode": false,
-      "installFdsx": true,
+      "installFdsx": false,
       "installRtk": true,
-      "installPi": true
+      "installPi": false
     }
   }
 }
@@ -62,9 +62,9 @@ Disable individual tools or pin supported tool versions as needed:
 | `installCodex` | Install OpenAI Codex CLI | boolean | `false` |
 | `installGh` | Install GitHub CLI (gh) | boolean | `true` |
 | `installOpencode` | Install opencode (AI coding assistant) | boolean | `false` |
-| `installFdsx` | Install fdsx | boolean | `true` |
+| `installFdsx` | Install fdsx | boolean | `false` |
 | `installRtk` | Install rtk (Rust Token Killer - token-optimized CLI proxy) | boolean | `true` |
-| `installPi` | Install pi coding agent | boolean | `true` |
+| `installPi` | Install pi coding agent | boolean | `false` |
 
 ## `tools`
 
@@ -97,9 +97,9 @@ Disable individual tools or pin supported tool versions as needed:
       "installGrok": true,
       "installGh": true,
       "installOp": true,
-      "installFdsx": true,
+      "installFdsx": false,
       "installRtk": true,
-      "installPi": true
+      "installPi": false
     }
   }
 }
@@ -118,9 +118,9 @@ Disable individual tools or pin supported tool versions as needed:
 | `installGrok` | Install Grok CLI | boolean | `true` |
 | `installGh` | Install GitHub CLI (gh) | boolean | `true` |
 | `installOp` | Install 1Password CLI (op) | boolean | `true` |
-| `installFdsx` | Install fdsx | boolean | `true` |
+| `installFdsx` | Install fdsx | boolean | `false` |
 | `installRtk` | Install rtk (Rust Token Killer - token-optimized CLI proxy) | boolean | `true` |
-| `installPi` | Install pi coding agent | boolean | `true` |
+| `installPi` | Install pi coding agent | boolean | `false` |
 
 ## `tig`
 

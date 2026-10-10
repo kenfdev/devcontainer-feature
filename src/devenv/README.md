@@ -25,9 +25,9 @@ A dev container feature that bundles essential terminal-based development tools:
 | installCodex | Install OpenAI Codex CLI | boolean | false |
 | installGh | Install GitHub CLI (gh) | boolean | true |
 | installOpencode | Install opencode (AI coding assistant) | boolean | false |
-| installFdsx | Install fdsx (fast data serialization tool) | boolean | true |
+| installFdsx | Install fdsx (fast data serialization tool) | boolean | false |
 | installRtk | Install rtk (Rust Token Killer - token-optimized CLI proxy) | boolean | true |
-| installPi | Install pi coding agent | boolean | true |
+| installPi | Install pi coding agent | boolean | false |
 
 
 
