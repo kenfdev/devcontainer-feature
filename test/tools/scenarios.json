@@ -141,7 +141,8 @@
             }
         }
     },
-    "fdsx-only": {
+    "_fdsx-only-disabled": {
+        "_comment": "Disabled: fdsx installation fails with Python 3.15 due to PyO3 compatibility issues in ormsgpack dependency. See https://github.com/kenfdev/devcontainer-feature/pull/82",
         "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
         "features": {
             "tools": {
