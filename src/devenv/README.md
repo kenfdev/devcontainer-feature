@@ -7,7 +7,7 @@ A dev container feature that bundles essential terminal-based development tools:
 
 ```json
 "features": {
-    "ghcr.io/kenfdev/devcontainer-feature/devenv:1": {}
+    "ghcr.io/kenfdev/devcontainer-feature/devenv:2": {}
 }
 ```
 
