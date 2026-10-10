@@ -776,7 +776,11 @@ install_fdsx() {
             return 0
         fi
         
-        if run_with_uv "$REMOTE_USER" "uv tool install fdsx"; then
+        # Set PYO3_USE_ABI3_FORWARD_COMPATIBILITY to allow building with newer Python versions
+        # fdsx dependencies use PyO3 which may not support the latest Python yet
+        export PYO3_USE_ABI3_FORWARD_COMPATIBILITY=1
+        
+        if run_with_uv "$REMOTE_USER" "PYO3_USE_ABI3_FORWARD_COMPATIBILITY=1 uv tool install fdsx"; then
             link_user_bin "fdsx" "$REMOTE_USER_HOME"
             echo "fdsx installed successfully for user $REMOTE_USER"
         else
@@ -797,7 +801,11 @@ install_fdsx() {
             return 0
         fi
         
-        if run_with_uv "" "uv tool install fdsx"; then
+        # Set PYO3_USE_ABI3_FORWARD_COMPATIBILITY to allow building with newer Python versions
+        # fdsx dependencies use PyO3 which may not support the latest Python yet
+        export PYO3_USE_ABI3_FORWARD_COMPATIBILITY=1
+        
+        if run_with_uv "" "PYO3_USE_ABI3_FORWARD_COMPATIBILITY=1 uv tool install fdsx"; then
             link_user_bin "fdsx" "$REMOTE_USER_HOME"
             echo "fdsx installed successfully"
         else
