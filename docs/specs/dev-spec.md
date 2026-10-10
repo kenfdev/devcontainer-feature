@@ -35,7 +35,7 @@ All options use **camelCase** naming convention.
 | `installTmux` | boolean | `false` | Install tmux |
 | `installLazygit` | boolean | `true` | Install lazygit |
 | `installNvim` | boolean | `true` | Install neovim (and supporting tools: ripgrep, fd, fzf) |
-| `installPi` | boolean | `true` | Install pi coding agent |
+| `installPi` | boolean | `false` | Install pi coding agent |
 
 ### Version Options
 

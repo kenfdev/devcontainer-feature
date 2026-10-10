@@ -27,7 +27,7 @@ A dev container feature that bundles essential terminal-based development tools:
 | installOpencode | Install opencode (AI coding assistant) | boolean | false |
 | installFdsx | Install fdsx (fast data serialization tool) | boolean | true |
 | installRtk | Install rtk (Rust Token Killer - token-optimized CLI proxy) | boolean | true |
-| installPi | Install pi coding agent | boolean | true |
+| installPi | Install pi coding agent | boolean | false |
 
 
 

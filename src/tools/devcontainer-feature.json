@@ -1,7 +1,7 @@
 {
     "name": "tools",
     "id": "tools",
-    "version": "1.11.2",
+    "version": "2.0.0",
     "description": "A minimal dev container feature that bundles terminal-based development tools, AI coding CLIs, and 1Password CLI.",
     "options": {
         "installLazygit": {
@@ -82,7 +82,7 @@
         "installPi": {
             "type": "boolean",
             "description": "Install pi coding agent",
-            "default": true
+            "default": false
         },
         "installOhMyPi": {
             "type": "boolean",

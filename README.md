@@ -42,7 +42,7 @@ Disable individual tools or pin supported tool versions as needed:
       "installOpencode": false,
       "installFdsx": true,
       "installRtk": true,
-      "installPi": true
+      "installPi": false
     }
   }
 }
@@ -64,7 +64,7 @@ Disable individual tools or pin supported tool versions as needed:
 | `installOpencode` | Install opencode (AI coding assistant) | boolean | `false` |
 | `installFdsx` | Install fdsx | boolean | `true` |
 | `installRtk` | Install rtk (Rust Token Killer - token-optimized CLI proxy) | boolean | `true` |
-| `installPi` | Install pi coding agent | boolean | `true` |
+| `installPi` | Install pi coding agent | boolean | `false` |
 
 ## `tools`
 
@@ -99,7 +99,7 @@ Disable individual tools or pin supported tool versions as needed:
       "installOp": true,
       "installFdsx": true,
       "installRtk": true,
-      "installPi": true
+      "installPi": false
     }
   }
 }
@@ -120,7 +120,7 @@ Disable individual tools or pin supported tool versions as needed:
 | `installOp` | Install 1Password CLI (op) | boolean | `true` |
 | `installFdsx` | Install fdsx | boolean | `true` |
 | `installRtk` | Install rtk (Rust Token Killer - token-optimized CLI proxy) | boolean | `true` |
-| `installPi` | Install pi coding agent | boolean | `true` |
+| `installPi` | Install pi coding agent | boolean | `false` |
 
 ## `tig`
 
