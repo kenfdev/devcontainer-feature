@@ -194,6 +194,7 @@
                 "installFdsx": false,
                 "installRtk": false,
                 "installWitr": false,
+                "installPi": true,
                 "installOhMyPi": false,
                 "installCursor": false,
                 "installOp": false,
