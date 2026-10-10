@@ -57,7 +57,7 @@
         "installFdsx": {
             "type": "boolean",
             "description": "Install fdsx (fast data serialization tool)",
-            "default": true
+            "default": false
         },
         "installRtk": {
             "type": "boolean",
