@@ -151,6 +151,7 @@
                 "installCodex": false,
                 "installGrok": false,
                 "installGh": false,
+                "installFdsx": true,
                 "installRtk": false,
                 "installWitr": false,
                 "installPi": false,
